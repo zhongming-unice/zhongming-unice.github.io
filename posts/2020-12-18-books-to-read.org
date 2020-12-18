@@ -1,0 +1,36 @@
+#+title: books to read
+#+date: <2020-12-18 15:18>
+#+filetags: c++ scheme complier
+
+* cpp
+- Exceptional C++ style 40 new engineering puzzles, programming problems, and solutions by Herb Sutter 
+- More Exceptional C++ 40 New Engineering Puzzles, Programming Problems, and Solutions by Herb Sutter
+- Modern C++ design generic programming and design patterns applied by Alexandrescu, Andrei
+- Effective Modern C++ 42 Specific Ways to Improve Your Use of C++11 and C++14 by Scott Meyers 
+- Effective C++ Digital Collection 140 Ways to Improve Your Programming by Scott Meyers 
+- C++ Primer by Stanley B. Lippman, Josée Lajoie, Barbara E. Moo 
+- C++ Network Programming, Volume I Mastering Complexity with ACE and Patterns by Douglas C. Schmidt, Stephen D. Huston 
+- C++ Network Programming, Volume 2 Systematic Reuse with ACE and Frameworks by Douglas C. Schmidt, Stephen D. Huston
+- C++ Gotchas Avoiding Common Problems in Coding and Design by Stephen C. Dewhurst 
+- C++ Coding Standards 101 Rules, Guidelines, and Best Practices by Herb Sutter, Andrei Alexandrescu 
+  
+
+* scheme
+- The optimal implementation of functional programming languages by Andrea Asperti, Stefano Guerrini
+- The Little LISPer by Daniel P. Friedman, Matthias Felleisen
+- The Little Schemer - 4th Edition by Daniel P. Friedman, Matthias Felleisen, Gerald J. Sussman 
+- The Seasoned Schemer by Daniel P. Friedman, Matthias Felleisen
+- The Reasoned Schemer [2nd ed.] by Daniel P. Friedman, William E. Byrd, Oleg Kiselyov, Jason Hemann 
+- The Little Prover by Daniel P. Friedman, Carl Eastlund
+- The Little MLer by Matthias Felleisen, Daniel P. Friedman
+- Essentials of Programming Languages by Daniel P. Friedman, Mitchell Wand 
+
+
+* complier
+- Structure and Interpretation of Computer Programs by Harold Abelson, Gerald Jay Sussman
+- Modern Compiler Implementation in C by Andrew W. Appel,  Maia Ginsburg
+- How to Design Programs An Introduction to Programming and Computing by Felleisen, Matthias Findler, Robert Bruce Flatt, Matthew Krishnamurthi, Shriram
+- Compilers  principles, techniques, and tools by Jeffrey D. Ullman Ravi Sethi Monica S. Lam Alfred V. Aho
+- Advanced Compiler Design and Implementation by Steven S. Muchnick
+
+

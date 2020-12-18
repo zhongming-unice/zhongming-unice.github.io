@@ -1,0 +1,30 @@
+#+title: scheme notes
+#+date: <2020-12-18 14:33>
+#+filetags: scheme
+
+#+begin_comment
+;;; scheme.org --- scheme programming language notes
+
+;;; Commentary:
+;;  It's a personal note.
+;;  Written by (c) ZHONG Ming.  2020-2021.
+#+end_comment
+
+* keywords
+
+car: Contents of the Address part of the Register
+non-destructive
+
+cdr: Contents of the Decrement part of the Register
+non-destructive
+
+assq: procedure: assq object alist
+Returns #t if object is an association list (including the empty list); otherwise returns #f
+#+begin_src lisp
+(define e '((a 1) (b 2) (c 3)))
+(assq 'a e)                             ⇒  (a 1)
+(assq 'b e)                             ⇒  (b 2)
+(assq 'd e)                             ⇒  #f
+#+end_src
+
+* others

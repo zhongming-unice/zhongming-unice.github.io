@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+<channel>
+<title><![CDATA[Vue de Villa Nador]]></title>
+<description><![CDATA[Vue de Villa Nador]]></description>
+<link>https://zhongming-unice.github.io/</link>
+<lastBuildDate>Fri, 18 Dec 2020 15:24:22 +0800</lastBuildDate>
+<item>
+  <title><![CDATA[scheme notes]]></title>
+  <description><![CDATA[
+<nav id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org301b229">1. keywords</a></li>
+<li><a href="#org6059865">2. others</a></li>
+</ul>
+</div>
+</nav>
+
+<div id="outline-container-org301b229" class="outline-2">
+<h2 id="org301b229"><span class="section-number-2">1</span> keywords</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+car: Contents of the Address part of the Register
+non-destructive
+</p>
+
+<p>
+cdr: Contents of the Decrement part of the Register
+non-destructive
+</p>
+
+<p>
+assq: procedure: assq object alist
+Returns #t if object is an association list (including the empty list); otherwise returns #f
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(define e '((a 1) (b 2) (c 3)))
+(assq 'a e)                             ⇒  (a 1)
+(assq 'b e)                             ⇒  (b 2)
+(assq 'd e)                             ⇒  #f
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6059865" class="outline-2">
+<h2 id="org6059865"><span class="section-number-2">2</span> others</h2>
+</div>
+<div class="taglist"><a href="https://zhongming-unice.github.io/tags.html">Tags</a>: <a href="https://zhongming-unice.github.io/tag-scheme.html">scheme</a> </div>]]></description>
+  <category><![CDATA[scheme]]></category>
+  <link>https://zhongming-unice.github.io/2020-12-18-scheme-notes.html</link>
+  <pubDate>Fri, 18 Dec 2020 14:33:00 +0800</pubDate>
+</item>
+</channel>
+</rss>
