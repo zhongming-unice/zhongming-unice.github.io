@@ -4,7 +4,7 @@
 <title><![CDATA[Vue de Villa Nador]]></title>
 <description><![CDATA[Vue de Villa Nador]]></description>
 <link>https://zhongming-unice.github.io/</link>
-<lastBuildDate>Fri, 18 Dec 2020 15:24:22 +0800</lastBuildDate>
+<lastBuildDate>Fri, 18 Dec 2020 15:47:49 +0800</lastBuildDate>
 <item>
   <title><![CDATA[scheme notes]]></title>
   <description><![CDATA[
@@ -12,14 +12,14 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org301b229">1. keywords</a></li>
-<li><a href="#org6059865">2. others</a></li>
+<li><a href="#orga0e3070">1. keywords</a></li>
+<li><a href="#org0ea14a0">2. others</a></li>
 </ul>
 </div>
 </nav>
 
-<div id="outline-container-org301b229" class="outline-2">
-<h2 id="org301b229"><span class="section-number-2">1</span> keywords</h2>
+<div id="outline-container-orga0e3070" class="outline-2">
+<h2 id="orga0e3070"><span class="section-number-2">1</span> keywords</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 car: Contents of the Address part of the Register
@@ -45,8 +45,8 @@ Returns #t if object is an association list (including the empty list); otherwis
 </div>
 </div>
 
-<div id="outline-container-org6059865" class="outline-2">
-<h2 id="org6059865"><span class="section-number-2">2</span> others</h2>
+<div id="outline-container-org0ea14a0" class="outline-2">
+<h2 id="org0ea14a0"><span class="section-number-2">2</span> others</h2>
 </div>
 <div class="taglist"><a href="https://zhongming-unice.github.io/tags.html">Tags</a>: <a href="https://zhongming-unice.github.io/tag-scheme.html">scheme</a> </div>]]></description>
   <category><![CDATA[scheme]]></category>
