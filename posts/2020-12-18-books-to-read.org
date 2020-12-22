@@ -13,6 +13,9 @@
 - C++ Network Programming, Volume 2 Systematic Reuse with ACE and Frameworks by Douglas C. Schmidt, Stephen D. Huston
 - C++ Gotchas Avoiding Common Problems in Coding and Design by Stephen C. Dewhurst 
 - C++ Coding Standards 101 Rules, Guidelines, and Best Practices by Herb Sutter, Andrei Alexandrescu 
+- UNIX Network Programming, Volume 1 The Sockets Networking API, 3rd Edition by W. Richard Stevens, Bill Fenner, Andrew M. Rudoff
+- Advanced Programming in the UNIX® Environment by W. Richard Stevens  Stephen A. Rago [Stevens, W. Richard  Rago, Stephen A.]
+- TCPIP Illustrated. vol. 2 The Implementation by Gary R. Wright, W. Richard Stevens
   
 
 * scheme
@@ -24,6 +27,7 @@
 - The Little Prover by Daniel P. Friedman, Carl Eastlund
 - The Little MLer by Matthias Felleisen, Daniel P. Friedman
 - Essentials of Programming Languages by Daniel P. Friedman, Mitchell Wand 
+- Common Lisp, The Language, 2nd Edition
 
 
 * complier
