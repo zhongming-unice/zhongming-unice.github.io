@@ -16,6 +16,7 @@
 - UNIX Network Programming, Volume 1 The Sockets Networking API, 3rd Edition by W. Richard Stevens, Bill Fenner, Andrew M. Rudoff
 - Advanced Programming in the UNIX® Environment by W. Richard Stevens  Stephen A. Rago [Stevens, W. Richard  Rago, Stephen A.]
 - TCPIP Illustrated. vol. 2 The Implementation by Gary R. Wright, W. Richard Stevens
+- Elements of Programming by Alexander Stepanov and Paul McJones
   
 
 * scheme

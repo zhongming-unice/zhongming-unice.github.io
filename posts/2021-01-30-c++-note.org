@@ -1,0 +1,560 @@
+#+title: c++ note
+#+date: <2021-01-30 15:08>
+#+filetags: c++
+#+OPTIONS: ^:nil
+
+#+begin_comment
+;;; cpp.org --- c/cpp programming language notes
+
+;;; Commentary:
+;;  It's a personal note.
+;;  Written by (c) ZHONG Ming.  2020-2021.
+#+end_comment
+
+* grammar
+** static
+*** copy constructor
+在使用包含静态成员的类时，有时候会调用拷贝构造函数生成临时的隐藏的类对象，
+而这个临时对象在消亡时会调用析构函数有可能会对静态变量做操作（例如total_num--），
+可是这些对象在生成时却没有执行构造函数中的total_num++的操作。
+解决方案是为这个类写一个拷贝构造函数，在该拷贝构造函数中完成total_num++的操作。
+
+** virtual
+在构造函数和析构函数中调用虚的成员函数不会有虚函数的效果，即还是调用父类的成员函数。
+可以使用工厂模式来解决。
+
+类中有虚函数时，析构函数要为虚或者protected
+
+** lvalue and rvalue
+*** rvalue
+rvalue: xvalue(Expiring Value), prvalue(Pure Right Value)
+
+rvo, nrvo: Return Value Optimization, Named Return Value Optimization
+
+编译器减少函数返回时生成临时值（对象）的个数
+编译器默认使用，编译时使用 -fno-elide-constructors 来禁用
+*** std::forward
+defined in header <utility>
+
+完美转发 能转发：
+const T &
+T &
+const T &&
+T &&
+
+如果外面传来了rvalue临时变量，它就转发rvalue并且启用move语义
+如果外面传来了lvalue，它就转发lvalue并且启用copy
+能保留const，可以被static_cast替代
+
+** cast
+*** const_cast
+可 cast const 的对象，除function pointers
+*** static_cast 
+*** reinterpret_cast
+*** dynamic_cast
+
+** smart pointer
+*** unique_ptr
+get()
+
+release()
+*** shared_ptr
+*** weak_ptr
+lock()
+
+expired()
+*** enable_shared_from_this 
+Curiously Recurring Template Pattern 奇异递归模板模式是C++模板编程时的一种惯用法（idiom）
+更一般地被称作F-bound polymorphism
+
+shared_from_this: returns a shared_ptr which shares ownership of *this
+
+weak_from_this: returns the weak_ptr which shares ownership of *this
+#+begin_src c++
+#include <memory>
+#include <iostream>
+ 
+struct Good: std::enable_shared_from_this<Good> // note: public inheritance
+{
+    std::shared_ptr<Good> getptr() {
+        return shared_from_this();
+    }
+};
+ 
+struct Bad
+{
+    std::shared_ptr<Bad> getptr() {
+        return std::shared_ptr<Bad>(this);
+    }
+    ~Bad() { std::cout << "Bad::~Bad() called\n"; }
+};
+ 
+int main()
+{
+    // Good: the two shared_ptr's share the same object
+    std::shared_ptr<Good> gp1 = std::make_shared<Good>();
+    std::shared_ptr<Good> gp2 = gp1->getptr();
+    std::cout << "gp2.use_count() = " << gp2.use_count() << '\n';
+ 
+    // Bad: shared_from_this is called without having std::shared_ptr owning the caller 
+    try {
+        Good not_so_good;
+        std::shared_ptr<Good> gp1 = not_so_good.getptr();
+    } catch(std::bad_weak_ptr& e) {
+        // undefined behavior (until C++17) and std::bad_weak_ptr thrown (since C++17)
+        std::cout << e.what() << '\n';    
+    }
+ 
+    // Bad, each shared_ptr thinks it's the only owner of the object
+    std::shared_ptr<Bad> bp1 = std::make_shared<Bad>();
+    std::shared_ptr<Bad> bp2 = bp1->getptr();
+    std::cout << "bp2.use_count() = " << bp2.use_count() << '\n';
+} // UB: double-delete of Bad
+
+#+end_src
+
+* std container
+** std::array
+template<typename T, size_t N>
+
+内存分配在栈（stack）上，不会重新分配，随机访问元素
+
+swap: 交换每一个元素
+
+fill: 对所有元素赋值
+
+** std::vector
+template<typename T, typename Allocator = allocator<T> >
+
+assign: 赋值
+
+capacity: 容量
+
+reserve: 预先分配内存
+
+shrink_to_fit: resize到合适的内存大小
+
+push_back, emplace_back: 尾部插入
+
+insert，emplace: 插入
+
+vector的元素不能为bool
+
+** std::deque
+acronym of double-ended queue 双端队列
+
+push_front, emplace_front: 头部插入
+
+** std::list
+Doubly linked list 双向列表
+
+remove, remove_if: 删除
+
+reverse: 反转
+
+sort: 排序
+
+merge: 合并已排序的list
+
+unique: 已排序的list去重
+
+splice: 接合
+
+** std::forward_list
+Single linked list 单向列表
+
+before_begin: begin的前一个迭代器
+
+erase_after: 删除下一个元素，返回 void
+
+insert_after: 插入
+
+splice_after: 接合
+
+** std::set
+template<typename T, typename Compare = less<T>, typename Allocator = allocator<T>>
+
+count: 查找元素个数
+
+find: 查找元素
+
+lower_bound: 第一个可插入点
+
+upper_bound: 最后一个可插入点
+
+equal_range: pair(lower_bound, upper_bound)
+
+insert: 插入，返回值为pair<Iterator, bool>
+
+std::find: 根据operator==查找；而std::set::find 根据Compare查找
+
+std::set::find 比 std::find 快
+
+** std::map
+template<typename Key, typename T, typename Compare = less<Key>, typename Allocator = allocator<pair<const Key, T> > >
+
+find: 返回pair<const Key, T>
+
+emplace_hint: 推荐插入
+
+[] 和 .at()，[const Key] 不存在时插入pair，返回pair.second，.at(const Key) 不存在时不插入，返回一个异常
+
+** std::unordered_map
+template<typename Key, typename T, typename Hash = hash<Key>, typename EqPred = equal_to<Key>, typename Allocator = allocator<pair<const Key, T> > >
+
+需要使用模板类的偏化定义键的 hash 函数，如果有两个值，可以使用 boost 库的 hash_combine
+
+#+begin_src c++
+  // Key class 's hash function
+namespaece std
+  {
+    template<> struct hash<Key>	// Template Specialization 
+    {
+      size_t operator()(const Key &k) const
+      {
+	return k.value;
+      }
+    };
+  }
+ // if we need combine 2 values
+template <class T>
+inline void hash_combine(std::size_t& seed, const T& v)
+{
+  std::hash<T> hasher;
+  seed ^= hasher(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+}
+
+namespaece std
+  {
+    template<> struct hash<Key>	// Template Specialization 
+    {
+      size_t operator()(const Key &k) const
+      {
+	auto seed1 = hash<int>()(k.v1);
+	return hash_combine(seed1, k.v2);
+      }
+    };
+  }
+#+end_src
+
+* multithread
+** basic
+std::thread::hardware_concurrency 硬件支持的线程数
+
+std::this_thread::yield() 让出时间片
+
+** atomic
+*** some operators
+
+| 原子指令 (x均为std::atomic<int>)                 | 作用                                                               |
+|--------------------------------------------------+--------------------------------------------------------------------|
+| x.load()                                         | 返回x的值。                                                        |
+| x.store(n)                                       | 把x设为n，什么都不返回。                                           |
+| x.exchange(n)                                    | 把x设为n，返回设定之前的值。                                       |
+| x.compare_exchange_strong(expected_ref, desired) | 若x等于expected_ref，则设为desired；否则把最新值写入expected_ref。 |
+| x.compare_exchange_weak(expected_ref, desired)   | 相比compare_exchange_strong可能有spurious wakeup                   |
+| x.fetch_add(n), x.fetch_sub(n)                   | 原子地做x += n, x-= n，返回修改之前的值。                          |
+
+*** memory order
+relaxed: 宽松内存顺序的典型使用是计数器自增，
+例如 std::shared_ptr 的引用计数器，因为这只要求原子性，
+但不要求顺序或同步（注意 std::shared_ptr 计数器自减要求与析构函数进行获得释放同步）
+
+acquire: 若线程 A 中的一个原子存储带标签 memory_order_release ，
+而线程 B 中来自同一变量的原子加载带标签 memory_order_acquire ，
+则从线程 A 的视角先发生于原子存储的所有内存写入（非原子及宽松原子的），
+在线程 B 中成为可见副效应，即一旦原子加载完成，则保证线程 B 能观察到线程 A 写入内存的所有内容。 
+互斥锁（例如 std::mutex 或原子自旋锁）是释放获得同步的例子：线程 A 释放锁而线程 B 获得它时，
+发生于线程 A 环境的临界区（释放之前）中的所有事件，必须对于执行同一临界区的线程 B （获得之后）可见。
+
+consume: 若线程 A 中的原子存储带标签 memory_order_release ，
+而线程 B 中来自同一对象的读取存储值的原子加载带标签 memory_order_consume ，
+则线程 A 视角中先发生于原子存储的所有内存写入（非原子和宽松原子的），
+会在线程 B 中该加载操作所携带依赖进入的操作中变成可见副效应，
+即一旦完成原子加载，则保证线程B中，使用从该加载获得的值的运算符和函数，能见到线程 A 写入内存的内容。
+
+| memory order         | 作用                                                                                     |
+|----------------------+------------------------------------------------------------------------------------------|
+| memory_order_relaxed | 没有fencing作用                                                                          |
+| memory_order_consume | 后面依赖此原子变量的访存指令勿重排至此条指令之前                                         |
+| memory_order_acquire | 后面访存指令勿重排至此条指令之前                                                         |
+| memory_order_release | 前面访存指令勿重排至此条指令之后。当此条指令的结果对其他线程可见后，之前的所有指令都可见 |
+| memory_order_acq_rel | acquire + release语意                                                                    |
+| memory_order_seq_cst | acq_rel语意外加所有使用seq_cst的指令有严格地全序关系                                     |
+
+限制重排：
+
+Release-Acquire ordering: 在store()之前的所有读写操作，不允许被移动到这个store()的后面。
+在load()之后的所有读写操作，不允许被移动到这个load()的前面。
+假设 Thread-1 store()的那个值，成功被 Thread-2 load()到了，
+那么 Thread-1 在store()之前对内存的所有写入操作，此时对 Thread-2 来说，都是可见的。
+
+*** atomic_flag
+可于用户空间用 atomic_flag 实现自旋互斥
+
+互斥锁是是一种sleep-waiting的锁，自旋锁是一种busy-waiting的锁
+
+** mutex
+一般设为 mutable 使得const member function 可以使用
+使用 std::lock_guard<std::mutex> 这种 RAII 防止出现异常导致 mutex 没有 unlock，
+
+配合 std::lock 和 std::adopt_lock 可以防止死锁
+
+lock_guard 提供便利的 RAII 机制
+
+*** RAII
+资源获取即初始化（Resource Acquisition Is Initialization），或称 RAII，
+它将必须在使用前请求的资源的生命周期与一个对象的生命周期相绑定。
+
+将每个资源封装入一个类，其中
+
+1, 构造函数请求资源，并建立所有类不变式，或在它无法完成时抛出异常，
+
+2, 析构函数释放资源并决不抛出异常；
+
+始终经由 RAII 类的实例使用满足要求的资源，该资源
+
+1, 自身拥有自动存储期或临时生存期，
+
+2, 具有与自动或临时对象的生存期绑定的生存期
+
+移动语义使得在对象间，跨作用域，以及在线程内外安全地移动所有权，而同时维护资源安全成为可能。
+
+拥有 open()/close()、lock()/unlock()，或 init()/copyFrom()/destroy() 成员函数的类是非 RAII 类的典型的例子
+
+*** lock_guard, unique_lock and scoped_lock
+#+begin_src c++
+std::scoped_lock lock(e1.m, e2.m);
+ 
+// 等价代码 1 （用 std::lock 和 std::lock_guard ）
+// std::lock(e1.m, e2.m);
+// std::lock_guard<std::mutex> lk1(e1.m, std::adopt_lock);
+// std::lock_guard<std::mutex> lk2(e2.m, std::adopt_lock);
+
+// 等价代码 2 （若需要 unique_lock ，例如对于条件变量）
+// std::unique_lock<std::mutex> lk1(e1.m, std::defer_lock);
+// std::unique_lock<std::mutex> lk2(e2.m, std::defer_lock);
+// std::lock(lk1, lk2);
+#+end_src
+
+** condition_variable
+notify_one(): notifies one waiting thread
+
+notify_all(): notifies all waiting threads
+
+* complier
+** install clang-12
+
+https://apt.llvm.org/
+#+begin_src sh
+wget https://apt.llvm.org/llvm.sh
+chmod +x llvm.sh
+sudo ./llvm.sh <version number>
+#+end_src sh
+#+begin_src sh
+sudo update-alternatives --config clang
+cd /usr/bin
+sudo ln -s clang-12 clang
+sudo ln -s clang++-12 clang++
+sudo ln -s /usr/bin/llvm-ar-12 /usr/bin/llvm-ar
+sudo ln -s /usr/bin/llvm-as-12 /usr/bin/llvm-as
+sudo ln -s /usr/bin/clangd-12 /usr/bin/clangd
+sudo ln -s /usr/bin/clang-tidy-12 /usr/bin/clang-tidy
+
+alias clang++='clang++ -std=c++20'
+#+end_src
+
+** install gcc-10
+
+#+begin_src sh
+
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt install gcc-10 g++-10
+
+sudo update-alternatives \
+--install /usr/bin/gcc gcc /usr/bin/gcc-10 100 \
+--slave /usr/bin/g++ g++ /usr/bin/g++-10 \
+--slave /usr/bin/gcov gcov /usr/bin/gcov-10
+
+# /usr/bin/gcc -> /etc/alternatives/gcc -> /usr/bin/gcc-10
+sudo update-alternatives --config gcc
+
+alias g++='g++ -std=c++20'
+
+#+end_src
+
+** gcc
++ -E :: 预处理 将 .c 文件转为 .i 
++ -S :: 编译 将 .i 文件转为 .s
++ -c :: 汇编 将 .s 文件转为 .o
++  :: 连接 将 .o 文件转为可执行文件
+
+* gdb
+
+set print asm-demangle on
+
+set print demangle on
+
+* miscellaneous
+** value semantics
+[[https://akrzemi1.wordpress.com/2012/02/03/value-semantics/][Value semantics]]
+
+对一个具有值语义的原始变量变量赋值可以转换成内存的bit-wise-copy。
+
+如果一个type X 具有值语义, 则：
+
+1）X 的size在编译时可以确定。
+
+2）将X的变量x,赋值与另一个变量y，无须专门的 = operator,简单的bit-wise-copy 即可。
+
+3）当上述赋值发生后，x和y脱离关系：x和y可以独立销毁，其内存也可以独立释放。
+
+* design patterns
+** creational patterns
+*** abstract factory
+* Primer C++
+** string, vector and array
+#+begin_quote
+"Some compilers may require the old-style declarations for a vector of vectors, for example, vector<vector<int> >."
+#+end_quote
+
+#+begin_quote
+"The subscript operator on vector (and string) fetches an existing element; it does not add an element."
+#+end_quote
+
+* CSAPP
+** basic
+*** array and pointer
+int *A2[3]: 3个指向 int 的指针，sizeof = 24 (= int *(A2[3]))
+
+int (*A3)[3]: 一个指向长度为3的 int 数组的指针，sizeof = 8
+
+*** registers
+eax: accumulate
+
+ecx: counter
+
+edx: data
+
+ebx: base
+
+esi: source index -- second argument register
+
+edi: destination index -- first argument register
+
+esp: stack pointer
+
+ebp: base pointer
+
+eip: instruction pointer
+
+
+CF: carry flag(for unsigned)
+
+ZF: zero flag
+
+SF: sign flag(for signed)
+
+OF: overflow flag(for signed)
+
+arguments 1,2,3,4,5,6 分别放在 rdi, rsi, rdx, rcx, r8, r9
+
+浮点类型的参数是由另外一组寄存器传递的
+
+return value 放在 rax
+*** overflow buffer
+1, randomize stack position
+
+2, make the stack not executable
+
+3, use stack canary
+** asm
+*** conditional move
+使用 conditional moves 能避免 branch prediction. 
+
+Branches are very disruptive to instruction flow through pipelines.
+
+** lab
+*** data lab
+#+begin_src c++
+/*
+ * conditional - same as x ? y : z
+ *   Example: conditional(2,4,5) = 4
+ *   Legal ops: ! ~ & ^ | + << >>
+ *   Max ops: 16
+ *   Rating: 3
+ */
+int conditional(int x, int y, int z) {
+// ~!x + 1: 当x为0时为全1，当x不为0时为全0
+  return (~(~!x + 1) & y) | ((~!x + 1) & z);
+}
+#+end_src
+
+#+begin_src c++
+/*
+ * floatScale2 - Return bit-level equivalent of expression 2*f for
+ *   floating point argument f.
+ *   Both the argument and result are passed as unsigned int's, but
+ *   they are to be interpreted as the bit-level representation of
+ *   single-precision floating point values.
+ *   When argument is NaN, return argument
+ *   Legal ops: Any integer/unsigned operations incl. ||, &&. also if, while
+ *   Max ops: 30
+ *   Rating: 4
+ */
+unsigned floatScale2(unsigned uf) {
+  int exp = (uf >> 23) & 0xFF;
+  // Special
+  if (exp == 0xFF)
+    return uf;
+  // Denormalized
+  if (exp == 0)
+    return ((uf & 0x007fffff) << 1) | (uf & (1 << 31));
+  // Normalized
+  return uf + (1 << 23);
+}
+#+end_src
+
+#+begin_src c++
+/*
+ * floatFloat2Int - Return bit-level equivalent of expression (int) f
+ *   for floating point argument f.
+ *   Argument is passed as unsigned int, but
+ *   it is to be interpreted as the bit-level representation of a
+ *   single-precision floating point value.
+ *   Anything out of range (including NaN and infinity) should return
+ *   0x80000000u.
+ *   Legal ops: Any integer/unsigned operations incl. ||, &&. also if, while
+ *   Max ops: 30
+ *   Rating: 4
+ */
+int floatFloat2Int(unsigned uf) {
+  int TMIN = 1 << 31;
+  int exp = ((uf >> 23) & 0xFF) - 127;
+  // Out of range
+  if (exp > 31)
+    return TMIN;
+  if (exp < 0)
+    return 0;
+  int frac = (uf & 0x007fffff) | 0x00800000;
+  // Left shift or right shift
+  int f = (exp > 23) ? (frac << (exp - 23)) : (frac >> (23 - exp));
+  // Sign
+  return (uf & TMIN) ? -f : f;
+}
+#+end_src
+*** bomb lab
+
+* Practical Network Programming
+** intro
+*** layered network
+ethernet frame
+
+IP packet
+
+TCP segment
+
+Application message
+
+* UNIX Network Programming

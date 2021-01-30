@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="alternate"
+      type="application/rss+xml"
+      href="https://zhongming-unice.github.io/rss.xml"
+      title="RSS feed for https://zhongming-unice.github.io/"/>
+<title>c++ note</title>
+<meta name="author" content="ming"><meta name="referrer" content="no-referrer"><link href="static/usual-org-front-matter.css" rel="stylesheet" type="text/css" /><link href="static/org-notes-style.css" rel="stylesheet" type="text/css" /><link href="static/floating-toc.css" rel="stylesheet" type="text/css" /><link href="static/blog-banner.css" rel="stylesheet" type="text/css" /><link rel="icon" href="static/favicon.ico"></head>
+<body>
+<div id="preamble" class="status">
+<div class="header">  <div class="sitelinks">    <a href="https://zhongming-unice.github.io/about.html">about</a>    | <a href="https://zhongming-unice.github.io/archive.html">archive</a>    | <a href="https://zhongming-unice.github.io/rss.xml">rss</a>  </div></div></div>
+<div id="content">
+<div class="post-date">30  1 2021</div><h1 class="post-title"><a href="https://zhongming-unice.github.io/2021-01-30-c++-note.html">c++ note</a></h1>
+<nav id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgfc7d322">1. grammar</a>
+<ul>
+<li><a href="#org98afcb3">1.1. static</a>
+<ul>
+<li><a href="#org3c59a04">1.1.1. copy constructor</a></li>
+</ul>
+</li>
+<li><a href="#orgcda55dd">1.2. virtual</a></li>
+<li><a href="#org0b953fd">1.3. lvalue and rvalue</a>
+<ul>
+<li><a href="#orgf56ae57">1.3.1. rvalue</a></li>
+<li><a href="#org54861fe">1.3.2. std::forward</a></li>
+</ul>
+</li>
+<li><a href="#orge07acd5">1.4. cast</a>
+<ul>
+<li><a href="#org352b6c4">1.4.1. const_cast</a></li>
+<li><a href="#org996452d">1.4.2. static_cast</a></li>
+<li><a href="#org58c98ad">1.4.3. reinterpret_cast</a></li>
+<li><a href="#org46cbd69">1.4.4. dynamic_cast</a></li>
+</ul>
+</li>
+<li><a href="#org11964b4">1.5. smart pointer</a>
+<ul>
+<li><a href="#orgb0635bc">1.5.1. unique_ptr</a></li>
+<li><a href="#org731a621">1.5.2. shared_ptr</a></li>
+<li><a href="#orgcc31c0a">1.5.3. weak_ptr</a></li>
+<li><a href="#org8ad1c89">1.5.4. enable_shared_from_this</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org22e1b30">2. std container</a>
+<ul>
+<li><a href="#orgcab0734">2.1. std::array</a></li>
+<li><a href="#org15582ed">2.2. std::vector</a></li>
+<li><a href="#org1c233d1">2.3. std::deque</a></li>
+<li><a href="#orgb0e3f90">2.4. std::list</a></li>
+<li><a href="#orgd73bcb9">2.5. std::forward_list</a></li>
+<li><a href="#org19c52f3">2.6. std::set</a></li>
+<li><a href="#org3b16623">2.7. std::map</a></li>
+<li><a href="#orgd6fc2df">2.8. std::unordered_map</a></li>
+</ul>
+</li>
+<li><a href="#orgdf3bbd7">3. multithread</a>
+<ul>
+<li><a href="#orgdd3859d">3.1. basic</a></li>
+<li><a href="#orgfa52d23">3.2. atomic</a>
+<ul>
+<li><a href="#org6a8929d">3.2.1. some operators</a></li>
+<li><a href="#org7369849">3.2.2. memory order</a></li>
+<li><a href="#orgdff6edf">3.2.3. atomic_flag</a></li>
+</ul>
+</li>
+<li><a href="#org090190a">3.3. mutex</a>
+<ul>
+<li><a href="#org1f939d3">3.3.1. RAII</a></li>
+<li><a href="#org1976838">3.3.2. lock_guard, unique_lock and scoped_lock</a></li>
+</ul>
+</li>
+<li><a href="#org5469694">3.4. condition_variable</a></li>
+</ul>
+</li>
+<li><a href="#org3006216">4. complier</a>
+<ul>
+<li><a href="#org5d5b9fd">4.1. install clang-12</a></li>
+<li><a href="#org43f5fd0">4.2. install gcc-10</a></li>
+<li><a href="#org84a6024">4.3. gcc</a></li>
+</ul>
+</li>
+<li><a href="#org733aecc">5. gdb</a></li>
+<li><a href="#org8f6c997">6. miscellaneous</a>
+<ul>
+<li><a href="#orgd1451a5">6.1. value semantics</a></li>
+</ul>
+</li>
+<li><a href="#org328459a">7. design patterns</a>
+<ul>
+<li><a href="#org47eb07f">7.1. creational patterns</a>
+<ul>
+<li><a href="#orgc825713">7.1.1. abstract factory</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org1f95517">8. Primer C++</a>
+<ul>
+<li><a href="#org9f1fb5f">8.1. string, vector and array</a></li>
+</ul>
+</li>
+<li><a href="#org7f2f410">9. CSAPP</a>
+<ul>
+<li><a href="#org9541bd9">9.1. basic</a>
+<ul>
+<li><a href="#orga4fb1f3">9.1.1. array and pointer</a></li>
+<li><a href="#orgad4a9d8">9.1.2. registers</a></li>
+<li><a href="#org5cb5356">9.1.3. overflow buffer</a></li>
+</ul>
+</li>
+<li><a href="#orgff83253">9.2. asm</a>
+<ul>
+<li><a href="#orgc8c1ad6">9.2.1. conditional move</a></li>
+</ul>
+</li>
+<li><a href="#org6b34733">9.3. lab</a>
+<ul>
+<li><a href="#org7a16a5c">9.3.1. data lab</a></li>
+<li><a href="#org9aa0df3">9.3.2. bomb lab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgb67a3da">10. Practical Network Programming</a>
+<ul>
+<li><a href="#org3ffb5c8">10.1. intro</a>
+<ul>
+<li><a href="#orgf2a2faa">10.1.1. layered network</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org8779366">11. UNIX Network Programming</a></li>
+</ul>
+</div>
+</nav>
+
+<div id="outline-container-orgfc7d322" class="outline-2">
+<h2 id="orgfc7d322"><span class="section-number-2">1</span> grammar</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org98afcb3" class="outline-3">
+<h3 id="org98afcb3"><span class="section-number-3">1.1</span> static</h3>
+<div class="outline-text-3" id="text-1-1">
+</div>
+<div id="outline-container-org3c59a04" class="outline-4">
+<h4 id="org3c59a04"><span class="section-number-4">1.1.1</span> copy constructor</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<p>
+在使用包含静态成员的类时，有时候会调用拷贝构造函数生成临时的隐藏的类对象，
+而这个临时对象在消亡时会调用析构函数有可能会对静态变量做操作（例如total_num&#x2013;），
+可是这些对象在生成时却没有执行构造函数中的total_num++的操作。
+解决方案是为这个类写一个拷贝构造函数，在该拷贝构造函数中完成total_num++的操作。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcda55dd" class="outline-3">
+<h3 id="orgcda55dd"><span class="section-number-3">1.2</span> virtual</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+在构造函数和析构函数中调用虚的成员函数不会有虚函数的效果，即还是调用父类的成员函数。
+可以使用工厂模式来解决。
+</p>
+
+<p>
+类中有虚函数时，析构函数要为虚或者protected
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0b953fd" class="outline-3">
+<h3 id="org0b953fd"><span class="section-number-3">1.3</span> lvalue and rvalue</h3>
+<div class="outline-text-3" id="text-1-3">
+</div>
+<div id="outline-container-orgf56ae57" class="outline-4">
+<h4 id="orgf56ae57"><span class="section-number-4">1.3.1</span> rvalue</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<p>
+rvalue: xvalue(Expiring Value), prvalue(Pure Right Value)
+</p>
+
+<p>
+rvo, nrvo: Return Value Optimization, Named Return Value Optimization
+</p>
+
+<p>
+编译器减少函数返回时生成临时值（对象）的个数
+编译器默认使用，编译时使用 -fno-elide-constructors 来禁用
+</p>
+</div>
+</div>
+<div id="outline-container-org54861fe" class="outline-4">
+<h4 id="org54861fe"><span class="section-number-4">1.3.2</span> std::forward</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<p>
+defined in header &lt;utility&gt;
+</p>
+
+<p>
+完美转发 能转发：
+const T &amp;
+T &amp;
+const T &amp;&amp;
+T &amp;&amp;
+</p>
+
+<p>
+如果外面传来了rvalue临时变量，它就转发rvalue并且启用move语义
+如果外面传来了lvalue，它就转发lvalue并且启用copy
+能保留const，可以被static_cast替代
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge07acd5" class="outline-3">
+<h3 id="orge07acd5"><span class="section-number-3">1.4</span> cast</h3>
+<div class="outline-text-3" id="text-1-4">
+</div>
+<div id="outline-container-org352b6c4" class="outline-4">
+<h4 id="org352b6c4"><span class="section-number-4">1.4.1</span> const_cast</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<p>
+可 cast const 的对象，除function pointers
+</p>
+</div>
+</div>
+<div id="outline-container-org996452d" class="outline-4">
+<h4 id="org996452d"><span class="section-number-4">1.4.2</span> static_cast</h4>
+</div>
+<div id="outline-container-org58c98ad" class="outline-4">
+<h4 id="org58c98ad"><span class="section-number-4">1.4.3</span> reinterpret_cast</h4>
+</div>
+<div id="outline-container-org46cbd69" class="outline-4">
+<h4 id="org46cbd69"><span class="section-number-4">1.4.4</span> dynamic_cast</h4>
+</div>
+</div>
+
+<div id="outline-container-org11964b4" class="outline-3">
+<h3 id="org11964b4"><span class="section-number-3">1.5</span> smart pointer</h3>
+<div class="outline-text-3" id="text-1-5">
+</div>
+<div id="outline-container-orgb0635bc" class="outline-4">
+<h4 id="orgb0635bc"><span class="section-number-4">1.5.1</span> unique_ptr</h4>
+<div class="outline-text-4" id="text-1-5-1">
+<p>
+get()
+</p>
+
+<p>
+release()
+</p>
+</div>
+</div>
+<div id="outline-container-org731a621" class="outline-4">
+<h4 id="org731a621"><span class="section-number-4">1.5.2</span> shared_ptr</h4>
+</div>
+<div id="outline-container-orgcc31c0a" class="outline-4">
+<h4 id="orgcc31c0a"><span class="section-number-4">1.5.3</span> weak_ptr</h4>
+<div class="outline-text-4" id="text-1-5-3">
+<p>
+lock()
+</p>
+
+<p>
+expired()
+</p>
+</div>
+</div>
+<div id="outline-container-org8ad1c89" class="outline-4">
+<h4 id="org8ad1c89"><span class="section-number-4">1.5.4</span> enable_shared_from_this</h4>
+<div class="outline-text-4" id="text-1-5-4">
+<p>
+Curiously Recurring Template Pattern 奇异递归模板模式是C++模板编程时的一种惯用法（idiom）
+更一般地被称作F-bound polymorphism
+</p>
+
+<p>
+shared_from_this: returns a shared_ptr which shares ownership of *this
+</p>
+
+<p>
+weak_from_this: returns the weak_ptr which shares ownership of *this
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">#include &lt;memory&gt;
+#include &lt;iostream&gt;
+
+struct Good: std::enable_shared_from_this&lt;Good&gt; // note: public inheritance
+{
+    std::shared_ptr&lt;Good&gt; getptr() {
+	return shared_from_this();
+    }
+};
+
+struct Bad
+{
+    std::shared_ptr&lt;Bad&gt; getptr() {
+	return std::shared_ptr&lt;Bad&gt;(this);
+    }
+    ~Bad() { std::cout &lt;&lt; "Bad::~Bad() called\n"; }
+};
+
+int main()
+{
+    // Good: the two shared_ptr's share the same object
+    std::shared_ptr&lt;Good&gt; gp1 = std::make_shared&lt;Good&gt;();
+    std::shared_ptr&lt;Good&gt; gp2 = gp1-&gt;getptr();
+    std::cout &lt;&lt; "gp2.use_count() = " &lt;&lt; gp2.use_count() &lt;&lt; '\n';
+
+    // Bad: shared_from_this is called without having std::shared_ptr owning the caller 
+    try {
+	Good not_so_good;
+	std::shared_ptr&lt;Good&gt; gp1 = not_so_good.getptr();
+    } catch(std::bad_weak_ptr&amp; e) {
+	// undefined behavior (until C++17) and std::bad_weak_ptr thrown (since C++17)
+	std::cout &lt;&lt; e.what() &lt;&lt; '\n';    
+    }
+
+    // Bad, each shared_ptr thinks it's the only owner of the object
+    std::shared_ptr&lt;Bad&gt; bp1 = std::make_shared&lt;Bad&gt;();
+    std::shared_ptr&lt;Bad&gt; bp2 = bp1-&gt;getptr();
+    std::cout &lt;&lt; "bp2.use_count() = " &lt;&lt; bp2.use_count() &lt;&lt; '\n';
+} // UB: double-delete of Bad
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org22e1b30" class="outline-2">
+<h2 id="org22e1b30"><span class="section-number-2">2</span> std container</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgcab0734" class="outline-3">
+<h3 id="orgcab0734"><span class="section-number-3">2.1</span> std::array</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+template&lt;typename T, size_t N&gt;
+</p>
+
+<p>
+内存分配在栈（stack）上，不会重新分配，随机访问元素
+</p>
+
+<p>
+swap: 交换每一个元素
+</p>
+
+<p>
+fill: 对所有元素赋值
+</p>
+</div>
+</div>
+
+<div id="outline-container-org15582ed" class="outline-3">
+<h3 id="org15582ed"><span class="section-number-3">2.2</span> std::vector</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+template&lt;typename T, typename Allocator = allocator&lt;T&gt; &gt;
+</p>
+
+<p>
+assign: 赋值
+</p>
+
+<p>
+capacity: 容量
+</p>
+
+<p>
+reserve: 预先分配内存
+</p>
+
+<p>
+shrink_to_fit: resize到合适的内存大小
+</p>
+
+<p>
+push_back, emplace_back: 尾部插入
+</p>
+
+<p>
+insert，emplace: 插入
+</p>
+
+<p>
+vector的元素不能为bool
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1c233d1" class="outline-3">
+<h3 id="org1c233d1"><span class="section-number-3">2.3</span> std::deque</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+acronym of double-ended queue 双端队列
+</p>
+
+<p>
+push_front, emplace_front: 头部插入
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb0e3f90" class="outline-3">
+<h3 id="orgb0e3f90"><span class="section-number-3">2.4</span> std::list</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+Doubly linked list 双向列表
+</p>
+
+<p>
+remove, remove_if: 删除
+</p>
+
+<p>
+reverse: 反转
+</p>
+
+<p>
+sort: 排序
+</p>
+
+<p>
+merge: 合并已排序的list
+</p>
+
+<p>
+unique: 已排序的list去重
+</p>
+
+<p>
+splice: 接合
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd73bcb9" class="outline-3">
+<h3 id="orgd73bcb9"><span class="section-number-3">2.5</span> std::forward_list</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+Single linked list 单向列表
+</p>
+
+<p>
+before_begin: begin的前一个迭代器
+</p>
+
+<p>
+erase_after: 删除下一个元素，返回 void
+</p>
+
+<p>
+insert_after: 插入
+</p>
+
+<p>
+splice_after: 接合
+</p>
+</div>
+</div>
+
+<div id="outline-container-org19c52f3" class="outline-3">
+<h3 id="org19c52f3"><span class="section-number-3">2.6</span> std::set</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+template&lt;typename T, typename Compare = less&lt;T&gt;, typename Allocator = allocator&lt;T&gt;&gt;
+</p>
+
+<p>
+count: 查找元素个数
+</p>
+
+<p>
+find: 查找元素
+</p>
+
+<p>
+lower_bound: 第一个可插入点
+</p>
+
+<p>
+upper_bound: 最后一个可插入点
+</p>
+
+<p>
+equal_range: pair(lower_bound, upper_bound)
+</p>
+
+<p>
+insert: 插入，返回值为pair&lt;Iterator, bool&gt;
+</p>
+
+<p>
+std::find: 根据operator==查找；而std::set::find 根据Compare查找
+</p>
+
+<p>
+std::set::find 比 std::find 快
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3b16623" class="outline-3">
+<h3 id="org3b16623"><span class="section-number-3">2.7</span> std::map</h3>
+<div class="outline-text-3" id="text-2-7">
+<p>
+template&lt;typename Key, typename T, typename Compare = less&lt;Key&gt;, typename Allocator = allocator&lt;pair&lt;const Key, T&gt; &gt; &gt;
+</p>
+
+<p>
+find: 返回pair&lt;const Key, T&gt;
+</p>
+
+<p>
+emplace_hint: 推荐插入
+</p>
+
+<p>
+[] 和 .at()，[const Key] 不存在时插入pair，返回pair.second，.at(const Key) 不存在时不插入，返回一个异常
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd6fc2df" class="outline-3">
+<h3 id="orgd6fc2df"><span class="section-number-3">2.8</span> std::unordered_map</h3>
+<div class="outline-text-3" id="text-2-8">
+<p>
+template&lt;typename Key, typename T, typename Hash = hash&lt;Key&gt;, typename EqPred = equal_to&lt;Key&gt;, typename Allocator = allocator&lt;pair&lt;const Key, T&gt; &gt; &gt;
+</p>
+
+<p>
+需要使用模板类的偏化定义键的 hash 函数，如果有两个值，可以使用 boost 库的 hash_combine
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++">  // Key class 's hash function
+namespaece std
+  {
+    template&lt;&gt; struct hash&lt;Key&gt;	// Template Specialization 
+    {
+      size_t operator()(const Key &amp;k) const
+      {
+	return k.value;
+      }
+    };
+  }
+ // if we need combine 2 values
+template &lt;class T&gt;
+inline void hash_combine(std::size_t&amp; seed, const T&amp; v)
+{
+  std::hash&lt;T&gt; hasher;
+  seed ^= hasher(v) + 0x9e3779b9 + (seed&lt;&lt;6) + (seed&gt;&gt;2);
+}
+
+namespaece std
+  {
+    template&lt;&gt; struct hash&lt;Key&gt;	// Template Specialization 
+    {
+      size_t operator()(const Key &amp;k) const
+      {
+	auto seed1 = hash&lt;int&gt;()(k.v1);
+	return hash_combine(seed1, k.v2);
+      }
+    };
+  }
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdf3bbd7" class="outline-2">
+<h2 id="orgdf3bbd7"><span class="section-number-2">3</span> multithread</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgdd3859d" class="outline-3">
+<h3 id="orgdd3859d"><span class="section-number-3">3.1</span> basic</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+std::thread::hardware_concurrency 硬件支持的线程数
+</p>
+
+<p>
+std::this_thread::yield() 让出时间片
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfa52d23" class="outline-3">
+<h3 id="orgfa52d23"><span class="section-number-3">3.2</span> atomic</h3>
+<div class="outline-text-3" id="text-3-2">
+</div>
+<div id="outline-container-org6a8929d" class="outline-4">
+<h4 id="org6a8929d"><span class="section-number-4">3.2.1</span> some operators</h4>
+<div class="outline-text-4" id="text-3-2-1">
+<table>
+
+
+<colgroup>
+<col  class="org-left">
+
+<col  class="org-left">
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">原子指令 (x均为std::atomic&lt;int&gt;)</th>
+<th scope="col" class="org-left">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">x.load()</td>
+<td class="org-left">返回x的值。</td>
+</tr>
+
+<tr>
+<td class="org-left">x.store(n)</td>
+<td class="org-left">把x设为n，什么都不返回。</td>
+</tr>
+
+<tr>
+<td class="org-left">x.exchange(n)</td>
+<td class="org-left">把x设为n，返回设定之前的值。</td>
+</tr>
+
+<tr>
+<td class="org-left">x.compare_exchange_strong(expected_ref, desired)</td>
+<td class="org-left">若x等于expected_ref，则设为desired；否则把最新值写入expected_ref。</td>
+</tr>
+
+<tr>
+<td class="org-left">x.compare_exchange_weak(expected_ref, desired)</td>
+<td class="org-left">相比compare_exchange_strong可能有spurious wakeup</td>
+</tr>
+
+<tr>
+<td class="org-left">x.fetch_add(n), x.fetch_sub(n)</td>
+<td class="org-left">原子地做x += n, x-= n，返回修改之前的值。</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org7369849" class="outline-4">
+<h4 id="org7369849"><span class="section-number-4">3.2.2</span> memory order</h4>
+<div class="outline-text-4" id="text-3-2-2">
+<p>
+relaxed: 宽松内存顺序的典型使用是计数器自增，
+例如 std::shared_ptr 的引用计数器，因为这只要求原子性，
+但不要求顺序或同步（注意 std::shared_ptr 计数器自减要求与析构函数进行获得释放同步）
+</p>
+
+<p>
+acquire: 若线程 A 中的一个原子存储带标签 memory_order_release ，
+而线程 B 中来自同一变量的原子加载带标签 memory_order_acquire ，
+则从线程 A 的视角先发生于原子存储的所有内存写入（非原子及宽松原子的），
+在线程 B 中成为可见副效应，即一旦原子加载完成，则保证线程 B 能观察到线程 A 写入内存的所有内容。 
+互斥锁（例如 std::mutex 或原子自旋锁）是释放获得同步的例子：线程 A 释放锁而线程 B 获得它时，
+发生于线程 A 环境的临界区（释放之前）中的所有事件，必须对于执行同一临界区的线程 B （获得之后）可见。
+</p>
+
+<p>
+consume: 若线程 A 中的原子存储带标签 memory_order_release ，
+而线程 B 中来自同一对象的读取存储值的原子加载带标签 memory_order_consume ，
+则线程 A 视角中先发生于原子存储的所有内存写入（非原子和宽松原子的），
+会在线程 B 中该加载操作所携带依赖进入的操作中变成可见副效应，
+即一旦完成原子加载，则保证线程B中，使用从该加载获得的值的运算符和函数，能见到线程 A 写入内存的内容。
+</p>
+
+<table>
+
+
+<colgroup>
+<col  class="org-left">
+
+<col  class="org-left">
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">memory order</th>
+<th scope="col" class="org-left">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">memory_order_relaxed</td>
+<td class="org-left">没有fencing作用</td>
+</tr>
+
+<tr>
+<td class="org-left">memory_order_consume</td>
+<td class="org-left">后面依赖此原子变量的访存指令勿重排至此条指令之前</td>
+</tr>
+
+<tr>
+<td class="org-left">memory_order_acquire</td>
+<td class="org-left">后面访存指令勿重排至此条指令之前</td>
+</tr>
+
+<tr>
+<td class="org-left">memory_order_release</td>
+<td class="org-left">前面访存指令勿重排至此条指令之后。当此条指令的结果对其他线程可见后，之前的所有指令都可见</td>
+</tr>
+
+<tr>
+<td class="org-left">memory_order_acq_rel</td>
+<td class="org-left">acquire + release语意</td>
+</tr>
+
+<tr>
+<td class="org-left">memory_order_seq_cst</td>
+<td class="org-left">acq_rel语意外加所有使用seq_cst的指令有严格地全序关系</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+限制重排：
+</p>
+
+<p>
+Release-Acquire ordering: 在store()之前的所有读写操作，不允许被移动到这个store()的后面。
+在load()之后的所有读写操作，不允许被移动到这个load()的前面。
+假设 Thread-1 store()的那个值，成功被 Thread-2 load()到了，
+那么 Thread-1 在store()之前对内存的所有写入操作，此时对 Thread-2 来说，都是可见的。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdff6edf" class="outline-4">
+<h4 id="orgdff6edf"><span class="section-number-4">3.2.3</span> atomic_flag</h4>
+<div class="outline-text-4" id="text-3-2-3">
+<p>
+可于用户空间用 atomic_flag 实现自旋互斥
+</p>
+
+<p>
+互斥锁是是一种sleep-waiting的锁，自旋锁是一种busy-waiting的锁
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org090190a" class="outline-3">
+<h3 id="org090190a"><span class="section-number-3">3.3</span> mutex</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+一般设为 mutable 使得const member function 可以使用
+使用 std::lock_guard&lt;std::mutex&gt; 这种 RAII 防止出现异常导致 mutex 没有 unlock，
+</p>
+
+<p>
+配合 std::lock 和 std::adopt_lock 可以防止死锁
+</p>
+
+<p>
+lock_guard 提供便利的 RAII 机制
+</p>
+</div>
+
+<div id="outline-container-org1f939d3" class="outline-4">
+<h4 id="org1f939d3"><span class="section-number-4">3.3.1</span> RAII</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<p>
+资源获取即初始化（Resource Acquisition Is Initialization），或称 RAII，
+它将必须在使用前请求的资源的生命周期与一个对象的生命周期相绑定。
+</p>
+
+<p>
+将每个资源封装入一个类，其中
+</p>
+
+<p>
+1, 构造函数请求资源，并建立所有类不变式，或在它无法完成时抛出异常，
+</p>
+
+<p>
+2, 析构函数释放资源并决不抛出异常；
+</p>
+
+<p>
+始终经由 RAII 类的实例使用满足要求的资源，该资源
+</p>
+
+<p>
+1, 自身拥有自动存储期或临时生存期，
+</p>
+
+<p>
+2, 具有与自动或临时对象的生存期绑定的生存期
+</p>
+
+<p>
+移动语义使得在对象间，跨作用域，以及在线程内外安全地移动所有权，而同时维护资源安全成为可能。
+</p>
+
+<p>
+拥有 open()/close()、lock()/unlock()，或 init()/copyFrom()/destroy() 成员函数的类是非 RAII 类的典型的例子
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1976838" class="outline-4">
+<h4 id="org1976838"><span class="section-number-4">3.3.2</span> lock_guard, unique_lock and scoped_lock</h4>
+<div class="outline-text-4" id="text-3-3-2">
+<div class="org-src-container">
+<pre class="src src-c++">std::scoped_lock lock(e1.m, e2.m);
+
+// 等价代码 1 （用 std::lock 和 std::lock_guard ）
+// std::lock(e1.m, e2.m);
+// std::lock_guard&lt;std::mutex&gt; lk1(e1.m, std::adopt_lock);
+// std::lock_guard&lt;std::mutex&gt; lk2(e2.m, std::adopt_lock);
+
+// 等价代码 2 （若需要 unique_lock ，例如对于条件变量）
+// std::unique_lock&lt;std::mutex&gt; lk1(e1.m, std::defer_lock);
+// std::unique_lock&lt;std::mutex&gt; lk2(e2.m, std::defer_lock);
+// std::lock(lk1, lk2);
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5469694" class="outline-3">
+<h3 id="org5469694"><span class="section-number-3">3.4</span> condition_variable</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+notify_one(): notifies one waiting thread
+</p>
+
+<p>
+notify_all(): notifies all waiting threads
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3006216" class="outline-2">
+<h2 id="org3006216"><span class="section-number-2">4</span> complier</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org5d5b9fd" class="outline-3">
+<h3 id="org5d5b9fd"><span class="section-number-3">4.1</span> install clang-12</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+<a href="https://apt.llvm.org/">https://apt.llvm.org/</a>
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">wget https://apt.llvm.org/llvm.sh
+chmod +x llvm.sh
+sudo ./llvm.sh &lt;version number&gt;
+#+end_src sh
+#+begin_src sh
+sudo update-alternatives --config clang
+cd /usr/bin
+sudo ln -s clang-12 clang
+sudo ln -s clang++-12 clang++
+sudo ln -s /usr/bin/llvm-ar-12 /usr/bin/llvm-ar
+sudo ln -s /usr/bin/llvm-as-12 /usr/bin/llvm-as
+sudo ln -s /usr/bin/clangd-12 /usr/bin/clangd
+sudo ln -s /usr/bin/clang-tidy-12 /usr/bin/clang-tidy
+
+alias clang++='clang++ -std=c++20'
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org43f5fd0" class="outline-3">
+<h3 id="org43f5fd0"><span class="section-number-3">4.2</span> install gcc-10</h3>
+<div class="outline-text-3" id="text-4-2">
+<div class="org-src-container">
+<pre class="src src-sh">
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt install gcc-10 g++-10
+
+sudo update-alternatives \
+--install /usr/bin/gcc gcc /usr/bin/gcc-10 100 \
+--slave /usr/bin/g++ g++ /usr/bin/g++-10 \
+--slave /usr/bin/gcov gcov /usr/bin/gcov-10
+
+# /usr/bin/gcc -&gt; /etc/alternatives/gcc -&gt; /usr/bin/gcc-10
+sudo update-alternatives --config gcc
+
+alias g++='g++ -std=c++20'
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org84a6024" class="outline-3">
+<h3 id="org84a6024"><span class="section-number-3">4.3</span> gcc</h3>
+<div class="outline-text-3" id="text-4-3">
+<dl class="org-dl">
+<dt>-E</dt><dd>预处理 将 .c 文件转为 .i</dd>
+<dt>-S</dt><dd>编译 将 .i 文件转为 .s</dd>
+<dt>-c</dt><dd>汇编 将 .s 文件转为 .o</dd>
+<dt>(no term)</dt><dd>:: 连接 将 .o 文件转为可执行文件</dd>
+</dl>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org733aecc" class="outline-2">
+<h2 id="org733aecc"><span class="section-number-2">5</span> gdb</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+set print asm-demangle on
+</p>
+
+<p>
+set print demangle on
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8f6c997" class="outline-2">
+<h2 id="org8f6c997"><span class="section-number-2">6</span> miscellaneous</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-orgd1451a5" class="outline-3">
+<h3 id="orgd1451a5"><span class="section-number-3">6.1</span> value semantics</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+<a href="https://akrzemi1.wordpress.com/2012/02/03/value-semantics/">Value semantics</a>
+</p>
+
+<p>
+对一个具有值语义的原始变量变量赋值可以转换成内存的bit-wise-copy。
+</p>
+
+<p>
+如果一个type X 具有值语义, 则：
+</p>
+
+<p>
+1）X 的size在编译时可以确定。
+</p>
+
+<p>
+2）将X的变量x,赋值与另一个变量y，无须专门的 = operator,简单的bit-wise-copy 即可。
+</p>
+
+<p>
+3）当上述赋值发生后，x和y脱离关系：x和y可以独立销毁，其内存也可以独立释放。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org328459a" class="outline-2">
+<h2 id="org328459a"><span class="section-number-2">7</span> design patterns</h2>
+<div class="outline-text-2" id="text-7">
+</div>
+<div id="outline-container-org47eb07f" class="outline-3">
+<h3 id="org47eb07f"><span class="section-number-3">7.1</span> creational patterns</h3>
+<div class="outline-text-3" id="text-7-1">
+</div>
+<div id="outline-container-orgc825713" class="outline-4">
+<h4 id="orgc825713"><span class="section-number-4">7.1.1</span> abstract factory</h4>
+</div>
+</div>
+</div>
+<div id="outline-container-org1f95517" class="outline-2">
+<h2 id="org1f95517"><span class="section-number-2">8</span> Primer C++</h2>
+<div class="outline-text-2" id="text-8">
+</div>
+<div id="outline-container-org9f1fb5f" class="outline-3">
+<h3 id="org9f1fb5f"><span class="section-number-3">8.1</span> string, vector and array</h3>
+<div class="outline-text-3" id="text-8-1">
+<blockquote>
+<p>
+"Some compilers may require the old-style declarations for a vector of vectors, for example, vector&lt;vector&lt;int&gt; &gt;."
+</p>
+</blockquote>
+
+<blockquote>
+<p>
+"The subscript operator on vector (and string) fetches an existing element; it does not add an element."
+</p>
+</blockquote>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7f2f410" class="outline-2">
+<h2 id="org7f2f410"><span class="section-number-2">9</span> CSAPP</h2>
+<div class="outline-text-2" id="text-9">
+</div>
+<div id="outline-container-org9541bd9" class="outline-3">
+<h3 id="org9541bd9"><span class="section-number-3">9.1</span> basic</h3>
+<div class="outline-text-3" id="text-9-1">
+</div>
+<div id="outline-container-orga4fb1f3" class="outline-4">
+<h4 id="orga4fb1f3"><span class="section-number-4">9.1.1</span> array and pointer</h4>
+<div class="outline-text-4" id="text-9-1-1">
+<p>
+int *A2[3]: 3个指向 int 的指针，sizeof = 24 (= int *(A2[3]))
+</p>
+
+<p>
+int (*A3)[3]: 一个指向长度为3的 int 数组的指针，sizeof = 8
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgad4a9d8" class="outline-4">
+<h4 id="orgad4a9d8"><span class="section-number-4">9.1.2</span> registers</h4>
+<div class="outline-text-4" id="text-9-1-2">
+<p>
+eax: accumulate
+</p>
+
+<p>
+ecx: counter
+</p>
+
+<p>
+edx: data
+</p>
+
+<p>
+ebx: base
+</p>
+
+<p>
+esi: source index &#x2013; second argument register
+</p>
+
+<p>
+edi: destination index &#x2013; first argument register
+</p>
+
+<p>
+esp: stack pointer
+</p>
+
+<p>
+ebp: base pointer
+</p>
+
+<p>
+eip: instruction pointer
+</p>
+
+
+<p>
+CF: carry flag(for unsigned)
+</p>
+
+<p>
+ZF: zero flag
+</p>
+
+<p>
+SF: sign flag(for signed)
+</p>
+
+<p>
+OF: overflow flag(for signed)
+</p>
+
+<p>
+arguments 1,2,3,4,5,6 分别放在 rdi, rsi, rdx, rcx, r8, r9
+</p>
+
+<p>
+浮点类型的参数是由另外一组寄存器传递的
+</p>
+
+<p>
+return value 放在 rax
+</p>
+</div>
+</div>
+<div id="outline-container-org5cb5356" class="outline-4">
+<h4 id="org5cb5356"><span class="section-number-4">9.1.3</span> overflow buffer</h4>
+<div class="outline-text-4" id="text-9-1-3">
+<p>
+1, randomize stack position
+</p>
+
+<p>
+2, make the stack not executable
+</p>
+
+<p>
+3, use stack canary
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgff83253" class="outline-3">
+<h3 id="orgff83253"><span class="section-number-3">9.2</span> asm</h3>
+<div class="outline-text-3" id="text-9-2">
+</div>
+<div id="outline-container-orgc8c1ad6" class="outline-4">
+<h4 id="orgc8c1ad6"><span class="section-number-4">9.2.1</span> conditional move</h4>
+<div class="outline-text-4" id="text-9-2-1">
+<p>
+使用 conditional moves 能避免 branch prediction. 
+</p>
+
+<p>
+Branches are very disruptive to instruction flow through pipelines.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6b34733" class="outline-3">
+<h3 id="org6b34733"><span class="section-number-3">9.3</span> lab</h3>
+<div class="outline-text-3" id="text-9-3">
+</div>
+<div id="outline-container-org7a16a5c" class="outline-4">
+<h4 id="org7a16a5c"><span class="section-number-4">9.3.1</span> data lab</h4>
+<div class="outline-text-4" id="text-9-3-1">
+<div class="org-src-container">
+<pre class="src src-c++">/*
+ * conditional - same as x ? y : z
+ *   Example: conditional(2,4,5) = 4
+ *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
+ *   Max ops: 16
+ *   Rating: 3
+ */
+int conditional(int x, int y, int z) {
+// ~!x + 1: 当x为0时为全1，当x不为0时为全0
+  return (~(~!x + 1) &amp; y) | ((~!x + 1) &amp; z);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c++">/*
+ * floatScale2 - Return bit-level equivalent of expression 2*f for
+ *   floating point argument f.
+ *   Both the argument and result are passed as unsigned int's, but
+ *   they are to be interpreted as the bit-level representation of
+ *   single-precision floating point values.
+ *   When argument is NaN, return argument
+ *   Legal ops: Any integer/unsigned operations incl. ||, &amp;&amp;. also if, while
+ *   Max ops: 30
+ *   Rating: 4
+ */
+unsigned floatScale2(unsigned uf) {
+  int exp = (uf &gt;&gt; 23) &amp; 0xFF;
+  // Special
+  if (exp == 0xFF)
+    return uf;
+  // Denormalized
+  if (exp == 0)
+    return ((uf &amp; 0x007fffff) &lt;&lt; 1) | (uf &amp; (1 &lt;&lt; 31));
+  // Normalized
+  return uf + (1 &lt;&lt; 23);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c++">/*
+ * floatFloat2Int - Return bit-level equivalent of expression (int) f
+ *   for floating point argument f.
+ *   Argument is passed as unsigned int, but
+ *   it is to be interpreted as the bit-level representation of a
+ *   single-precision floating point value.
+ *   Anything out of range (including NaN and infinity) should return
+ *   0x80000000u.
+ *   Legal ops: Any integer/unsigned operations incl. ||, &amp;&amp;. also if, while
+ *   Max ops: 30
+ *   Rating: 4
+ */
+int floatFloat2Int(unsigned uf) {
+  int TMIN = 1 &lt;&lt; 31;
+  int exp = ((uf &gt;&gt; 23) &amp; 0xFF) - 127;
+  // Out of range
+  if (exp &gt; 31)
+    return TMIN;
+  if (exp &lt; 0)
+    return 0;
+  int frac = (uf &amp; 0x007fffff) | 0x00800000;
+  // Left shift or right shift
+  int f = (exp &gt; 23) ? (frac &lt;&lt; (exp - 23)) : (frac &gt;&gt; (23 - exp));
+  // Sign
+  return (uf &amp; TMIN) ? -f : f;
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org9aa0df3" class="outline-4">
+<h4 id="org9aa0df3"><span class="section-number-4">9.3.2</span> bomb lab</h4>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb67a3da" class="outline-2">
+<h2 id="orgb67a3da"><span class="section-number-2">10</span> Practical Network Programming</h2>
+<div class="outline-text-2" id="text-10">
+</div>
+<div id="outline-container-org3ffb5c8" class="outline-3">
+<h3 id="org3ffb5c8"><span class="section-number-3">10.1</span> intro</h3>
+<div class="outline-text-3" id="text-10-1">
+</div>
+<div id="outline-container-orgf2a2faa" class="outline-4">
+<h4 id="orgf2a2faa"><span class="section-number-4">10.1.1</span> layered network</h4>
+<div class="outline-text-4" id="text-10-1-1">
+<p>
+ethernet frame
+</p>
+
+<p>
+IP packet
+</p>
+
+<p>
+TCP segment
+</p>
+
+<p>
+Application message
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8779366" class="outline-2">
+<h2 id="org8779366"><span class="section-number-2">11</span> UNIX Network Programming</h2>
+</div>
+<div class="taglist"><a href="https://zhongming-unice.github.io/tags.html">Tags</a>: <a href="https://zhongming-unice.github.io/tag-c++.html">c++</a> </div></div>
+<div id="postamble" class="status"></div>
+</body>
+</html>
