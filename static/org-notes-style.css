@@ -127,7 +127,7 @@ textarea {
 .todo,
 .done,
 .tag {
-    font-family: sans-serif;
+    font-family: Copperplate, Garamond;
     padding: 0 0.3em;
     background-color: #EEE;
     border: 1px solid #CCC;
@@ -186,13 +186,13 @@ textarea {
 
 pre,
 code {
-    font-family: sans-serif;
+    font-family: Monaco, serif;
     padding-left: 0.3em;
     padding-right: 0.3em;
 }
 
 pre {
-    font-size: 90%;
+    font-size: 80%;
     padding: 8pt;
     overflow: auto;
     white-space: pre;
@@ -392,7 +392,7 @@ blockquote {
 }
 
 body {
-    font-family: Monaco;
+    font-family: Courier New, Monaco;
     width: 92%;
     max-width: 1024px;
     margin: 0 auto;
@@ -417,7 +417,7 @@ h2 {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: sans-serif;
+    font-family: Copperplate, Monaco;
     color: #222;
 }
 

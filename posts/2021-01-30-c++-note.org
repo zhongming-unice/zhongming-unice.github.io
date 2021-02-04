@@ -1,8 +1,6 @@
 #+title: c++ note
 #+date: <2021-01-30 15:08>
 #+filetags: c++
-#+OPTIONS: ^:nil
-
 #+begin_comment
 ;;; cpp.org --- c/cpp programming language notes
 
@@ -10,66 +8,42 @@
 ;;  It's a personal note.
 ;;  Written by (c) ZHONG Ming.  2020-2021.
 #+end_comment
+#+OPTIONS: ^:nil
 
-* grammar
+
+* basic grammar
 ** static
-*** copy constructor
-在使用包含静态成员的类时，有时候会调用拷贝构造函数生成临时的隐藏的类对象，
-而这个临时对象在消亡时会调用析构函数有可能会对静态变量做操作（例如total_num--），
-可是这些对象在生成时却没有执行构造函数中的total_num++的操作。
-解决方案是为这个类写一个拷贝构造函数，在该拷贝构造函数中完成total_num++的操作。
+- copy constructor ::
+在使用包含静态成员的类时，调用拷贝构造函数生成临时对象，
+这个临时对象在调用析构函数时可能会产生对静态成员的副作用（如 count 自减1），
+我们需要重写拷贝构造函数，在该拷贝构造函数中完成构造函数里的操作（如 count 自增1）。
 
 ** virtual
-在构造函数和析构函数中调用虚的成员函数不会有虚函数的效果，即还是调用父类的成员函数。
-可以使用工厂模式来解决。
-
-类中有虚函数时，析构函数要为虚或者protected
+- 在构造函数和析构函数中调用虚的成员函数不会有虚函数的效果，即还是调用父类的成员函数，可以使用工厂模式来解决。
+- 类中有虚函数时，析构函数要为虚或者 protected
 
 ** lvalue and rvalue
-*** rvalue
-rvalue: xvalue(Expiring Value), prvalue(Pure Right Value)
+- rvalue
+  + xvalue(Expiring Value)
+  + prvalue(Pure Right Value)
 
-rvo, nrvo: Return Value Optimization, Named Return Value Optimization
+- rvo :: Return Value Optimization, 编译器减少函数返回时生成临时值（对象）的个数，编译器默认使用，编译时使用 -fno-elide-constructors 来禁用
+- nrvo :: Named Return Value Optimization
 
-编译器减少函数返回时生成临时值（对象）的个数
-编译器默认使用，编译时使用 -fno-elide-constructors 来禁用
-*** std::forward
-defined in header <utility>
-
-完美转发 能转发：
-const T &
-T &
-const T &&
-T &&
-
-如果外面传来了rvalue临时变量，它就转发rvalue并且启用move语义
-如果外面传来了lvalue，它就转发lvalue并且启用copy
-能保留const，可以被static_cast替代
-
+- std::forward 完美转发，defined in header <utility>，能保留const，可以被static_cast替代，能转发：
+  + const T &
+  + T &
+  + const T &&
+  + T &&
+  
 ** cast
-*** const_cast
-可 cast const 的对象，除function pointers
-*** static_cast 
-*** reinterpret_cast
-*** dynamic_cast
+- const_cast :: 可 cast const 的对象，除 function pointers
 
 ** smart pointer
-*** unique_ptr
-get()
-
-release()
-*** shared_ptr
-*** weak_ptr
-lock()
-
-expired()
-*** enable_shared_from_this 
-Curiously Recurring Template Pattern 奇异递归模板模式是C++模板编程时的一种惯用法（idiom）
-更一般地被称作F-bound polymorphism
-
-shared_from_this: returns a shared_ptr which shares ownership of *this
-
-weak_from_this: returns the weak_ptr which shares ownership of *this
+- enable_shared_from_this ::
+  + 是一种 Curiously Recurring Template Pattern 奇异递归模板模式，更一般地被称作 F-bound polymorphism
+  + shared_from_this: returns a shared_ptr which shares ownership of *this
+  + weak_from_this: returns the weak_ptr which shares ownership of *this
 #+begin_src c++
 #include <memory>
 #include <iostream>
@@ -113,96 +87,102 @@ int main()
 
 #+end_src
 
+** RAII
+资源获取即初始化（Resource Acquisition Is Initialization），或称 RAII，
+它将必须在使用前请求的资源的生命周期与一个对象的生命周期相绑定。
+
+- 拥有 open()/close()、lock()/unlock()，或 init()/copyFrom()/destroy() 成员函数的类是非 RAII 类的典型的例子
+
+** value semantics
+[[https://akrzemi1.wordpress.com/2012/02/03/value-semantics/][Value semantics]]
+
+- 对一个具有值语义的原始变量变量赋值可以转换成内存的 bit-wise-copy
+- 如果一个type X 具有值语义, 则：
+  + X 的 size 在编译时可以确定
+  + 将 X 的变量 x，赋值与另一个变量 y，无须专门的 = operator，简单的 bit-wise-copy 即可
+  + 当上述赋值发生后，x 和 y 脱离关系：x 和 y 可以独立销毁，其内存也可以独立释放 
+
+** network I/O basic
+- synchronous :: 
+- asynchronous :: 
+- blocking :: 
+- nonblocking ::
+- reactor ::
+- proactor ::
+
+- kqueue ::
+- epoll ::
+- poll ::
+- select :: 
+- IOCP :: 
+- asio ::
+- muduo ::
+
 * std container
 ** std::array
 template<typename T, size_t N>
 
-内存分配在栈（stack）上，不会重新分配，随机访问元素
-
-swap: 交换每一个元素
-
-fill: 对所有元素赋值
+- 内存分配在栈（stack）上，不会重新分配，随机访问元素
+- swap: 交换每一个元素
+- fill: 对所有元素赋值
 
 ** std::vector
 template<typename T, typename Allocator = allocator<T> >
 
-assign: 赋值
-
-capacity: 容量
-
-reserve: 预先分配内存
-
-shrink_to_fit: resize到合适的内存大小
-
-push_back, emplace_back: 尾部插入
-
-insert，emplace: 插入
-
-vector的元素不能为bool
+- assign: 赋值
+- capacity: 容量
+- reserve: 预先分配内存
+- shrink_to_fit: resize到合适的内存大小
+- push_back, emplace_back: 尾部插入
+- insert，emplace: 插入
+- vector 的元素不能为 bool，vector<bool> 是按 bit 存储
 
 ** std::deque
 acronym of double-ended queue 双端队列
 
-push_front, emplace_front: 头部插入
+- push_front, emplace_front: 头部插入
 
 ** std::list
 Doubly linked list 双向列表
 
-remove, remove_if: 删除
-
-reverse: 反转
-
-sort: 排序
-
-merge: 合并已排序的list
-
-unique: 已排序的list去重
-
-splice: 接合
+- remove, remove_if: 删除
+- reverse: 反转
+- sort: 排序
+- merge: 合并已排序的list
+- unique: 已排序的list去重
+- splice: 接合
 
 ** std::forward_list
 Single linked list 单向列表
 
-before_begin: begin的前一个迭代器
-
-erase_after: 删除下一个元素，返回 void
-
-insert_after: 插入
-
-splice_after: 接合
+- before_begin: begin的前一个迭代器
+- erase_after: 删除下一个元素，返回 void
+- insert_after: 插入
+- splice_after: 接合
 
 ** std::set
 template<typename T, typename Compare = less<T>, typename Allocator = allocator<T>>
 
-count: 查找元素个数
-
-find: 查找元素
-
-lower_bound: 第一个可插入点
-
-upper_bound: 最后一个可插入点
-
-equal_range: pair(lower_bound, upper_bound)
-
-insert: 插入，返回值为pair<Iterator, bool>
-
-std::find: 根据operator==查找；而std::set::find 根据Compare查找
-
-std::set::find 比 std::find 快
+- count: 查找元素个数
+- find: 查找元素
+- lower_bound: 第一个可插入点
+- upper_bound: 最后一个可插入点
+- equal_range: pair(lower_bound, upper_bound)
+- insert: 插入，返回值为 pair<Iterator, bool>
+- std::find: 根据 operator== 查找；而 std::set::find 根据 Compare 查找
+- std::set::find 比 std::find 快
 
 ** std::map
 template<typename Key, typename T, typename Compare = less<Key>, typename Allocator = allocator<pair<const Key, T> > >
 
-find: 返回pair<const Key, T>
-
-emplace_hint: 推荐插入
-
-[] 和 .at()，[const Key] 不存在时插入pair，返回pair.second，.at(const Key) 不存在时不插入，返回一个异常
+- find: 返回 pair<const Key, T>
+- emplace_hint: 推荐插入
+- [] 和 .at()，[const Key] 不存在时插入pair，返回pair.second，.at(const Key) 不存在时不插入，返回一个异常
 
 ** std::unordered_map
 template<typename Key, typename T, typename Hash = hash<Key>, typename EqPred = equal_to<Key>, typename Allocator = allocator<pair<const Key, T> > >
 
-需要使用模板类的偏化定义键的 hash 函数，如果有两个值，可以使用 boost 库的 hash_combine
+- 需要使用模板类的偏化定义键的 hash 函数，如果有两个值，可以使用 boost 库的 hash_combine
 
 #+begin_src c++
   // Key class 's hash function
@@ -216,6 +196,9 @@ namespaece std
       }
     };
   }
+#+end_src
+
+#+begin_src c++
  // if we need combine 2 values
 template <class T>
 inline void hash_combine(std::size_t& seed, const T& v)
@@ -239,12 +222,11 @@ namespaece std
 
 * multithread
 ** basic
-std::thread::hardware_concurrency 硬件支持的线程数
-
-std::this_thread::yield() 让出时间片
+- std::thread::hardware_concurrency 硬件支持的线程数
+- std::this_thread::yield() 让出时间片
 
 ** atomic
-*** some operators
+- operators
 
 | 原子指令 (x均为std::atomic<int>)                 | 作用                                                               |
 |--------------------------------------------------+--------------------------------------------------------------------|
@@ -255,23 +237,7 @@ std::this_thread::yield() 让出时间片
 | x.compare_exchange_weak(expected_ref, desired)   | 相比compare_exchange_strong可能有spurious wakeup                   |
 | x.fetch_add(n), x.fetch_sub(n)                   | 原子地做x += n, x-= n，返回修改之前的值。                          |
 
-*** memory order
-relaxed: 宽松内存顺序的典型使用是计数器自增，
-例如 std::shared_ptr 的引用计数器，因为这只要求原子性，
-但不要求顺序或同步（注意 std::shared_ptr 计数器自减要求与析构函数进行获得释放同步）
-
-acquire: 若线程 A 中的一个原子存储带标签 memory_order_release ，
-而线程 B 中来自同一变量的原子加载带标签 memory_order_acquire ，
-则从线程 A 的视角先发生于原子存储的所有内存写入（非原子及宽松原子的），
-在线程 B 中成为可见副效应，即一旦原子加载完成，则保证线程 B 能观察到线程 A 写入内存的所有内容。 
-互斥锁（例如 std::mutex 或原子自旋锁）是释放获得同步的例子：线程 A 释放锁而线程 B 获得它时，
-发生于线程 A 环境的临界区（释放之前）中的所有事件，必须对于执行同一临界区的线程 B （获得之后）可见。
-
-consume: 若线程 A 中的原子存储带标签 memory_order_release ，
-而线程 B 中来自同一对象的读取存储值的原子加载带标签 memory_order_consume ，
-则线程 A 视角中先发生于原子存储的所有内存写入（非原子和宽松原子的），
-会在线程 B 中该加载操作所携带依赖进入的操作中变成可见副效应，
-即一旦完成原子加载，则保证线程B中，使用从该加载获得的值的运算符和函数，能见到线程 A 写入内存的内容。
+- memory order
 
 | memory order         | 作用                                                                                     |
 |----------------------+------------------------------------------------------------------------------------------|
@@ -282,47 +248,19 @@ consume: 若线程 A 中的原子存储带标签 memory_order_release ，
 | memory_order_acq_rel | acquire + release语意                                                                    |
 | memory_order_seq_cst | acq_rel语意外加所有使用seq_cst的指令有严格地全序关系                                     |
 
-限制重排：
-
+- 限制重排 ::
 Release-Acquire ordering: 在store()之前的所有读写操作，不允许被移动到这个store()的后面。
 在load()之后的所有读写操作，不允许被移动到这个load()的前面。
 假设 Thread-1 store()的那个值，成功被 Thread-2 load()到了，
 那么 Thread-1 在store()之前对内存的所有写入操作，此时对 Thread-2 来说，都是可见的。
 
-*** atomic_flag
-可于用户空间用 atomic_flag 实现自旋互斥
-
-互斥锁是是一种sleep-waiting的锁，自旋锁是一种busy-waiting的锁
+- atomic_flag ::
+可于用户空间用 atomic_flag 实现自旋互斥，互斥锁是是一种 sleep-waiting 的锁，自旋锁是一种 busy-waiting 的锁
 
 ** mutex
-一般设为 mutable 使得const member function 可以使用
-使用 std::lock_guard<std::mutex> 这种 RAII 防止出现异常导致 mutex 没有 unlock，
-
-配合 std::lock 和 std::adopt_lock 可以防止死锁
-
-lock_guard 提供便利的 RAII 机制
-
-*** RAII
-资源获取即初始化（Resource Acquisition Is Initialization），或称 RAII，
-它将必须在使用前请求的资源的生命周期与一个对象的生命周期相绑定。
-
-将每个资源封装入一个类，其中
-
-1, 构造函数请求资源，并建立所有类不变式，或在它无法完成时抛出异常，
-
-2, 析构函数释放资源并决不抛出异常；
-
-始终经由 RAII 类的实例使用满足要求的资源，该资源
-
-1, 自身拥有自动存储期或临时生存期，
-
-2, 具有与自动或临时对象的生存期绑定的生存期
-
-移动语义使得在对象间，跨作用域，以及在线程内外安全地移动所有权，而同时维护资源安全成为可能。
-
-拥有 open()/close()、lock()/unlock()，或 init()/copyFrom()/destroy() 成员函数的类是非 RAII 类的典型的例子
-
-*** lock_guard, unique_lock and scoped_lock
+- 一般设为 mutable 使得 const member function 可以使用
+- 使用 std::lock_guard<std::mutex> 这种 RAII 防止出现异常导致 mutex 没有 unlock，配合 std::lock 和 std::adopt_lock 可以防止死锁
+- lock_guard, unique_lock and scoped_lock
 #+begin_src c++
 std::scoped_lock lock(e1.m, e2.m);
  
@@ -337,224 +275,229 @@ std::scoped_lock lock(e1.m, e2.m);
 // std::lock(lk1, lk2);
 #+end_src
 
-** condition_variable
-notify_one(): notifies one waiting thread
+** condition variable
 
-notify_all(): notifies all waiting threads
+- notify_one(): notifies one waiting thread
+- notify_all(): notifies all waiting threads
 
-* complier
-** install clang-12
-
-https://apt.llvm.org/
-#+begin_src sh
-wget https://apt.llvm.org/llvm.sh
-chmod +x llvm.sh
-sudo ./llvm.sh <version number>
-#+end_src sh
-#+begin_src sh
-sudo update-alternatives --config clang
-cd /usr/bin
-sudo ln -s clang-12 clang
-sudo ln -s clang++-12 clang++
-sudo ln -s /usr/bin/llvm-ar-12 /usr/bin/llvm-ar
-sudo ln -s /usr/bin/llvm-as-12 /usr/bin/llvm-as
-sudo ln -s /usr/bin/clangd-12 /usr/bin/clangd
-sudo ln -s /usr/bin/clang-tidy-12 /usr/bin/clang-tidy
-
-alias clang++='clang++ -std=c++20'
-#+end_src
-
-** install gcc-10
-
-#+begin_src sh
-
-sudo apt install software-properties-common
-sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-sudo apt install gcc-10 g++-10
-
-sudo update-alternatives \
---install /usr/bin/gcc gcc /usr/bin/gcc-10 100 \
---slave /usr/bin/g++ g++ /usr/bin/g++-10 \
---slave /usr/bin/gcov gcov /usr/bin/gcov-10
-
-# /usr/bin/gcc -> /etc/alternatives/gcc -> /usr/bin/gcc-10
-sudo update-alternatives --config gcc
-
-alias g++='g++ -std=c++20'
-
-#+end_src
-
-** gcc
-+ -E :: 预处理 将 .c 文件转为 .i 
-+ -S :: 编译 将 .i 文件转为 .s
-+ -c :: 汇编 将 .s 文件转为 .o
-+  :: 连接 将 .o 文件转为可执行文件
-
-* gdb
-
-set print asm-demangle on
-
-set print demangle on
-
-* miscellaneous
-** value semantics
-[[https://akrzemi1.wordpress.com/2012/02/03/value-semantics/][Value semantics]]
-
-对一个具有值语义的原始变量变量赋值可以转换成内存的bit-wise-copy。
-
-如果一个type X 具有值语义, 则：
-
-1）X 的size在编译时可以确定。
-
-2）将X的变量x,赋值与另一个变量y，无须专门的 = operator,简单的bit-wise-copy 即可。
-
-3）当上述赋值发生后，x和y脱离关系：x和y可以独立销毁，其内存也可以独立释放。
+* asio
+** timer
+- boost::asio::deadline_timer 使用的计量时间是系统时间 (posix_time)，因此修改系统时间会影响deadline_timer的行为
+- 基于 std::chrono::steady_clock 的 boost::asio::steady_timer 是一个不会受系统时间影响的定时器
+- boost::asio::strand 基于 mutex 实现，保证 callback 的顺序
 
 * design patterns
-** creational patterns
-*** abstract factory
+** Creational Patterns 
+- [Abstract Factory] :: families of product objects
+- [Builder] :: how a composite object gets created
+- [Factory Method] :: subclass of object that is instantiated
+- [Prototype] :: class of object that is instantiated
+- [Singleton] :: the sole instance of a class
+** Structural Patterns
+- [Adapter] :: interface to an object
+- [Bridge] :: implementation of an object 
+- [Composite] :: structure and composition of an object
+- [Decorator] :: responsibilities of an object without subclassing
+- [Façade] :: interface to a subsystem
+- [Flyweight] :: storage costs of objects
+- [Proxy] :: how an object is accessed (its location)
+** Behavioral Patterns
+- [Chain of Responsibility] :: object that can fulfill a request
+- [Command] :: when and how a request is fulfilled
+- [Interpreter] :: grammar and interpretation of a language
+- [Iterator] :: how an aggregate's elements are accessed
+- [Mediator] :: how and which objects interact with each other
+- [Memento] :: what private information is stored outside an object, and when 
+- [Observer] :: how the dependent objects stay up to date
+- [State] :: states of an object
+- [Strategy] :: an algorithm
+- [Template Method] :: steps of an algorithm
+- [Visitor] :: operations that can be applied to objects without changing their classes
+
 * Primer C++
 ** string, vector and array
+- 老的编译器需要区分 >> 和 > >
 #+begin_quote
 "Some compilers may require the old-style declarations for a vector of vectors, for example, vector<vector<int> >."
 #+end_quote
 
+- vector 不能通过下标操作符进行插入
 #+begin_quote
 "The subscript operator on vector (and string) fetches an existing element; it does not add an element."
 #+end_quote
 
+- built-in 数组通过两个函数获得头尾指针
+#+begin_src c++
+int ia[] = {0,1,2,3,4,5,6,7,8,9}; // ia is an array of ten ints
+int *beg = begin(ia); // pointer to the first element in ia
+int *last = end(ia);  // pointer one past the last element in ia
+#+end_src
+
+#+begin_quote
+"arrays are not class types, so these functions are not member functions. Instead, they take an argument that is an array"
+#+end_quote
+
+- 两个指针相减的类型为 ptrdiff_t
+#+begin_quote
+"The result of subtracting two pointers is a library type named ptrdiff_t. Like size_t, the ptrdiff_t type is a machine-specific type and is defined in the cstddef header. Because subtraction might yield a negative distance, ptrdiff_t is a signed integral type."
+#+end_quote
+
+- built-in 数组可以取负数作为下标
+#+begin_src c++
+int *p = &ia[2];  // p points to the element indexed by 2
+int j = p[1];     // p[1] is equivalent to *(p + 1),
+                  // p[1] is the same element as ia[3]
+int k = p[-2];    // p[-2] is the same element as ia[0]
+#+end_src
+
+#+begin_quote
+"The library types force the index used with a subscript to be an unsigned value. The built-in subscript operator does not. The index used with the built-in subscript operator can be a negative value."
+#+end_quote
+
+- initialize a C-style character string from a library string
+#+begin_src c++
+string s("Hello World");  // s holds Hello World
+char *str = s; // error: can't initialize a char* from a string
+const char *str = s.c_str(); // ok
+#+end_src
+
+- 多维数组的 range for 要使用引用，avoid the normal array to pointer conversion
+#+begin_quote
+"To use a multidimensional array in a range for, the loop control variable for all but the innermost array must be references."
+#+end_quote
+
 * CSAPP
 ** basic
-*** array and pointer
-int *A2[3]: 3个指向 int 的指针，sizeof = 24 (= int *(A2[3]))
+- registers
+  + arguments 1, 2, 3, 4, 5, 6 分别放在 rdi, rsi, rdx, rcx, r8, r9
+  + 浮点类型的参数是由另外一组寄存器传递的
+  + return value 放在 rax
+- overflow buffer
+  + randomize stack position
+  + make the stack not executable
+  + use stack canary
+- rep; ret
+  + 汇编中用 rep 后面跟 ret 的组合来避免使 ret 指令成为条件跳转指令的目标
+  + 这里的 rep 指令就是作为一种空操作，因此作为跳转目的插入它，除了能使代码在 AMD 上运行得更快之外，不会改变代码的其他行为
 
-int (*A3)[3]: 一个指向长度为3的 int 数组的指针，sizeof = 8
+** optimization
+- conditional move :: 使用 conditional moves 能避免 branch prediction
 
-*** registers
-eax: accumulate
+- unrolling and accumulating :: 不使用流水线的话最好能优化到 latency bound（单位 clock cycles per element），使用流水线可以达到 throughout bound
 
-ecx: counter
+- ymm register :: 使用 SIMD (Single instruction, multiple data) operations 加速运算（vectorizing后）
 
-edx: data
+- branch misprediction invalidation :: 寄存器有多个副本，当分支预测错误时还原寄存器的值，reload pipline
 
-ebx: base
+** memory
+- bus interface standard
+  + PCIe 属于全双工模式，而 SATA 是半双工模式，
+  + NVMe 与AHCI 相比使用多队列，所以 NVMe + PCIe 比 AHCI + SATA 快
+- non-volatile memory
+  + 根据浮置栅存储的位的多少，闪存可分为 SLC (Single Level Cell Multi Level Cell), MLC, TLC and QLC
+- volatile memory
+  + SRAM: cache memory
+  + DRAM: main memory, frame buffer
+- locality
+  + 程序需考虑 temporal locality and spatial locality
+  + matrix multiplication 通过分块（blocking）增加 temporal locality，通过改变循环的顺序改变 spatial locality（i*k 与 k*j 的矩阵相乘，最佳顺序为 kij）
 
-esi: source index -- second argument register
+** linking
+- linker symbol
+  + global symbols :: non-static global functions/variables
+  + external symbols :: global symbols referenced but defined by other module
+  + local symbols :: static global functions/variables
 
-edi: destination index -- first argument register
+- relocation entry: complier 告诉 linker 去填充 symbols 所在的地址
 
-esp: stack pointer
+- static libraries
+  + ar -- create and maintain library archives
+  + 使用多个 .o 文件创建 .a static library
 
-ebp: base pointer
+- shared libraries
+  + 解决了 static libraries 的 potential duplication
+  + 可以多个进程共享
 
-eip: instruction pointer
+- library interpositioning
+  + complie time :: macro-expand
+  + link time :: linker trick to have special name resolution (gcc -Wl)
+  + load/run time :: 修改 LD_PRELOAD 
+
+- link directory
+#+begin_src sh
+# mac 下查看shared library(.dylib)
+otool -L a.out
+# linux 下查看shared library(.so)
+ldd a.out
+# 查看第三方库路径
+pkg-config --cflags --libs yaml-cpp
+#+end_src
+** exceptional control flow
+- asynchronous exceptions (interrputs)
+  + cause by events external to the processor, such as timer interrput
+- synchronous exceptions
+  + traps :: international, example: system calls
+  + faults :: uninternational but possibly recoverable, example: page faults
+  + aborts :: uninternational and unrecoverable
+
+- process
+  - context :: address space + registers
+  - states :: running, stopped, terminated
+  - exit :: called once, never returns
+  - fork :: called once, returns twice (to parent and child)
+  - wait :: parent reap a child, synchronizing with child
+  - waitpid :: waiting for specific process
+  - reap :: 如果 parent 没有 reap child 进程，init process (pid = 1) 这个进程会去 reap zombie child process
+  - execve :: loading and running programs, called once, nerver returns
+
+- shell 
+  + fg(foreground) 和 bg(background) 的区别在于 fg 调用了 waitpid(pid, &status, 0)
+
+- signal
+  + pause: wait for the receipt of a signal
+  + pnb (pending nonblocked signals) = pending & ~blocked
+  + a signal handler is a separate logical flow (not process) that runs concurrently with the main program
+  + sigprocmask: explicit blocking and unblocking mechanism
+  + guideline for writing safe handler
+    - as simple as possible
+    - call only async-signal-safe functions
+    - save and restore errno on entry and exit
+    - protect shared data by temporarily blocking all signals
+    - declare global variables as *volatile*
 
 
-CF: carry flag(for unsigned)
 
-ZF: zero flag
-
-SF: sign flag(for signed)
-
-OF: overflow flag(for signed)
-
-arguments 1,2,3,4,5,6 分别放在 rdi, rsi, rdx, rcx, r8, r9
-
-浮点类型的参数是由另外一组寄存器传递的
-
-return value 放在 rax
-*** overflow buffer
-1, randomize stack position
-
-2, make the stack not executable
-
-3, use stack canary
-** asm
-*** conditional move
-使用 conditional moves 能避免 branch prediction. 
-
-Branches are very disruptive to instruction flow through pipelines.
 
 ** lab
-*** data lab
-#+begin_src c++
-/*
- * conditional - same as x ? y : z
- *   Example: conditional(2,4,5) = 4
- *   Legal ops: ! ~ & ^ | + << >>
- *   Max ops: 16
- *   Rating: 3
- */
-int conditional(int x, int y, int z) {
-// ~!x + 1: 当x为0时为全1，当x不为0时为全0
-  return (~(~!x + 1) & y) | ((~!x + 1) & z);
-}
-#+end_src
+*** attack lab
 
-#+begin_src c++
-/*
- * floatScale2 - Return bit-level equivalent of expression 2*f for
- *   floating point argument f.
- *   Both the argument and result are passed as unsigned int's, but
- *   they are to be interpreted as the bit-level representation of
- *   single-precision floating point values.
- *   When argument is NaN, return argument
- *   Legal ops: Any integer/unsigned operations incl. ||, &&. also if, while
- *   Max ops: 30
- *   Rating: 4
- */
-unsigned floatScale2(unsigned uf) {
-  int exp = (uf >> 23) & 0xFF;
-  // Special
-  if (exp == 0xFF)
-    return uf;
-  // Denormalized
-  if (exp == 0)
-    return ((uf & 0x007fffff) << 1) | (uf & (1 << 31));
-  // Normalized
-  return uf + (1 << 23);
-}
-#+end_src
+* Introduction to Computer Networking
+** intro
++ layers
+  - application :: bi-directional reliable byte stream between two applications, using application-specific semantics (eg. http, bit-torrent).
+  - transport :: gurantees correct, in-order delivery of data end-to-end. controls congestion.
+  - network :: delivers datagrams end-to-end. best-effort delivery - no gurantees. must use the Internet protocol (IP).
+  - link :: delivers data over a single link between an end host and router, or between routers.
++ encapsulation
+  - Virtual Private Network (VPN) :: http inside tcp inside ip inside tls inside tcp inside ip inside ethernet 
++ endianness
+  - helper functions for convert network byte order (include <arpa/inet.h>):
+  - htons(), ntohs(), htonl(), ntohl(): htons means "host to network short", ntohl means "network to host long"
 
-#+begin_src c++
-/*
- * floatFloat2Int - Return bit-level equivalent of expression (int) f
- *   for floating point argument f.
- *   Argument is passed as unsigned int, but
- *   it is to be interpreted as the bit-level representation of a
- *   single-precision floating point value.
- *   Anything out of range (including NaN and infinity) should return
- *   0x80000000u.
- *   Legal ops: Any integer/unsigned operations incl. ||, &&. also if, while
- *   Max ops: 30
- *   Rating: 4
- */
-int floatFloat2Int(unsigned uf) {
-  int TMIN = 1 << 31;
-  int exp = ((uf >> 23) & 0xFF) - 127;
-  // Out of range
-  if (exp > 31)
-    return TMIN;
-  if (exp < 0)
-    return 0;
-  int frac = (uf & 0x007fffff) | 0x00800000;
-  // Left shift or right shift
-  int f = (exp > 23) ? (frac << (exp - 23)) : (frac >> (23 - exp));
-  // Sign
-  return (uf & TMIN) ? -f : f;
-}
-#+end_src
-*** bomb lab
-
+** tcp
+- stream of bytes
+- reliable delivery
+  + ackownledgments indicate correct delivery.
+  + checksums detect corrupted data.
+  + squence numbers detect missing data.
+  + flow-control prevents overrunning receiver.
+- in-squence
+- congestion control
 * Practical Network Programming
 ** intro
-*** layered network
-ethernet frame
+- layered network
+  + ethernet frame
+  + IP packet
+  + TCP segment
+  + Application message
 
-IP packet
-
-TCP segment
-
-Application message
-
-* UNIX Network Programming
