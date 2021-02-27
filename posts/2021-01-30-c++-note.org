@@ -10,8 +10,7 @@
 #+end_comment
 #+OPTIONS: ^:nil
 
-
-* basic grammar
+* basic
 ** static
 - copy constructor ::
 在使用包含静态成员的类时，调用拷贝构造函数生成临时对象，
@@ -39,9 +38,55 @@
 ** cast
 - const_cast :: 可 cast const 的对象，除 function pointers
 
+** inheritance
+- 强制要求派生类显式地使用接口，又为派生类准备一个可调用的默认实现：为纯虚函数提供定义，这种定义不会存入虚表，因此基类本身仍然是抽象类，并且派生类仍然需要提供一个显式实现
+  #+begin_src c++
+class Base
+{
+public:
+  virtual void doSomething() = 0;
+  
+};
+
+void Base::doSomething() { std::cout << "haha" << std::endl; };
+
+class Derived : public Base
+{
+public:
+  virtual void doSomething()
+  {
+    Base::doSomething();
+  }
+};
+
+  #+end_src
+- 虚继承可以解决菱形继承问题
+  #+begin_src c++
+class VBase {
+  virtual void f();
+};
+
+class Middle1 : virtual VBase {};
+
+class Middle2 : virtual VBase {};
+
+class Derived : virtual Middle1, virtual Middle2 {};
+
+int main() {
+  return sizeof(Derived);
+}
+
+  #+end_src
+  #+begin_src sh
+  -Xclang -fdump-record-layouts -std=c++11
+  #+end_src
+- 组合正交的多个功能
+  + 有一个 TaskManager 类，负责管理所有拥有 ITask 接口的对象，现在需要为 ITask 类型增加两个功能：一是 timing 功能，即在 ITask 对象执行 Execute 方法前后计时；二是 logging 功能，即在 ITask 对象执行 Execute 方法前后打印日志
+  + 将 TimingTask 和 LoggingTask 的基类都换成模板参数，实现 mixin
+
 ** smart pointer
 - enable_shared_from_this ::
-  + 是一种 Curiously Recurring Template Pattern 奇异递归模板模式，更一般地被称作 F-bound polymorphism
+  + 是一种 CRTP
   + shared_from_this: returns a shared_ptr which shares ownership of *this
   + weak_from_this: returns the weak_ptr which shares ownership of *this
 #+begin_src c++
@@ -86,7 +131,16 @@ int main()
 } // UB: double-delete of Bad
 
 #+end_src
+- weak_ptr
+  + std::weak_ptr models temporary ownership: when an object needs to be accessed only if it exists, and it may be deleted at any time by someone else, std::weak_ptr is used to track the object, and it is converted to std::shared_ptr to assume temporary ownership. If the original std::shared_ptr is destroyed at this time, the object's lifetime is extended until the temporary std::shared_ptr is destroyed as well.
+  + Another use for std::weak_ptr is to break reference cycles formed by objects managed by std::shared_ptr. If such cycle is orphaned (i,e. there are no outside shared pointers into the cycle), the shared_ptr reference counts cannot reach zero and the memory is leaked. To prevent this, one of the pointers in the cycle can be made weak.
 
+- the trade-offs between make_shared and shared_ptr+new
+  + std::shared_ptr<T>(new T(args...)) performs at least two allocations (one for the object T and one for the control block of the shared pointer), while std::make_shared<T> typically performs only one allocation.
+  + If any std::weak_ptr references the control block created by std::make_shared after the lifetime of all shared owners ended, the memory occupied by T persists until all weak owners get destroyed as well, which may be undesirable if sizeof(T) is large.
+  + std::shared_ptr<T>(new T(args...)) may call a non-public constructor of T if executed in context where it is accessible, while std::make_shared requires public access to the selected constructor.
+  + Unlike the std::shared_ptr constructors, std::make_shared does not allow a custom deleter.
+  + std::make_shared uses ::new, so if any special behavior has been set up using a class-specific operator new, it will differ from std::shared_ptr<T>(new T(args...)).
 ** RAII
 资源获取即初始化（Resource Acquisition Is Initialization），或称 RAII，
 它将必须在使用前请求的资源的生命周期与一个对象的生命周期相绑定。
@@ -102,22 +156,100 @@ int main()
   + 将 X 的变量 x，赋值与另一个变量 y，无须专门的 = operator，简单的 bit-wise-copy 即可
   + 当上述赋值发生后，x 和 y 脱离关系：x 和 y 可以独立销毁，其内存也可以独立释放 
 
+** CRTP
+Curiously Recurring Template Pattern 奇异递归模板模式，更一般地被称作 F-bound polymorphism
+- 派生类继承自模板类，派生类将自身作为参数传给模板类
+- 基类转换成派生类用的是 static_cast 而不是 dynamic_cast，降低了继承带来的虚函数表查询开销
+- enable_shared_from_this 和 ranges::view_interface 属于 CRTP
+ 
 ** network I/O basic
 - synchronous :: 
 - asynchronous :: 
 - blocking :: 
-- nonblocking ::
+- non-blocking ::
 - reactor ::
 - proactor ::
 
 - kqueue ::
-- epoll ::
-- poll ::
 - select :: 
+  + 当前进程使用 O(N) 时间轮询 bitmap 中准备就绪的 socket, 并将其保存进 socket 的等待队列中（作为等待者）, 如果没有准备就绪的 socket, 该进程将会被挂起, 等有数据传输完毕触发中断程序（kernel 也可以启动 interrupt coalescing 机制, 让网卡做中断合并）使 cpu 让出时间片去将数据导入 socket 的读缓冲区并将等待者移入工作队列
+- poll :: 
+  + 用数组代替 select 中的 bitmap 使其监听的 socket 数可以大于1024
+- epoll ::
+  + select 和 poll 的不足:
+    - 每次调用都需要所有需要监听的 socket 的 fd 的集合
+    - 返回值为 socket 就绪/错误的数量
+  + 解决:
+    - epoll 在内核空间使用 eventpoll 存放 socket fd 列表（红黑树）和就绪的 socket 列表
+    - socket 的等待队列中不再是进程, 而是 eventpoll 对象引用
+    - epoll_ctl(): 增删改 eventpoll 中的 socket fd 列表
+    - epoll_wait(): 阻塞线程直到指定的 socket 就绪, 将就绪的 socket 信息传入 epoll_event 事件数组指针
+    - 将 epoll_wait() 中的阻塞时间设置为0即为非阻塞
+    - eventpoll 的等待队列保存了调用了 epoll_wait() 的进程
+    
 - IOCP :: 
 - asio ::
 - muduo ::
+- misc
+  + 需要的线程数 = qps * latency (单位秒)
+    
+** malloc
+- dlmalloc – General purpose allocator
 
+- ptmalloc2 - glibc
+  + ptmalloc2 was forked from dlmalloc
+  + 每个 chunk 至少需要 8 个字节的 overhead
+  + ptmalloc 将相似大小的 chunk 用双向链表链接起来, 这样的一个链表被称为一个 bin, Ptmalloc 一共 维护了 128 个 bin, 并使用一个数组来存储这些 bin
+
+  + 大内存采用mmap()，小内存使用brk()
+  + 有一个主分配区 (main arena), 多个非主分配区, 非主分配区只能使用 mmap 申请虚拟内存
+
+  + per thread arena: maintain separate heap and freelist data structures for each thread
+  + application’s arena limit is based on number of cores present in the system.
+    - For 32 bit systems: Number of arena = 2 * number of cores.
+    - For 64 bit systems: Number of arena = 8 * number of cores.
+  + A single thread arena can have multiple heaps (non contiguous region, created by mmap)
+
+  + Heap Header: heap_info (Main arena dont have multiple heaps and hence no heap_info structure)
+  + Arena Header: malloc_state (contains information about bins, top chunk, last remainder chunk…) (Unlike thread arena, main arena’s arena header isnt part of sbrk’d heap segment. Its a global variable and hence its found in libc.so’s data segment)
+  + Chunk Header: malloc_chunk
+
+  + chunk 可分为: 
+    - Allocated chunk ::
+      + prev_size: If the previous chunk is free, this field contains the size of previous chunk. Else if previous chunk is allocated, this field contains previous chunk’s user data.
+      + size: This field contains the size of this allocated chunk. Last 3 bits of this field contains flag information.
+      + PREV_INUSE (P) – This bit is set when previous chunk is allocated.
+      + IS_MMAPPED (M) – This bit is set when chunk is mmap’d.
+      + NON_MAIN_ARENA (N) – This bit is set when this chunk belongs to a thread arena.
+
+    - Free chunk ::
+      + prev_size: No two free chunks can be adjacent together. When both the chunks are free, its gets combined into one single free chunk. Hence always previous chunk to this freed chunk would be allocated and therefore prev_size contains previous chunk’s user data.
+      + size: This field contains the size of this free chunk.
+      + fd: Forward pointer – Points to next chunk in the same bin (and NOT to the next chunk present in physical memory).
+      + bk: Backward pointer – Points to previous chunk in the same bin (and NOT to the previous chunk present in physical memory).
+
+    - Top chunk ::
+      + Chunk which is at the top border of an arena is called top chunk. It doesnt belong to any bin.
+
+    - Last Remainder chunk ::
+      + Last remainder chunk helps to improve locality of reference ie) consecutive malloc request of small chunks might end up being allocated close to each other.
+
+  + Bins: Bins are the freelist datastructures. They are used to hold free chunks.
+    - Fast Bin: Chunks of size 16 to 80 bytes (Number of bins – 10) (addition and deletion happens at the front end of the list – LIFO)
+    - Unsorted Bin: When small or large chunk gets freed instead of adding them in to their respective bins, its gets added into unsorted bin. (Number of bins – 1)
+    - Small Bin: Chunks of size less than 512 bytes (Number of bins – 62)
+    - Large Bin: Chunks of size greater than equal to 512 (Number of bins – 63)
+
+
+- jemalloc – FreeBSD and Firefox
+
+- tcmalloc – Google
+  + 小对象 (<=32K) 从 ThreadCache 分配, 大对象从 CentralCache 分配
+
+- libumem – Solaris
+
+** thread
+** future
 * std container
 ** std::array
 template<typename T, size_t N>
@@ -220,6 +352,16 @@ namespaece std
   }
 #+end_src
 
+** std::remove
+STL 中 remove() 只是将待删除元素之后的元素移动到容器的前端，而不是删除。若要真正移除，需要搭配使用 erase()
+#+begin_src c++
+std::string str2 = "Text\n with\tsome \t  whitespaces\n\n";
+str2.erase(std::remove_if(str2.begin(), 
+                          str2.end(),
+                          [](unsigned char x){return std::isspace(x);}),
+           str2.end());
+#+end_src
+
 * multithread
 ** basic
 - std::thread::hardware_concurrency 硬件支持的线程数
@@ -280,12 +422,67 @@ std::scoped_lock lock(e1.m, e2.m);
 - notify_one(): notifies one waiting thread
 - notify_all(): notifies all waiting threads
 
+* coroutines
 * asio
 ** timer
 - boost::asio::deadline_timer 使用的计量时间是系统时间 (posix_time)，因此修改系统时间会影响deadline_timer的行为
 - 基于 std::chrono::steady_clock 的 boost::asio::steady_timer 是一个不会受系统时间影响的定时器
 - boost::asio::strand 基于 mutex 实现，保证 callback 的顺序
+** daytime
+- client synchronous
+  + resolver(io_context)
+  + endpoint = resolver.resolve(ip address, "daytime"): result of resolver 
+  + socket(io_context): connect to an endpoint
+  + buffer: a buffer of a boost array
+  + socket.read_some(buffer, error): return length
 
+- server synchronous
+  + acceptor(io_context, endpoint(tcp4, "daytime"))
+  + socket(io_context)
+  + acceptor.accept(socket)
+  + buffer: a buffer of a string
+  + write(socket, buffer, error)
+
+- server asynchronous
+  + class tcp_connection: a CRTP
+    - static create(io_context)
+    - start(): call async_write
+    - handle_write(error, bytes_transferred): do nothing
+    - member variables: socket and message
+  + class tcp_server
+    - start_accept(): call acceptor.async_accept
+    - handle_accept(std::shared_ptr<tcp_connection>, error): call tcp_connection::start and start_accept
+    - member variables: io_context and acceptor
+
+** chat
+- char_message
+  + data = header + body
+  + decode/encode header: use strncat/sprintf/memcpy
+
+- char_server
+  + participant: has a virtual function *deliver(msg)*
+  + room: has a set of participants and a deque of messages, can join/leave participant, can let all participant in the room deliver(msg)
+  + session: a CRTP inherits from participant, has a socket, a reference of a room, a read message and a deque of write messages
+    - constructor: socket and reference of room
+    - start: let room join shared_from_this and begin read header
+    - deliver(&msg): push msg to write messages, call do_write
+    - do_read_header: async read, call do_read_body
+    - do_read_body: async read, let room deliver(read message), call do_read_header
+    - do_write: async write the front of write messages utils they're empty
+  + server: has a acceptor and a room
+    - constructor: io_context and endpoint
+    - do_accept: async accept, let session start, call do_accept itself
+
+- char_client: io_context run in a new thread, client should be closed before this thread join
+  + client: has a reference of io_context, a socket, a read message and a deque of write messages
+    - constructor: io_context and endpoint
+    - write(&msg): post, push message to write messages, call do_write
+    - close: post, let socket close
+    - do_connect(&endpoint): async connect, call do_read_header
+    - do_read_header: async read, call do_read_body
+    - do_read_body: async read, let room deliver(read message), call do_read_header
+    - do_write: async write the front of write messages utils they're empty
+    
 * design patterns
 ** Creational Patterns 
 - [Abstract Factory] :: families of product objects
@@ -313,6 +510,69 @@ std::scoped_lock lock(e1.m, e2.m);
 - [Strategy] :: an algorithm
 - [Template Method] :: steps of an algorithm
 - [Visitor] :: operations that can be applied to objects without changing their classes
+
+* unix
+** baisc
+- int / iret
+  + 调用 sys_open:
+    #+begin_src asm
+    mov 0x05 ,eax       /* 设置系统调用号 05: sys_open*/
+    int 0x80
+    #+end_src
+  + 调用 int 0x80 后，查找中断描述符表(IDT, Interrupt Descriptor Table)，进行特权级检查(DPL = CPL = 3)，在 GDT / LDT 中找到对应的段描述符
+  + 段寄存器 DPL >= CPL 才能访问内核段的内存空间(通过 set_system_intr_gate 来设置)
+  + Linux 只为每个 CPU 维护一个 TSS，通过 TSS(Task State Segment) 来切换到内核栈
+  + 系统调用库(glibc) 中，int 0x80 只有在硬件不支持快速系统调用(sysenter / syscall)的时候才会调用
+
+- sysenter / sysexit
+  + 没有特权级别检查(CPL, DPL)，也没有压栈的操作
+
+- syscall / sysret
+  + 64 位
+
+** man sections
+1. Executable programs or shell commands
+2. System calls (functions provided by the kernel)
+3. Library calls (functions within program libraries)
+4. Special files (usually found in /dev)
+5. File formats and conventions eg /etc/passwd
+6. Games
+7. Miscellaneous (including macro packages and conventions), e.g. man(7)
+8. System administration commands (usually only for root)
+9. Kernel routines [Non standard]
+** ctrl
+- ctrl-c: (kill foreground process) 发送 SIGINT 信号给前台进程组中的所有进程，强制终止程序的执行
+- ctrl-z: (suspend foreground process) 发送 SIGTSTP 信号给前台进程组中的所有进程，挂起一个进程，使用 fg/bg 操作恢复执行前台或后台的进程
+- ctrl-d: (terminate input, or exit shell) 一个特殊的二进制值，表示 EOF，作用相当于在终端中输入exit后回车
+- ctrl-/: 发送 SIGQUIT 信号给前台进程组中的所有进程，终止前台进程并生成 core 文件
+- ctrl-s: 中断控制台输出
+- ctrl-q: 恢复控制台输出
+
+** *nix commands
+
+#+begin_src sh
+# 查看某进程的虚拟内存分配情况
+cat /proc/[PID]/maps
+#+end_src
+
+#+begin_src sh
+#!/bin/sh
+exec 6< 1.txt # 创建一个文件描述符6，用6这个数字代表对1.txt的读操作
+exec 7> 1.txt # 创建一个文件描述符6，用6这个数字代表对1.txt的写操作
+exec 8<> 1.txt # 0u stdin, 1u stdout, 2u stderr, 6r read only, 7w write only, 8u 
+
+lsof -op $$ # 查看当前进程正在使用的文件的描述符
+
+cd /proc/$$/fd # $$代表当前进程的ID号
+
+pwd
+ls
+
+echo "hhh" >& 7 # 往1.txt里边写数据
+read a  0<&  6 # 读取第一行数据到 a, 每个文件描述符代表的数据结构中都有自己的偏移量
+
+echo $a
+#+end_src
 
 * Primer C++
 ** string, vector and array
@@ -366,6 +626,37 @@ const char *str = s.c_str(); // ok
 "To use a multidimensional array in a range for, the loop control variable for all but the innermost array must be references."
 #+end_quote
 
+** expression
+- 使用 decltype 时会区分 lvalue 和 rvalue
+#+begin_quote
+"When we apply decltype to an expression (other than a variable), the result is a reference type if the expression yields oan lvalue. As an example, assume p is an int*. Because dereference yields an lvalue, decltype(* p) is int&. On the other hand, because the address of operator yields an rvalue, decltype(&p) is int**, that is, a pointer to a pointer to type int."
+#+end_quote
+
+- 在一条表达式中如有未定义执行顺序的 operators （如int i = f1() * f2();），我们不能确定 f1() 和 f2() 哪个先执行，会造成 has undefined behavior
+#+begin_quote
+"For operators that do not specify evaluation order, it is an error for an expression to refer to and change the same object. Expressions that do so have undefined behavior. As a simple example, the << operator makes no guarantees about when or how its operands are evaluated. As a result, the following output expression is undefined:"
+#+end_quote
+#+begin_src c++
+int i = 0;
+cout << i << " " << ++i << endl; // undefined
+#+end_src
+#+begin_quote
+"There are four operators that do guarantee the order in which operands are evaluated. The logical AND (&&) operator guarantees that its left-hand operand is evaluated first. Moreover, we are also guaranteed that the right-hand operand is evaluated only if the left-hand operand is true. The only other operators that guarantee the order in which operands are evaluated are the logical OR (||) operator, the conditional (? :) operator, and the comma (,) operator."
+#+end_quote
+#+begin_quote
+• The right side of an && is evaluated if and only if the left side is true.
+• The right side of an || is evaluated if and only if the left side is false.
+#+end_quote
+
+- bool 不应该用于计算
+#+begin_src c++
+bool b = true;
+bool b2 = -b; // b2 is true! (-1 is true)
+#+end_src
+#+begin_quote
+"bool values should not be used for computation. The result of -b is a good example of what we had in mind"
+#+end_quote
+
 * CSAPP
 ** basic
 - registers
@@ -382,11 +673,8 @@ const char *str = s.c_str(); // ok
 
 ** optimization
 - conditional move :: 使用 conditional moves 能避免 branch prediction
-
 - unrolling and accumulating :: 不使用流水线的话最好能优化到 latency bound（单位 clock cycles per element），使用流水线可以达到 throughout bound
-
 - ymm register :: 使用 SIMD (Single instruction, multiple data) operations 加速运算（vectorizing后）
-
 - branch misprediction invalidation :: 寄存器有多个副本，当分支预测错误时还原寄存器的值，reload pipline
 
 ** memory
@@ -425,9 +713,9 @@ const char *str = s.c_str(); // ok
 
 - link directory
 #+begin_src sh
-# mac 下查看shared library(.dylib)
+# mac 下查看 shared library(.dylib)
 otool -L a.out
-# linux 下查看shared library(.so)
+# linux 下查看 shared library(.so)
 ldd a.out
 # 查看第三方库路径
 pkg-config --cflags --libs yaml-cpp
@@ -447,6 +735,11 @@ pkg-config --cflags --libs yaml-cpp
   - fork :: called once, returns twice (to parent and child)
   - wait :: parent reap a child, synchronizing with child
   - waitpid :: waiting for specific process
+    #+begin_quote
+    The pid parameter specifies the set of child processes for which to wait.  If pid is -1, the call waits for any child process.  If pid is 0, the call waits for any
+     child process in the process group of the caller.  If pid is greater than zero, the call waits for the process with process id pid.  If pid is less than -1, the call
+     waits for any process whose process group id equals the absolute value of pid.
+    #+end_quote
   - reap :: 如果 parent 没有 reap child 进程，init process (pid = 1) 这个进程会去 reap zombie child process
   - execve :: loading and running programs, called once, nerver returns
 
@@ -455,6 +748,7 @@ pkg-config --cflags --libs yaml-cpp
 
 - signal
   + pause: wait for the receipt of a signal
+  + kill: send signal to a process
   + pnb (pending nonblocked signals) = pending & ~blocked
   + a signal handler is a separate logical flow (not process) that runs concurrently with the main program
   + sigprocmask: explicit blocking and unblocking mechanism
@@ -463,14 +757,130 @@ pkg-config --cflags --libs yaml-cpp
     - call only async-signal-safe functions
     - save and restore errno on entry and exit
     - protect shared data by temporarily blocking all signals
-    - declare global variables as *volatile*
+    - declare global variables as *volatile* (sig_atomic_t)，不能被加载到寄存器上
+  + async-signal-safety
+    - "man 7 signal": show async-signal-safe functions
+    - *write* is the only async-signal-safe output function
+    - *printf*, *malloc*, *exit* are not async-signal-safe, will cause deadlock
+      
+** system level I/O
+- End of line (EOL) indicators in different systems
+  + Linux and Mac Os: '\n'(0xa) - line feed
+  + Windows and Internet protocols: '\r\n'(0xd 0xa) - carriage return and line feed
+- strace: 追踪程序调用的系统命令
+  + example: strace -e trace=write ./cpstdin
+- descriptor table [one table per process]
+  + 不同的 file descriptor 可以指向相同的 file，指向不同的 open file table，其中的 file position 可能不同
+  + child process 会复制一份 parent process 的 descriptor talbe
+- open file table [shared by all process]
+  + file pos
+  + reference count
+- v-node table [shared by all process]
+  + informations in *stat* struct
+- dup2: duplicate an entry in the descriptor table
+  + most common use: I/O redirection (ls > a.txt)
+- standard I/O
+  + 先 write/read 到 internal buffer，再 transfers bytes from an internal buffer to a user buffer (flush)
+  + 遇到换行符会自动调用 fflush
 
+** virtual memory
+- cache
+  + write-back rather than write-through: try to defer writing back to disk
+  + each process has its own page table (an array of page table entries (PTEs) that maps virtual pages to physical pages) in DRAM
+  + page miss cause page fault (an exception)
+  + allocating pages: call sbrk，会改变 program break 的位置 (heap 的结束地址)
+- memory management
+  + *execve* allocate virtual pages for .text and .data section & create PTEs marked as invalid
+  + .text and .data section are copied, page by page
+- memory protection
+  + extend PTEs with permission bits (sup, read, write, exec)
+  + 64位的地址只使用了低48位，高位全为1的是用于内核，高位全为0的是用于用户
 
+- Page Table Base Register: CR3 寄存器保存着当前进程页目录的物理地址，切换进程就会改变 CR3 的值 (part of the process' context)
 
+- multi-level page tables
+  + PGD：page global directory (47-39), 页全局目录, 查看大小: *getconf PAGE_SIZE* = 4096
+  + PUD：page upper directory (38-30), 页上级目录
+  + PMD：page middle directory (29-21), 页中间目录
+  + PTE：page table entry (20-12), 页表项
 
-** lab
-*** attack lab
+- TLB (Translation Lookaside Buffer)
+  + TLB miss 后才会去 multi-level page tables 中寻找 PPN
 
+- components of the virtual address (VA)
+  + TLBI: TLB index
+  + TLBT: TLB tag
+  + VPO: virtual page offset
+  + VPN: virtual page number
+  
+- components of the physical address (PA)
+  + PPO: physical page offset
+  + PPN: physical page number
+  + CO: byte offset within cache line
+  + CI: cache index
+  + CT: cache tag
+
+- Linux VM organization
+  + task_struct 进程描述符: 有指向内存描述符的指针 struct mm_struct *mm, *active_mm
+  + mm_struct 内存描述符: 有指向线性区对象的链表头 struct vm_area_struct *mmap 和指向线性区对象的红黑树 struct rb_root mm_rb， 有 pgd_t * pgd
+  + vm_area_truct: 描述了虚拟地址空间的一个区间
+    - vm_prot: read/write premission for this area
+    - vm_flags: pages shared with other processes or private for this process
+
+- private copy-on-write objects: make a copy when write instead of it reflecting changes to disk
+
+- user-level memory mapping
+  + void *mmp(void *start, int len, int prot, int flags, int fd, int offset)
+  + map *len* bytes starting at *offset* of the file specified by file description *fd*, preferably at address *start*
+    - start: may be *0* for "pick an address"
+    - prot: PROT_READ, PROT_WRITE, PROT_EXEC, ...
+    - flags: MAP_ANON (anonymous, get a demand 0 page), MAP_PRIVATE, MAP_SHARED, ...
+  
+** dynamic memory allocation
+- performance goals
+  + throughput: number of completed requests per unit time
+  + peak memory utilization = max_playload / heap_size
+  + placement policy, splitting policy, coalescing policy
+
+- keeping track of free blocks
+  + method 1: implicit list using length -- links all blocks
+  + method 2: explicit list among the free blocks using pointers
+  + method 3: segregated free list
+  + method 4: blocks sorted by size
+
+- implicit list
+  + alignment: 16 bytes (2 words)
+  + header (1 word = size + previous allocation status + allocation status) + payload and padding + boundary tag (footer 1 word, only on free blocks)
+  + we dont need boundary tag on allocated blocks
+
+- explicit free list
+  + allocated blocks are the same as implicit list
+  + free blocks store forward/back pointers
+  + how to put a newly freed block? - LIFO policy and address-ordered policy
+  + allocate is linear time in number of free blocks instead of all blocks
+
+- implicit memory management - garbage collection
+  + must make some assumptions:
+    - memory manager can distinguish pointers from non-pointers
+    - all pointers point to the start of a block
+    - cannot hide pointers
+  + GC algorithms:
+    - mark-and-sweep collection: view memory as a directed graph, use extra mark bit in the head of each block
+    - reference counting
+    - copying collection
+    - generational collectors
+    - mark-compact collection
+    - conservation collection
+    - incremental collection
+    - 基于引用计数只需要局部信息，基于 trace 需要全局信息，引用计数缺少全局信息，无法处理循环引用，可使用*弱引用*解决
+
+- dealing with memory-related perils and pitfalls
+  + debugger: gdb
+  + data structure consistency checker
+  + binary translator: valgrind
+  + glibc malloc contains checking code: setenv MALLOC_CHECK_ 3
+
+** network programming
 * Introduction to Computer Networking
 ** intro
 + layers
@@ -493,6 +903,85 @@ pkg-config --cflags --libs yaml-cpp
   + flow-control prevents overrunning receiver.
 - in-squence
 - congestion control
+
+- connection setup
+  + sequence number, acknowledgment number, ack bit and syn bit are used
+  + 3-way handshake
+    - syn, sequence number $S_a$ , turns to syn sent state
+    - syn/ack, ack number $S_{a+1}$ and sequence number $S_p$ , turns to syn received state
+    - ack, ack number $S_{p+1}$ and sequence number $S_{a+1}$ , turns to established state
+  + support "simultaneous open": 4-way handshake
+
+- connection teardown
+  + sequence number, acknowledgment number, ack bit and fin bit are used
+  + 4-way wave hand
+    - fin/ack, ack number $S_b$ and sequence number $S_a$ , turns to fin wait 1 state
+    - ack, ack number $S_{a+1}$ , turns to close wait state
+    - fin/ack, ack number $S_{a+1}$ and sequence number $S_b$ , turns to last ack state
+    - ack, ack number $S_{b+1}$ , turns to time wait state
+  + active closer goes into TIME WAIT: sending fin before receiving one, keep socket around 2 MSL(maximun segment lifetime)
+  + 尽可能在服务器端避免 TIME WAIT
+
+
+
+** ICMP
+- self-contained message reporting error.
+- new datagram: first 8 byte payload + header + type + code
+- ping uses ICMP:
+  + 构造 ICMP 数据包 --> 构造 IP 数据包 --> 构造以太网数据帧 ----> 物理传输到目标主机 ----> 获取以太网数据帧 --> 解析出 IP 数据包 --> 解析出 ICMP 数据包 --> 发送回送应答报文
+  + echo request (type 8, code 0)
+  + echo reply (type 0, code 0)
+- traceroute uses ICMP: find the routers from A to B
+  + A sends a UDP message, TTL set to 1
+  + the first router sends the TTL expired (type 11) ICMP message to A
+  + A sends a UDP message, TTL set to 2
+  + the second router sends the TTL expired (type 11) ICMP message to A
+  + ......
+  + when messages reach B, B sends the port unreachable ICMP message to A
+
+** error detection
+- checksum
+  + IP, TCP
+  + fast but not robust
+- cyclic redundancy codes (CRC)
+  + Ethernet
+  + more expensive than checksum
+  + n 位 CRC = (message << n) 除以 generator polynomial 得到的余数
+  + check: (message << n + CRC) / generator 的 remainder 为0
+- message authentication code (MAC)
+  + Secure Socket Layer (SSL)/Transport Layer Security (TLS) -- https
+  + robust to malicious modifications
+  + can't guarantee detecting any error
+
+** sliding window
+- sender
+  + every segment has squence number
+  + maintain 3 variables
+    - send window size (SWS)
+    - last acknowledgment received (LAR)
+    - last segment sent (LSS)
+  + maintain invariant: LSS - LAR <= SWS
+  + window stalling: can't move past the first unacknowledgement piece of data
+
+- receiver
+  + maintain 3 variables
+    - receive window size (RWS)
+    - last acceptable segment (LAS)
+    - last segment received (LSR)
+  + maintain invariant: LAS - LSR <= RWS
+  + if received packet is < LAS, send acknowledgement
+    - send cumulative acks: if received 1, 2, 3, 5, acknowledge 3
+
+- generally need SWS + RWS squenece numbers
+  + RWS packets in unkown state (ack may/may not be lost)
+  + SWS packets in flight must not overflow squence number space
+
+- tcp flow control: tcp uses sliding window protocol for flow control
+
+- go-back-N and selective repeat
+  + go-back-N: one loss will lead to entire window retransmitting
+  + selective repeat: one loss will lead to only that packet retransmitting
+
 * Practical Network Programming
 ** intro
 - layered network
@@ -501,3 +990,335 @@ pkg-config --cflags --libs yaml-cpp
   + TCP segment
   + Application message
 
+** tcp self-connection
+- port should in net.ipv4.ip_local_port_range (sysctl -A | grep port_range)
+
+** other
+- 大型网站的构建
+  + web 静动态资源分离
+  + 缓存处理：客户端（浏览器）缓存，前端页面缓存（squid），页面片段缓存（Edge Side Includes），本地数据缓存
+  + web server 集群
+  + 数据库读写分离
+  + 负载均衡
+    - 前端负载均衡：DNS, NAT, 反向代理
+    - 应用服务器负载均衡
+    - 数据库负载均衡
+  + CDN（内容分发网络），分布式缓存，分库分表
+  + 多数据中心，分布式存储与计算
+
+- signal
+  + SIGPIPE :: client close socket, server call write, then server will receive a RST segment, if server do a write again, then it will cause SIGPIPE
+  + SIGCHLD :: zombie child process
+
+- poll
+  + ignore SIGPIPE and SIGCHLD
+  + non-blocking sokcet + I/O multiplexing
+  + create listenfd: socket_nonblocking, sokcet_cloexec (or call fcntl f_setfl(o_nonblock), f_setfd(fd_cloexec))
+  + &*pollfds.begin() 等同于 pollfds.data()
+  + 每次调用传一个 struct pollfd 的数组给内核，内核使用链表存储
+  + specifying a negative value in timeout means an infinite timeout.
+  + specifying a timeout of zero causes poll() to return immediately, even if no file descriptors are ready.
+  + accept(2) return EMFILE 处理（太多文件）
+    #+begin_src c++
+	      idlefd = open("dev/null", O_RDONLY | O_CLOEXEC);
+	      if (errno == EMFILE)
+		{
+		  close(idlefd);
+		  idlefd = accept(listenfd, nullptr, nullptr);
+		  close(idlefd);
+		  idlefd = open("dev/null", O_RDONLY | O_CLOEXEC);
+		  continue;
+
+    #+end_src
+
+- epoll
+  + 使用 epoll_create1(EPOLL_CLOEXEC) 创建 epollfd
+  + 使用 epoll_ctl(epollfd, EPOLL_CTL_ADD, listenfd, &event) 添加 event
+    #+begin_src c++
+
+       // The struct epoll_event is defined as:
+
+           typedef union epoll_data {
+               void    *ptr;
+               int      fd;
+               uint32_t u32;
+               uint64_t u64;
+           } epoll_data_t;
+
+           struct epoll_event {
+               uint32_t     events;    /* Epoll events */
+               epoll_data_t data;      /* User data variable */
+           };
+    #+end_src
+  + 调用 epoll_wait(epollfd, epoll_event 数组, epoll_event 数组的 size), 将就绪 event 的传入 epoll_event 数组
+* source code
+** epoll
+初始化
+#+begin_src c
+static int __init eventpoll_init(void)
+{
+    mutex_init(&epmutex);
+
+    /* Initialize the structure used to perform safe poll wait head wake ups */
+    ep_poll_safewake_init(&psw);
+
+    /* Allocates slab cache used to allocate "struct epitem" items */
+    epi_cache = kmem_cache_create("eventpoll_epi", sizeof(struct epitem),
+            0, SLAB_HWCACHE_ALIGN|EPI_SLAB_DEBUG|SLAB_PANIC,
+            NULL);
+
+    /* Allocates slab cache used to allocate "struct eppoll_entry" */
+    pwq_cache = kmem_cache_create("eventpoll_pwq",
+            sizeof(struct eppoll_entry), 0,
+            EPI_SLAB_DEBUG|SLAB_PANIC, NULL);
+
+    return 0;
+}
+fs_initcall(eventpoll_init);
+#+end_src
+
+结构体
+#+begin_src c
+
+/* 每创建一个 epollfd, 内核就会分配一个 eventpoll 与之对应, 可以说是
+ * 内核态的 epollfd. */
+struct eventpoll {
+    spinlock_t lock;
+
+    struct mutex mtx;     /* 防止使用时被删除 */
+
+    wait_queue_head_t wq;     /* sys_epoll_wait() 使用的等待队列 */
+
+    wait_queue_head_t poll_wait;     /* file->epoll() 使用的等待队列 */
+
+    struct list_head rdllist;     /* List of ready file descriptors */
+    
+    struct rb_root rbr; /* RB tree root used to store monitored fd structs */
+
+    struct epitem *ovflist;
+
+    struct user_struct *user;
+};
+
+/* epitem 表示一个被监听的 fd */
+struct epitem {
+    struct rb_node rbn;     /* RB tree node used to link this structure to the eventpoll RB tree */
+
+    struct list_head rdllink;     /* List header used to link this structure to the eventpoll ready list */
+
+    struct epitem *next;
+
+    struct epoll_filefd ffd;     /* The file descriptor information this item refers to */
+
+    int nwait;     /* Number of active wait queue attached to poll operations */
+    
+    struct list_head pwqlist;     /* List containing poll wait queues */
+    
+    struct eventpoll *ep;     /* 当前 epitem 属于哪个 eventpoll */
+    
+    struct list_head fllink;
+    
+    struct epoll_event event;     /* 当前的 epitem 关系哪些 events, 这个数据是调用 epoll_ctl 时从用户态传递过来 */
+};
+
+struct epoll_filefd {
+    struct file *file;
+    int fd;
+};
+
+/* poll 所用到的钩子 Wait structure used by the poll hooks */
+struct eppoll_entry {
+
+    struct list_head llink;     /* List header used to link this structure to the "struct epitem" */
+    
+    struct epitem *base; /* The "base" pointer is set to the container "struct epitem" */
+    
+    wait_queue_t wait;
+    
+    wait_queue_head_t *whead;
+};
+
+/* Wrapper struct used by poll queueing */
+struct ep_pqueue {
+    poll_table pt;
+    struct epitem *epi;
+};
+
+/* Used by the ep_send_events() function as callback private data */
+struct ep_send_events_data {
+    int maxevents;
+    struct epoll_event __user *events;
+};
+
+#+end_src
+
+函数
+
+create
+#+begin_src c
+
+SYSCALL_DEFINE1(epoll_create, int, size)
+{
+        if (size <= 0)
+                return -EINVAL;
+        return sys_epoll_create1(0);
+}
+
+
+SYSCALL_DEFINE1(epoll_create1, int, flags)
+{
+    int error;
+    struct eventpoll *ep = NULL;  // 主描述符
+    
+    BUILD_BUG_ON(EPOLL_CLOEXEC != O_CLOEXEC);
+
+    /* 对于 epoll 来讲, 目前唯一有效的 FLAG 就是 CLOEXEC */
+    if (flags & ~EPOLL_CLOEXEC)
+        return -EINVAL;
+    
+    error = ep_alloc(&ep);     /* 分配一个struct eventpoll */
+
+    if (error < 0)
+        return error;
+    /*
+     * Creates all the items needed to setup an eventpoll file. That is,
+     * a file structure and a free file descriptor.
+     * 推荐阅读 <Linux device driver 3rd>
+     */
+    error = anon_inode_getfd("[eventpoll]", &eventpoll_fops, ep,
+                 O_RDWR | (flags & O_CLOEXEC));
+    if (error < 0)
+        ep_free(ep);
+    return error;
+}
+#+end_src
+
+control
+#+begin_src c
+// 使用范例
+struct epoll_event event;
+event.data.fd = listenfd;
+event.events = EPOLLIN;
+epoll_ctl(epollfd, EPOLL_CTL_ADD, listenfd, &event);
+
+// epoll_ctl
+SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
+        struct epoll_event __user *, event)
+{
+    int error;
+    struct file *file, *tfile;
+    struct eventpoll *ep;
+    struct epitem *epi;
+    struct epoll_event epds;
+    error = -EFAULT;
+
+    /*
+     * 错误处理以及从用户空间将 epoll_event 结构的 event copy 到内核空间.
+     */
+    if (ep_op_has_event(op) &&
+        copy_from_user(&epds, event, sizeof(struct epoll_event)))
+        goto error_return;
+
+    /* Get the "struct file *" for the eventpoll file 
+     * 这个结构在 epoll_create1() 中, 由函数 anon_inode_getfd() 分配 */
+    error = -EBADF;
+    file = fget(epfd);
+    if (!file)
+        goto error_return;
+
+    /* Get the "struct file *" for the target file */
+    /* 我们需要监听的 fd, 也有个 struct file 结构 */
+    tfile = fget(fd);
+    if (!tfile)
+        goto error_fput;
+
+    /* The target file descriptor must support poll */
+    /* 监听的文件需要支持 poll */
+    error = -EPERM;
+    if (!tfile->f_op || !tfile->f_op->poll)
+        goto error_tgt_fput;
+
+    /*
+     * We have to check that the file structure underneath the file descriptor
+     * the user passed to us _is_ an eventpoll file. And also we do not permit
+     * adding an epoll file descriptor inside itself.
+     */
+    /* epoll 不能自己监听自己 */
+    error = -EINVAL;
+    if (file == tfile || !is_file_epoll(file))
+        goto error_tgt_fput;
+
+    /*
+     * At this point it is safe to assume that the "private_data" contains
+     * our own data structure.
+     */
+    /* 获取 eventpoll 结构, 来自与 epoll_create1() 中的分配 */
+    ep = file->private_data;
+
+    /* 接下来的操作有可能修改数据结构内容, 加锁 */
+    mutex_lock(&ep->mtx);
+
+    /*
+     * Try to lookup the file inside our RB tree, Since we grabbed "mtx"
+     * above, we can be sure to be able to use the item looked up by
+     * ep_find() till we release the mutex.
+     */
+    /* 对于每一个监听的fd, 内核都有分配一个epitem结构,
+     * 而且我们也知道, epoll是不允许重复添加fd的,
+     * 所以我们首先查找该fd是不是已经存在了.
+     * ep_find()其实就是RBTREE查找, 跟C++STL的map差不多一回事, O(lgn)的时间复杂度.
+     */
+    epi = ep_find(ep, tfile, fd);
+    error = -EINVAL;
+    switch (op) {
+        /* 首先我们关心添加 */
+    case EPOLL_CTL_ADD:
+        if (!epi) {
+            /* 之前的find没有找到有效的epitem, 证明是第一次插入, 接受!
+             * 这里我们可以知道, POLLERR和POLLHUP事件内核总是会关心的
+             * */
+            epds.events |= POLLERR | POLLHUP;
+            /* rbtree插入, 详情见ep_insert()的分析
+             * 其实我觉得这里有insert的话, 之前的find应该
+             * 是可以省掉的... */
+            error = ep_insert(ep, &epds, tfile, fd);
+        } else
+            /* 找到了!? 重复添加! */
+            error = -EEXIST;
+        break;
+        /* 删除和修改操作都比较简单 */
+    case EPOLL_CTL_DEL:
+        if (epi)
+            error = ep_remove(ep, epi);
+        else
+            error = -ENOENT;
+        break;
+    case EPOLL_CTL_MOD:
+        if (epi) {
+            epds.events |= POLLERR | POLLHUP;
+            error = ep_modify(ep, epi, &epds);
+        } else
+            error = -ENOENT;
+        break;
+    }
+    mutex_unlock(&ep->mtx);
+error_tgt_fput:
+    fput(tfile);
+error_fput:
+    fput(file);
+error_return:
+    return error;
+}
+#+end_src
+
+* plan
+
+vedio: csapp(), networking(), asio()
+
+e-book: csapp(), c++ primer()
+
+book: os(), network()
+
+practical: leetcode()
+
+other: muduo()

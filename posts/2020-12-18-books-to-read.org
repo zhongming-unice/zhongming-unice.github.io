@@ -12,12 +12,19 @@
 - C++ Network Programming, Volume I Mastering Complexity with ACE and Patterns by Douglas C. Schmidt, Stephen D. Huston 
 - C++ Network Programming, Volume 2 Systematic Reuse with ACE and Frameworks by Douglas C. Schmidt, Stephen D. Huston
 - C++ Gotchas Avoiding Common Problems in Coding and Design by Stephen C. Dewhurst 
-- C++ Coding Standards 101 Rules, Guidelines, and Best Practices by Herb Sutter, Andrei Alexandrescu 
-- UNIX Network Programming, Volume 1 The Sockets Networking API, 3rd Edition by W. Richard Stevens, Bill Fenner, Andrew M. Rudoff
-- Advanced Programming in the UNIX® Environment by W. Richard Stevens  Stephen A. Rago [Stevens, W. Richard  Rago, Stephen A.]
-- TCPIP Illustrated. vol. 2 The Implementation by Gary R. Wright, W. Richard Stevens
-- Elements of Programming by Alexander Stepanov and Paul McJones
+- C++ Coding Standards 101 Rules, Guidelines, and Best Practices by Herb Sutter, Andrei Alexandrescu
+- The C++ Standard Library A Tutorial and Reference by Nicolai M. Josuttis
+- Introduction to algorithms by Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein
   
+* unix
+- Computer Systems A Programmer’s Perspective by Randal E. Bryant, David R. O’Hallaron
+- UNIX Network Programming, Volume 1 The Sockets Networking API, 3rd Edition by W. Richard Stevens, Bill Fenner, Andrew M. Rudoff
+- UNIX network programming, vol.2: Interprocess communication by W. Richard Stevens
+- Advanced Programming in the UNIX® Environment by W. Richard Stevens  Stephen A. Rago [Stevens, W. Richard  Rago, Stephen A.]
+- TCPIP Illustrated, Volume 1 The Protocols by Kevin R. Fall, W. Richard Stevens
+- TCPIP Illustrated. vol. 2 The Implementation by Gary R. Wright, W. Richard Stevens
+- TCPIP Illustrated v. 3 TCP for Transactions, HTTP, NNTP and the Unix Domain Protocols by W. Richard Stevens
+- The Linux programming interface a Linux and UNIX system programming handbook by Michael Kerrisk
 
 * scheme
 - The optimal implementation of functional programming languages by Andrea Asperti, Stefano Guerrini
@@ -29,8 +36,8 @@
 - The Little MLer by Matthias Felleisen, Daniel P. Friedman
 - Essentials of Programming Languages by Daniel P. Friedman, Mitchell Wand 
 - Common Lisp, The Language, 2nd Edition
-
-
+- Elements of Programming by Alexander Stepanov and Paul McJones
+  
 * complier
 - Structure and Interpretation of Computer Programs by Harold Abelson, Gerald Jay Sussman
 - Modern Compiler Implementation in C by Andrew W. Appel,  Maia Ginsburg
