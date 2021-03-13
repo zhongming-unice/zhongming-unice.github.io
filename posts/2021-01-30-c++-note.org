@@ -12,34 +12,35 @@
 
 * basic
 ** static
-- copy constructor ::
-在使用包含静态成员的类时，调用拷贝构造函数生成临时对象，
-这个临时对象在调用析构函数时可能会产生对静态成员的副作用（如 count 自减1），
-我们需要重写拷贝构造函数，在该拷贝构造函数中完成构造函数里的操作（如 count 自增1）。
+- copy constructor :: 
+在使用包含静态成员的类时, 调用拷贝构造函数生成临时对象, 
+这个临时对象在调用析构函数时可能会产生对静态成员的副作用（如 count 自减1）, 
+我们需要重写拷贝构造函数, 在该拷贝构造函数中完成构造函数里的操作（如 count 自增1）。
 
 ** virtual
-- 在构造函数和析构函数中调用虚的成员函数不会有虚函数的效果，即还是调用父类的成员函数，可以使用工厂模式来解决。
-- 类中有虚函数时，析构函数要为虚或者 protected
+- 在构造函数和析构函数中调用虚的成员函数不会有虚函数的效果, 即还是调用父类的成员函数, 可以使用工厂模式来解决。
+- 类中有虚函数时, 析构函数要为虚或者 protected
 
 ** lvalue and rvalue
 - rvalue
   + xvalue(Expiring Value)
   + prvalue(Pure Right Value)
 
-- rvo :: Return Value Optimization, 编译器减少函数返回时生成临时值（对象）的个数，编译器默认使用，编译时使用 -fno-elide-constructors 来禁用
+- rvo :: Return Value Optimization, 编译器减少函数返回时生成临时值（对象）的个数, 编译器默认使用, 编译时使用 -fno-elide-constructors 来禁用
 - nrvo :: Named Return Value Optimization
 
-- std::forward 完美转发，defined in header <utility>，能保留const，可以被static_cast替代，能转发：
+- std::forward 完美转发, defined in header <utility>, 能保留const, 可以被static_cast替代, 能转发：
   + const T &
   + T &
   + const T &&
   + T &&
   
 ** cast
-- const_cast :: 可 cast const 的对象，除 function pointers
-
+- const_cast :: 可 cast const 的对象, 除 function pointers
+- reinterpret_cast :: 将内存里的值重新解释
+- dynamic_cast :: 一般地讲, 能用虚函数解决的问题就不要用 dynamic_cast, 能够用 dynamic_cast 解决的就不要用 typeid
 ** inheritance
-- 强制要求派生类显式地使用接口，又为派生类准备一个可调用的默认实现：为纯虚函数提供定义，这种定义不会存入虚表，因此基类本身仍然是抽象类，并且派生类仍然需要提供一个显式实现
+- 强制要求派生类显式地使用接口, 又为派生类准备一个可调用的默认实现：为纯虚函数提供定义, 这种定义不会存入虚表, 因此基类本身仍然是抽象类, 并且派生类仍然需要提供一个显式实现
   #+begin_src c++
 class Base
 {
@@ -81,9 +82,24 @@ int main() {
   -Xclang -fdump-record-layouts -std=c++11
   #+end_src
 - 组合正交的多个功能
-  + 有一个 TaskManager 类，负责管理所有拥有 ITask 接口的对象，现在需要为 ITask 类型增加两个功能：一是 timing 功能，即在 ITask 对象执行 Execute 方法前后计时；二是 logging 功能，即在 ITask 对象执行 Execute 方法前后打印日志
-  + 将 TimingTask 和 LoggingTask 的基类都换成模板参数，实现 mixin
+  + 有一个 TaskManager 类, 负责管理所有拥有 ITask 接口的对象, 现在需要为 ITask 类型增加两个功能：一是 timing 功能, 即在 ITask 对象执行 Execute 方法前后计时；二是 logging 功能, 即在 ITask 对象执行 Execute 方法前后打印日志
+  + 将 TimingTask 和 LoggingTask 的基类都换成模板参数, 实现 mixin
 
+** time
+| Function           | Type            | Precision   | Remark   |
+|--------------------+-----------------+-------------+----------|
+| time(2)            | time_t          | second      |          |
+| ftime(3)           | struct timeb    | millisecond | obsolete |
+| gettimeofday(2)    | struct timeval  | microsecond |          |
+| clock_gettime(2)   | struct timespec | nanosecond  |          |
+| Time Stamp Counter | 64-bit register | CPU related |          |
+- clock_gettime(): 系统调用 (_sys_clock_gettime()), 可指定参数 CLOCK_REALTIME_COARSE 和 CLOCK_MONOTONIC_COARSE,
+  粗粒度地获取时间, 而不需要发生上下文切换 (和 gettimeofday() 一样也是 vdso 技术)
+  #+begin_src c++
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC_COARSE, &ts);
+  unsigned long long millisecs = ts.tv_sec * 1000 + ts.tv_nsec / (1000 * 1000);
+  #+end_src
 ** smart pointer
 - enable_shared_from_this ::
   + 是一种 CRTP
@@ -142,58 +158,278 @@ int main()
   + Unlike the std::shared_ptr constructors, std::make_shared does not allow a custom deleter.
   + std::make_shared uses ::new, so if any special behavior has been set up using a class-specific operator new, it will differ from std::shared_ptr<T>(new T(args...)).
 ** RAII
-资源获取即初始化（Resource Acquisition Is Initialization），或称 RAII，
+资源获取即初始化（Resource Acquisition Is Initialization）, 或称 RAII, 
 它将必须在使用前请求的资源的生命周期与一个对象的生命周期相绑定。
 
-- 拥有 open()/close()、lock()/unlock()，或 init()/copyFrom()/destroy() 成员函数的类是非 RAII 类的典型的例子
+- 拥有 open()/close()、lock()/unlock(), 或 init()/copyFrom()/destroy() 成员函数的类是非 RAII 类的典型的例子
 
 ** value semantics
-[[https://akrzemi1.wordpress.com/2012/02/03/value-semantics/][Value semantics]]
-
 - 对一个具有值语义的原始变量变量赋值可以转换成内存的 bit-wise-copy
 - 如果一个type X 具有值语义, 则：
   + X 的 size 在编译时可以确定
-  + 将 X 的变量 x，赋值与另一个变量 y，无须专门的 = operator，简单的 bit-wise-copy 即可
-  + 当上述赋值发生后，x 和 y 脱离关系：x 和 y 可以独立销毁，其内存也可以独立释放 
+  + 将 X 的变量 x, 赋值与另一个变量 y, 无须专门的 = operator, 简单的 bit-wise-copy 即可
+  + 当上述赋值发生后, x 和 y 脱离关系：x 和 y 可以独立销毁, 其内存也可以独立释放 
 
 ** CRTP
-Curiously Recurring Template Pattern 奇异递归模板模式，更一般地被称作 F-bound polymorphism
-- 派生类继承自模板类，派生类将自身作为参数传给模板类
-- 基类转换成派生类用的是 static_cast 而不是 dynamic_cast，降低了继承带来的虚函数表查询开销
+Curiously Recurring Template Pattern 奇异递归模板模式, 更一般地被称作 F-bound polymorphism
+- 派生类继承自模板类, 派生类将自身作为参数传给模板类
+- 基类转换成派生类用的是 static_cast 而不是 dynamic_cast, 降低了继承带来的虚函数表查询开销
 - enable_shared_from_this 和 ranges::view_interface 属于 CRTP
  
 ** network I/O basic
-- synchronous :: 
-- asynchronous :: 
-- blocking :: 
-- non-blocking ::
-- reactor ::
-- proactor ::
+*** socket
+- setsockopt
+  + SO_REUSEADDR    enables local address reuse 对 time-wait 链接, 确保 server 重启成功
+  + SO_REUSEPORT    enables duplicate address and port bindings 可解决 thundering herd problem
+    #+begin_quote
+           SO_REUSEPORT (since Linux 3.9)
+            Permits  multiple  AF_INET  or  AF_INET6  sockets to be bound to an identical
+            socket address.  This option must be set on each socket (including the  first
+            socket)  prior  to calling bind(2) on the socket.  To prevent port hijacking,
+            all of the processes binding to the same address must have the same effective
+            UID.  This option can be employed with both TCP and UDP sockets.
 
-- kqueue ::
-- select :: 
-  + 当前进程使用 O(N) 时间轮询 bitmap 中准备就绪的 socket, 并将其保存进 socket 的等待队列中（作为等待者）, 如果没有准备就绪的 socket, 该进程将会被挂起, 等有数据传输完毕触发中断程序（kernel 也可以启动 interrupt coalescing 机制, 让网卡做中断合并）使 cpu 让出时间片去将数据导入 socket 的读缓冲区并将等待者移入工作队列
-- poll :: 
-  + 用数组代替 select 中的 bitmap 使其监听的 socket 数可以大于1024
-- epoll ::
-  + select 和 poll 的不足:
-    - 每次调用都需要所有需要监听的 socket 的 fd 的集合
-    - 返回值为 socket 就绪/错误的数量
-  + 解决:
-    - epoll 在内核空间使用 eventpoll 存放 socket fd 列表（红黑树）和就绪的 socket 列表
-    - socket 的等待队列中不再是进程, 而是 eventpoll 对象引用
-    - epoll_ctl(): 增删改 eventpoll 中的 socket fd 列表
-    - epoll_wait(): 阻塞线程直到指定的 socket 就绪, 将就绪的 socket 信息传入 epoll_event 事件数组指针
-    - 将 epoll_wait() 中的阻塞时间设置为0即为非阻塞
-    - eventpoll 的等待队列保存了调用了 epoll_wait() 的进程
-    
-- IOCP :: 
-- asio ::
-- muduo ::
-- misc
-  + 需要的线程数 = qps * latency (单位秒)
-    
+            For  TCP  sockets, this option allows accept(2) load distribution in a multi-
+            threaded server to be improved by using a distinct listener socket  for  each
+            thread.   This provides improved load distribution as compared to traditional
+            techniques such using a single accept(2)ing thread that  distributes  connec‐
+            tions,  or  having  multiple  threads that compete to accept(2) from the same
+            socket.
+
+            For UDP sockets, the use of this option can provide  better  distribution  of
+            incoming datagrams to multiple processes (or threads) as compared to the tra‐
+            ditional technique of having multiple processes compete to receive  datagrams
+            on the same socket.
+    #+end_quote
+*** select
+- 当前进程使用 O(N) 时间轮询 bitmap 中准备就绪的 socket, 并将其保存进 socket 的等待队列中（作为等待者）, 如果没有准备就绪的 socket, 该进程将会被挂起, 等有数据传输完毕触发中断程序（kernel 也可以启动 interrupt coalescing 机制, 让网卡做中断合并）使 cpu 让出时间片去将数据导入 socket 的读缓冲区并将等待者移入工作队列
+*** poll
+- 用数组代替 select 中的 bitmap 使其监听的 socket 数可以大于1024
+- signal
+  + SIGPIPE :: client close socket, server call write, then server will receive a RST segment, if server do a write again, then it will cause SIGPIPE
+  + SIGCHLD :: zombie child process
+
+- usage
+  + ignore SIGPIPE and SIGCHLD
+  + non-blocking sokcet + I/O multiplexing
+  + create listenfd: socket_nonblocking, sokcet_cloexec (or call fcntl f_setfl(o_nonblock), f_setfd(fd_cloexec))
+    #+begin_src c
+    listenfd = socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
+    //or
+    flags = fcntl (listenfd, F_GETFL, 0);
+    flags |= O_NONBLOCK;
+    fcntl (listenfd, F_SETFL, flags);
+    #+end_src
+  + &*pollfds.begin() 等同于 pollfds.data()
+  + 每次调用传一个 struct pollfd 的数组给内核, 内核使用链表存储
+  + specifying a negative value in timeout means an infinite timeout.
+  + specifying a timeout of zero causes poll() to return immediately, even if no file descriptors are ready.
+  + accept(2) return EMFILE 处理（太多文件）
+    #+begin_src c++
+	      idlefd = open("dev/null", O_RDONLY | O_CLOEXEC);
+	      if (errno == EMFILE)
+		{
+		  close(idlefd);
+		  idlefd = accept(listenfd, nullptr, nullptr);
+		  close(idlefd);
+		  idlefd = open("dev/null", O_RDONLY | O_CLOEXEC);
+		  continue;
+
+    #+end_src
+
+*** epoll
+- file operations 中的 poll 函数的作用
+  #+begin_src c
+  // file_operations Struct Reference 
+  #include <fs.h>
+  unsigned int(* 	poll )(struct file *, struct poll_table_struct *);
+
+  typedef struct poll_table_struct {
+    poll_queue_proc _qproc;
+    unsigned long _key;
+   } poll_table;
+  #+end_src
+  + 将当前进程的 task_struct 加入设备驱动的等待队列, 并设置回调函数
+  + 检查已发生的事件 POLLIN, POLLOUT, POLLERR
+
+- 等待队列
+  + 等待队列包含队列头(wait_queue_head_t)和队列项(wait_queue_t)
+    #+begin_src c
+      #include <wait.h>
+      struct list_head{
+          struct list_head *next, &prev;
+      }; // 双向链表
+
+      typedef struct __wait_queue_head wait_queue_head_t;
+      struct __wait_queue_head {
+          spinlock_t lock;
+          struct list_head task_list;
+      };
+
+      typedef struct __wait_queue wait_queue_t;
+      struct __wait_queue {
+          unsigned int flags;
+      #define WQ_FLAG_EXCLUSIVE   0x01
+          void *private;		/* 指向 task_struct */
+          wait_queue_func_t func;	/* callback function */
+          struct list_head task_list;
+      };
+
+    #+end_src
+  
+
+- epoll_ctl(epfd, EPOLL_ADD_CTL, fd, &event)
+  + copy_from_user 将用户的 event 拷贝到内核 named epds
+  + 得到 epfd 的 file 结构体 named file, fd 的结构体 named tfile
+  + tfile 需要支持 poll: tfile->f_op->poll
+  + epfd 不能监听自己: file == tfile
+  + 获取 eventpoll 结构体 (每创建一个 epollfd, 内核就会分配一个 eventpoll 与之对应, 可以说是内核态的 epollfd), 来自与 epoll_create1() 中的分配: ep = file->private_data
+  + 加锁: mutex_lock(&ep->mtx)
+  + 对于每一个监听的 fd, 内核都有分配一个 epitem 结构体, epi = ep_find(ep, tfile, fd), rbtree 查找, O(lgn) 的时间复杂度
+  + if !epi 表示可插入, 复制到内核的 event: epds 添加事件 epds.events |= POLLERR | POLLHUP
+  + call ep_insert(ep, &epds, tfile, fd)
+    - 从 slab 中分配一个 epitem: epi = kmem_***_alloc(epi_***, GFP_KERNEL)
+    - 初始化 epi->ep = ep, ep_set_ffd(&epi->ffd, tfile, fd), epi->event = *event ...
+    - struct ep_pqueue epq: epq.epi = epi
+    - 初始化 epq 的 poll_table, 指定调用 poll_wait 时的回调函数为 ep_ptable_queue_proc: init_poll_funcptr(&epq.pt, ep_ptable_queue_proc)
+    - revents = tfile->f_op->poll(tfile, &epq.pt): f_op->poll(), sock_poll(), udp/tcp_poll(), datagram_poll(), sock_poll_wait(), ep_ptable_queue_proc()
+      + static void ep_ptable_queue_proc(struct file *file, wait_queue_head_t *whead, poll_table *pt)
+        - 根据 poll table 获取 epitem: struct epitem *epi = ep_item_from_epqueue(pt)
+        - 创建 struct eppoll_entry * pwq = kmem_***_alloc(pwq_***, GFP_KERNEL)
+        - 指定 ep_poll_callback 为唤醒时的回调函数: init_waitqueue_func_entry(&pwq->wait, ep_poll_callback)
+        - pwq->base = epi
+        - 将 pwq 挂入 sock->wq->wait (等待队列): add_wait_queue(whead, &pwq->wait)
+      + static int ep_poll_callback(wait_queue_t *wait, unsigned mode, int sync, void *key)
+        - 通过等待队列获取 epitem 和 eventpoll: 
+          struct epitem *epi = ep_item_from_wait(wait),
+          struct eventpoll *ep = epi->ep
+        - 检查有没有我们关心的事件: if (key && !((unsigned long) key & epi->event.events))
+    - 文件监听自己的 epitem 链起来: list_add_tail(&epi->fllink, &tfile->f_ep_links)
+    - epitem 插入 eventpoll 的 rbtree 中: ep_rbtree_insert(ep, epi)
+    - 监听数加1: atomic_inc(&ep->user->epoll_watches)
+  + 解锁: mutex_unlock(&ep->mtx)
+
+- epoll_wait(epfd, events, maxevents, timeout)
+  + 验证内存空间是否有效: access_ok(VERIFY_WRITE, events, maxevents * sizeof(struct epoll_event))
+  + 获取 epfd 在内核对应的 struct event_poll *ep = fget(epfd)->private_data
+  + call ep_poll(ep, events, maxevents, timeout)
+    - 检查 ready list (rdllist) 是否为空: list_empty(&ep->rdllist)
+    - 初始化等待队列: init_waitqueue_entry(&wait, current), current 是当前进程的 task_struct*
+    - 挂载到 ep 的等待队列: __add_wait_queue_exclusive(&ep->wq, &wait)
+    - sleep
+    - set_current_state(TASK_INTERRUPTIBLE): if the ep_poll_callback() sends us a wakeup in between, we can wake
+    - wake 后: __remove_wait_queue(&ep->wq, &wait), set_current_state(TASK_RUNNING)
+    - call ep_send_events(ep, events, maxevents)
+      + call ep_scan_ready_list(ep, ep_send_events_proc, &esed)
+        - 监听到 events 的 epitem 都链到 rdllist 上了
+        - 将 rdllist 所有的 epitem 都转移到了 txlist 上, 清空 rdllist: list_splice_init(&ep->rdllist, &txlist)
+        - 清空 ovflist: ep->ovflist = NULL
+        - call the callback function: (*sproc)(ep, &txlist, priv), 即 ep_send_events_proc(ep, &txlist, priv)
+          + priv: Private opaque data passed to the @sproc callback
+          + 扫描 txlist, 依次取出 epitem: list_first_entry(head, struct epitem, rdllink)
+          + 事件和用户传入的数据都 copy 给用户空间: __put_user(revents, &uevent->events), __put_user(epi->event.data, &uevent->data)
+          + 判断 trigger mode (LT or ET): if (!(epi->event.events & EPOLLET))
+          + 如果是 LT, 重新插入到 rdllist: list_add_tail(&epi->rdllink, &ep->rdllist)
+        - all the events that happens during that period of time are chained in ep->ovflist and requeued later on
+        - 将 ovflist 中的 epi 加到 rdllist
+        - 上一次没有处理完的 epitem, 重新插入到 rdllist: list_splice(&txlist, &ep->rdllist)
+        - 如果 rdllist 不为空, 唤醒
+ 
+- 用户态与内核态间的数据交换
+  | user                     | kernel                                           |
+  |--------------------------+--------------------------------------------------|
+  | int epfd                 | struct event_poll *ep = fget(epfd)->private_data |
+  | int fd (listenfd/connfd) | struct epitem *epi: alloc from slab, ep_set_ffd  |
+  | struct epoll_event event | struct epoll_event epds: copy_from_user          |
+  | events 数组              | copy to user by __put_user function              |
+
+- LT and ET
+  + 在 LT 模式下, ready list 上取出的 epitem 上报完事件后会重新加回 ready list
+    #+begin_src c
+    // static int ep_send_events_proc(struct eventpoll *ep, struct list_head *head, void *priv)
+    if (!(epi->event.events & EPOLLET)) {
+                list_add_tail(&epi->rdllink, &ep->rdllist);
+            }
+    #+end_src
+  + 如果 ready list 不为空, 且此时有进程阻塞在同一个 event_poll 睡眠队列上, 则唤醒它
+    #+begin_src c
+    // static int ep_scan_ready_list(struct eventpoll *ep, int (*sproc)(struct eventpoll *, struct list_head *, void *), void *priv)
+
+    if (!list_empty(&ep->rdllist)) {
+        /*
+         * Wake up (if active) both the eventpoll wait list and
+         * the ->poll() wait list (delayed after we release the lock).
+         */
+        if (waitqueue_active(&ep->wq))
+            wake_up_locked(&ep->wq);
+        if (waitqueue_active(&ep->poll_wait))
+            pwake++;
+    }
+    #+end_src
+
+- usage
+  + 使用 epoll_create1(EPOLL_CLOEXEC) 创建 epollfd
+  + 使用 epoll_ctl(epollfd, EPOLL_CTL_ADD, listenfd, &event) 添加 event
+    #+begin_src c++
+
+       // The struct epoll_event is defined as:
+
+           typedef union epoll_data {
+               void    *ptr;
+               int      fd;
+               uint32_t u32;
+               uint64_t u64;
+           } epoll_data_t;
+
+           struct epoll_event {
+               uint32_t     events;    /* Epoll events */
+               epoll_data_t data;      /* User data variable */
+           };
+
+           struct epoll_event event;
+           event.events = EPOLLIN;
+           event.data.fd = listenfd;
+           if (mode == 1)
+             event.events |= EPOLLET;
+           else if (mode == 2)
+             event.events |= EPOLLONESHOT;
+           epoll_ctl(epollfd, EPOLL_CTL_ADD, listenfd, &event);
+    #+end_src
+  + 调用 epoll_wait(epollfd, epoll_event 数组, epoll_event 数组的 size), 将就绪 event 的传入 epoll_event 数组
+    #+begin_src c++
+    nready = epoll_wait(epollfd, events.data(), static_cast<int>(events.size()), -1);
+    #+end_src
+- thundering herd
+  + EPOLLEXCLUSIVE: 只适用于多个线程/进程拥有各自的 epfd, 然后监听同一 listenfd
+  + SO_REUSEPORT: 只适用于多个 listenfd 绑定同一端口
+
 ** malloc
+#+begin_quote
+     The malloc(), calloc(), valloc(), realloc(), and reallocf() functions allocate memory.  The allocated memory is aligned such that it can be used for any data type,
+     including AltiVec- and SSE-related types.  The aligned_alloc() function allocates memory with the requested alignment.  The free() function frees allocations that
+     were created via the preceding allocation functions.
+
+     The malloc() function allocates size bytes of memory and returns a pointer to the allocated memory.
+
+     The calloc() function contiguously allocates enough space for count objects that are size bytes of memory each and returns a pointer to the allocated memory.  The
+     allocated memory is filled with bytes of value zero.
+
+     The valloc() function allocates size bytes of memory and returns a pointer to the allocated memory.  The allocated memory is aligned on a page boundary.
+
+     The aligned_alloc() function allocates size bytes of memory with an alignment specified by alignment and returns a pointer to the allocated memory.
+
+     The realloc() function tries to change the size of the allocation pointed to by ptr to size, and returns ptr.  If there is not enough room to enlarge the memory allo-
+     cation pointed to by ptr, realloc() creates a new allocation, copies as much of the old data pointed to by ptr as will fit to the new allocation, frees the old allo-
+     cation, and returns a pointer to the allocated memory.  If ptr is NULL, realloc() is identical to a call to malloc() for size bytes.  If size is zero and ptr is not
+     NULL, a new, minimum sized object is allocated and the original object is freed.  When extending a region allocated with calloc(3), realloc(3) does not guarantee that
+     the additional memory is also zero-filled.
+
+     The reallocf() function is identical to the realloc() function, except that it will free the passed pointer when the requested memory cannot be allocated.  This is a
+     FreeBSD specific API designed to ease the problems with traditional coding styles for realloc causing memory leaks in libraries.
+
+     The free() function deallocates the memory allocation pointed to by ptr. If ptr is a NULL pointer, no operation is performed.
+#+end_quote
+
 - dlmalloc – General purpose allocator
 
 - ptmalloc2 - glibc
@@ -201,7 +437,7 @@ Curiously Recurring Template Pattern 奇异递归模板模式，更一般地被�
   + 每个 chunk 至少需要 8 个字节的 overhead
   + ptmalloc 将相似大小的 chunk 用双向链表链接起来, 这样的一个链表被称为一个 bin, Ptmalloc 一共 维护了 128 个 bin, 并使用一个数组来存储这些 bin
 
-  + 大内存采用mmap()，小内存使用brk()
+  + 大内存采用mmap(), 小内存使用brk()
   + 有一个主分配区 (main arena), 多个非主分配区, 非主分配区只能使用 mmap 申请虚拟内存
 
   + per thread arena: maintain separate heap and freelist data structures for each thread
@@ -248,13 +484,27 @@ Curiously Recurring Template Pattern 奇异递归模板模式，更一般地被�
 
 - libumem – Solaris
 
-** thread
-** future
-* std container
+** thread-Safe, async-signal-safe and reentrant 
+#+begin_quote
+Reentrant Function
+
+A function whose effect, when called by two or more threads, is guaranteed to be as if the threads each executed the function one after another in an undefined order, even if the actual execution is interleaved.
+
+Thread-Safe
+
+A function that may be safely invoked concurrently by multiple threads. Each function defined in the System Interfaces volume of IEEE Std 1003.1-2001 is thread-safe unless explicitly stated otherwise.
+
+Async-Signal-Safe Function
+
+A function that may be invoked, without restriction, from signal-catching functions. No function is async-signal-safe unless explicitly described as such.
+#+end_quote
+可重入函数必然是线程安全函数和异步信号安全函数
+
+* stl container
 ** std::array
 template<typename T, size_t N>
 
-- 内存分配在栈（stack）上，不会重新分配，随机访问元素
+- 内存分配在栈（stack）上, 不会重新分配, 随机访问元素
 - swap: 交换每一个元素
 - fill: 对所有元素赋值
 
@@ -266,8 +516,8 @@ template<typename T, typename Allocator = allocator<T> >
 - reserve: 预先分配内存
 - shrink_to_fit: resize到合适的内存大小
 - push_back, emplace_back: 尾部插入
-- insert，emplace: 插入
-- vector 的元素不能为 bool，vector<bool> 是按 bit 存储
+- insert, emplace: 插入
+- vector 的元素不能为 bool, vector<bool> 是按 bit 存储
 
 ** std::deque
 acronym of double-ended queue 双端队列
@@ -275,7 +525,7 @@ acronym of double-ended queue 双端队列
 - push_front, emplace_front: 头部插入
 
 ** std::list
-Doubly linked list 双向列表
+Doubly linked list 双向列表(循环)
 
 - remove, remove_if: 删除
 - reverse: 反转
@@ -288,19 +538,21 @@ Doubly linked list 双向列表
 Single linked list 单向列表
 
 - before_begin: begin的前一个迭代器
-- erase_after: 删除下一个元素，返回 void
+- erase_after: 删除下一个元素, 返回 void
 - insert_after: 插入
 - splice_after: 接合
 
 ** std::set
 template<typename T, typename Compare = less<T>, typename Allocator = allocator<T>>
 
+- 通常为红黑树
+- std::multiset 允许元素重复, std::set 不允许
 - count: 查找元素个数
 - find: 查找元素
 - lower_bound: 第一个可插入点
 - upper_bound: 最后一个可插入点
 - equal_range: pair(lower_bound, upper_bound)
-- insert: 插入，返回值为 pair<Iterator, bool>
+- insert: 插入, 返回值为 pair<Iterator, bool>
 - std::find: 根据 operator== 查找；而 std::set::find 根据 Compare 查找
 - std::set::find 比 std::find 快
 
@@ -309,12 +561,12 @@ template<typename Key, typename T, typename Compare = less<Key>, typename Alloca
 
 - find: 返回 pair<const Key, T>
 - emplace_hint: 推荐插入
-- [] 和 .at()，[const Key] 不存在时插入pair，返回pair.second，.at(const Key) 不存在时不插入，返回一个异常
+- [] 和 .at(), [const Key] 不存在时插入pair, 返回pair.second, .at(const Key) 不存在时不插入, 返回一个异常
 
 ** std::unordered_map
 template<typename Key, typename T, typename Hash = hash<Key>, typename EqPred = equal_to<Key>, typename Allocator = allocator<pair<const Key, T> > >
 
-- 需要使用模板类的偏化定义键的 hash 函数，如果有两个值，可以使用 boost 库的 hash_combine
+- 需要使用模板类的偏化定义键的 hash 函数, 如果有两个值, 可以使用 boost 库的 hash_combine
 
 #+begin_src c++
   // Key class 's hash function
@@ -324,7 +576,7 @@ namespaece std
     {
       size_t operator()(const Key &k) const
       {
-	return k.value;
+        return k.value;
       }
     };
   }
@@ -353,7 +605,7 @@ namespaece std
 #+end_src
 
 ** std::remove
-STL 中 remove() 只是将待删除元素之后的元素移动到容器的前端，而不是删除。若要真正移除，需要搭配使用 erase()
+STL 中 remove() 只是将待删除元素之后的元素移动到容器的前端, 而不是删除。若要真正移除, 需要搭配使用 erase()
 #+begin_src c++
 std::string str2 = "Text\n with\tsome \t  whitespaces\n\n";
 str2.erase(std::remove_if(str2.begin(), 
@@ -362,22 +614,48 @@ str2.erase(std::remove_if(str2.begin(),
            str2.end());
 #+end_src
 
-* multithread
+* concurrency
 ** basic
 - std::thread::hardware_concurrency 硬件支持的线程数
 - std::this_thread::yield() 让出时间片
-
+- Binary semaphore 与 Mutex 的不同:
+  mutex 一定要由获得锁的进程释放, 而 semaphore 可以由其它进程释放, 因此semaphore可以用於進程間同步
+- spinlock 与 semaphore 的不同: 
+  spinlock 是 busy waiting, 而 semaphore 是 sleep。只有多 CPU 的內核态非进程空间, 才会用到 spinlock。 
+  Linux kernel 的 spinlock 在非 SMP 的情況下，只是关 irq，沒有別的操作，用於確保該段程序的運行不會被打斷。
+  而 spinlock 也一般沒有必要用於可以 sleep 的進程空間。
+- 用户空间的 spinlock 可以通过 atomic_flag 的 clear/test_and_set 来实现 unlock/lock/try_lock
 ** atomic
+- Compare & Swap: 看一看内存 *reg 里的值是不是 oldval, 如果是的话, 则对其赋值 newval
+  #+begin_src c
+    int compare_and_swap (int* reg, int oldval, int newval)
+    {
+      int old_reg_val = *reg;
+      if (old_reg_val == oldval) {
+        *reg = newval;
+      }
+      return old_reg_val;
+    }
+    /* gcc CAS */
+    bool __sync_bool_compare_and_swap (type *ptr, type oldval type newval, ...);
+    type __sync_val_compare_and_swap (type *ptr, type oldval type newval, ...);
+    /* c++ 11 CAS */
+    template< class T >
+    bool atomic_compare_exchange_weak( std::atomic* obj, T* expected, T desired );
+    template< class T >
+    bool atomic_compare_exchange_weak( volatile std::atomic* obj, T* expected, T desired );
+
+  #+end_src
 - operators
 
 | 原子指令 (x均为std::atomic<int>)                 | 作用                                                               |
 |--------------------------------------------------+--------------------------------------------------------------------|
 | x.load()                                         | 返回x的值。                                                        |
-| x.store(n)                                       | 把x设为n，什么都不返回。                                           |
-| x.exchange(n)                                    | 把x设为n，返回设定之前的值。                                       |
-| x.compare_exchange_strong(expected_ref, desired) | 若x等于expected_ref，则设为desired；否则把最新值写入expected_ref。 |
+| x.store(n)                                       | 把x设为n, 什么都不返回。                                           |
+| x.exchange(n)                                    | 把x设为n, 返回设定之前的值。                                       |
+| x.compare_exchange_strong(expected_ref, desired) | 若x等于expected_ref, 则设为desired；否则把最新值写入expected_ref。 |
 | x.compare_exchange_weak(expected_ref, desired)   | 相比compare_exchange_strong可能有spurious wakeup                   |
-| x.fetch_add(n), x.fetch_sub(n)                   | 原子地做x += n, x-= n，返回修改之前的值。                          |
+| x.fetch_add(n), x.fetch_sub(n)                   | 原子地做x += n, x-= n, 返回修改之前的值。                          |
 
 - memory order
 
@@ -386,22 +664,38 @@ str2.erase(std::remove_if(str2.begin(),
 | memory_order_relaxed | 没有fencing作用                                                                          |
 | memory_order_consume | 后面依赖此原子变量的访存指令勿重排至此条指令之前                                         |
 | memory_order_acquire | 后面访存指令勿重排至此条指令之前                                                         |
-| memory_order_release | 前面访存指令勿重排至此条指令之后。当此条指令的结果对其他线程可见后，之前的所有指令都可见 |
+| memory_order_release | 前面访存指令勿重排至此条指令之后。当此条指令的结果对其他线程可见后, 之前的所有指令都可见 |
 | memory_order_acq_rel | acquire + release语意                                                                    |
 | memory_order_seq_cst | acq_rel语意外加所有使用seq_cst的指令有严格地全序关系                                     |
 
 - 限制重排 ::
-Release-Acquire ordering: 在store()之前的所有读写操作，不允许被移动到这个store()的后面。
-在load()之后的所有读写操作，不允许被移动到这个load()的前面。
-假设 Thread-1 store()的那个值，成功被 Thread-2 load()到了，
-那么 Thread-1 在store()之前对内存的所有写入操作，此时对 Thread-2 来说，都是可见的。
+Release-Acquire ordering: 在 store() 之前的所有读写操作, 不允许被移动到这个 store() 的后面。
+在 load() 之后的所有读写操作, 不允许被移动到这个 load() 的前面。
+假设 Thread-1 store() 的那个值, 成功被 Thread-2 load() 到了, 
+那么 Thread-1 在store()之前对内存的所有写入操作, 此时对 Thread-2 来说, 都是可见的。
 
 - atomic_flag ::
-可于用户空间用 atomic_flag 实现自旋互斥，互斥锁是是一种 sleep-waiting 的锁，自旋锁是一种 busy-waiting 的锁
+可于用户空间用 atomic_flag 实现自旋互斥, 互斥锁是是一种 sleep-waiting 的锁, 自旋锁是一种 busy-waiting 的锁
 
 ** mutex
+- mutex 类似于 binary semaphore, 不同的是只能由上锁的进程/线程来解锁
 - 一般设为 mutable 使得 const member function 可以使用
-- 使用 std::lock_guard<std::mutex> 这种 RAII 防止出现异常导致 mutex 没有 unlock，配合 std::lock 和 std::adopt_lock 可以防止死锁
+  #+begin_src c
+  class ThreadsafeCounter {
+  mutable std::mutex m; // The "M&M rule": mutable and mutex go together
+  int data = 0;
+ public:
+  int get() const {
+    std::lock_guard<std::mutex> lk(m);
+    return data;
+  }
+  void inc() {
+    std::lock_guard<std::mutex> lk(m);
+    ++data;
+  }
+};
+  #+end_src
+- 使用 std::lock_guard<std::mutex> 这种 RAII 防止出现异常导致 mutex 没有 unlock, 配合 std::lock 和 std::adopt_lock 可以防止死锁
 - lock_guard, unique_lock and scoped_lock
 #+begin_src c++
 std::scoped_lock lock(e1.m, e2.m);
@@ -411,23 +705,31 @@ std::scoped_lock lock(e1.m, e2.m);
 // std::lock_guard<std::mutex> lk1(e1.m, std::adopt_lock);
 // std::lock_guard<std::mutex> lk2(e2.m, std::adopt_lock);
 
-// 等价代码 2 （若需要 unique_lock ，例如对于条件变量）
+// 等价代码 2 （若需要 unique_lock , 例如对于条件变量）
 // std::unique_lock<std::mutex> lk1(e1.m, std::defer_lock);
 // std::unique_lock<std::mutex> lk2(e2.m, std::defer_lock);
 // std::lock(lk1, lk2);
 #+end_src
 
 ** condition variable
-
 - notify_one(): notifies one waiting thread
 - notify_all(): notifies all waiting threads
+- wait_for()
+  #+begin_src c
+        /* template< class Rep, class Period, class Predicate > */
+        /* bool wait_for( std::unique_lock<std::mutex>& lock, */
+        /*              const std::chrono::duration<Rep, Period>& rel_time, */
+        /*              Predicate pred); */
 
-* coroutines
+    /* Equivalent to */ 
+    wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));
+  #+end_src
+
 * asio
 ** timer
-- boost::asio::deadline_timer 使用的计量时间是系统时间 (posix_time)，因此修改系统时间会影响deadline_timer的行为
+- boost::asio::deadline_timer 使用的计量时间是系统时间 (posix_time), 因此修改系统时间会影响deadline_timer的行为
 - 基于 std::chrono::steady_clock 的 boost::asio::steady_timer 是一个不会受系统时间影响的定时器
-- boost::asio::strand 基于 mutex 实现，保证 callback 的顺序
+- boost::asio::strand 基于 mutex 实现, 保证 callback 的顺序, 使用 strand.post/wrap 包装非线程安全的操作
 ** daytime
 - client synchronous
   + resolver(io_context)
@@ -483,53 +785,75 @@ std::scoped_lock lock(e1.m, e2.m);
     - do_read_body: async read, let room deliver(read message), call do_read_header
     - do_write: async write the front of write messages utils they're empty
     
-* design patterns
-** Creational Patterns 
-- [Abstract Factory] :: families of product objects
-- [Builder] :: how a composite object gets created
-- [Factory Method] :: subclass of object that is instantiated
-- [Prototype] :: class of object that is instantiated
-- [Singleton] :: the sole instance of a class
-** Structural Patterns
-- [Adapter] :: interface to an object
-- [Bridge] :: implementation of an object 
-- [Composite] :: structure and composition of an object
-- [Decorator] :: responsibilities of an object without subclassing
-- [Façade] :: interface to a subsystem
-- [Flyweight] :: storage costs of objects
-- [Proxy] :: how an object is accessed (its location)
-** Behavioral Patterns
-- [Chain of Responsibility] :: object that can fulfill a request
-- [Command] :: when and how a request is fulfilled
-- [Interpreter] :: grammar and interpretation of a language
-- [Iterator] :: how an aggregate's elements are accessed
-- [Mediator] :: how and which objects interact with each other
-- [Memento] :: what private information is stored outside an object, and when 
-- [Observer] :: how the dependent objects stay up to date
-- [State] :: states of an object
-- [Strategy] :: an algorithm
-- [Template Method] :: steps of an algorithm
-- [Visitor] :: operations that can be applied to objects without changing their classes
-
+* muduo
+** timestamp
+- boost::less_than_comparable<>: 要求实现 operator < , 自动实现 >, <=, >=, 模板元
+- BOOST_STATIC_ASSERT: 编译时断言, assert: 运行时断言, 在头文件 <boost/static_assert.hpp>
+- gmtime_r: 秒数转结构体
+  #+begin_src c
+  time_t seconds = static_cast<time_t>(....);
+  struct tm tm_time;
+  gmtime_r(&seconds, &tm_time);
+  #+end_src
+- PRId64: 跨 32/64 位平台的 lld/ld
+  #+begin_src c
+    #define __STDC_FORMAT_MACROS
+    #include <inttypes.h>
+    #undef __STDC_FORMAT_MACROS
+    printf("%" PRId64 "\n", value)
+    printf("%lld", value);		/* 32 bit OS*/
+    printf("%ld", value);		/* 64 bit OS */
+  #+end_src
+ 
 * unix
 ** baisc
 - int / iret
   + 调用 sys_open:
     #+begin_src asm
-    mov 0x05 ,eax       /* 设置系统调用号 05: sys_open*/
+    mov 0x05 ,eax       /* 设置系统调用号 05: sys_open */
     int 0x80
     #+end_src
-  + 调用 int 0x80 后，查找中断描述符表(IDT, Interrupt Descriptor Table)，进行特权级检查(DPL = CPL = 3)，在 GDT / LDT 中找到对应的段描述符
+  + 调用 int 0x80 后, 查找中断描述符表(IDT, Interrupt Descriptor Table), 进行特权级检查(DPL = CPL = 3), 在 GDT / LDT 中找到对应的段描述符
   + 段寄存器 DPL >= CPL 才能访问内核段的内存空间(通过 set_system_intr_gate 来设置)
-  + Linux 只为每个 CPU 维护一个 TSS，通过 TSS(Task State Segment) 来切换到内核栈
-  + 系统调用库(glibc) 中，int 0x80 只有在硬件不支持快速系统调用(sysenter / syscall)的时候才会调用
+  + Linux 只为每个 CPU 维护一个 TSS, 通过 TSS(Task State Segment) 来切换到内核栈
+  + 系统调用库(glibc) 中, int 0x80 只有在硬件不支持快速系统调用(sysenter / syscall)的时候才会调用
 
 - sysenter / sysexit
-  + 没有特权级别检查(CPL, DPL)，也没有压栈的操作
+  + 没有特权级别检查(CPL, DPL), 也没有压栈的操作
 
 - syscall / sysret
   + 64 位
 
+- exit / _exit
+  exit() 定义在 stdlib.h 中, _exit() 定义在 unistd.h 中, _exit() 是一个 sys_exit 系统调用, 而 exit() 先调用执行各终止处理函数, 关闭所有标准IO, 然后调用sys_exit
+  #+begin_quote
+       The function _exit() terminates the calling process "immediately".  Any
+       open file descriptors belonging to the process are closed; any children
+       of the process are inherited by process 1, init, and the process’s par-
+       ent is sent a SIGCHLD signal.
+
+       The  exit() function causes normal process termination and the value of
+       status & 0377 is returned to the parent (see wait(2)).
+
+       All functions registered with atexit(3) and on_exit(3) are  called,  in
+       the  reverse  order  of their registration.  (It is possible for one of
+       these functions to use atexit(3) or on_exit(3)  to  register  an  addi-
+       tional  function  to be executed during exit processing; the new regis-
+       tration is added to the front of the list of functions that  remain  to
+       be  called.) If one of these functions does not return (e.g., it calls
+       _exit(2), or kills itself with a signal), then none  of  the  remaining
+       functions is called, and further exit processing (in particular, flush-
+       ing of stdio(3) streams) is abandoned.  If a function has  been  regis-
+       tered  multiple  times using atexit(3) or on_exit(3), then it is called
+       as many times as it was registered.
+
+       All open stdio(3) streams are flushed and  closed.   Files  created  by
+       tmpfile(3) are removed.
+
+       The  C standard specifies two constants, EXIT_SUCCESS and EXIT_FAILURE,
+       that may be passed to exit() to  indicate  successful  or  unsuccessful
+       termination, respectively.
+  #+end_quote
 ** man sections
 1. Executable programs or shell commands
 2. System calls (functions provided by the kernel)
@@ -541,39 +865,79 @@ std::scoped_lock lock(e1.m, e2.m);
 8. System administration commands (usually only for root)
 9. Kernel routines [Non standard]
 ** ctrl
-- ctrl-c: (kill foreground process) 发送 SIGINT 信号给前台进程组中的所有进程，强制终止程序的执行
-- ctrl-z: (suspend foreground process) 发送 SIGTSTP 信号给前台进程组中的所有进程，挂起一个进程，使用 fg/bg 操作恢复执行前台或后台的进程
-- ctrl-d: (terminate input, or exit shell) 一个特殊的二进制值，表示 EOF，作用相当于在终端中输入exit后回车
-- ctrl-/: 发送 SIGQUIT 信号给前台进程组中的所有进程，终止前台进程并生成 core 文件
+- ctrl-c: = kill -s INT [PID] (kill foreground process) 发送 SIGINT 信号给前台进程组中的所有进程, 强制终止程序的执行
+- ctrl-z: (suspend foreground process) 发送 SIGTSTP 信号给前台进程组中的所有进程, 挂起一个进程, 使用 fg/bg 操作恢复执行前台或后台的进程
+- ctrl-d: (terminate input, or exit shell) 一个特殊的二进制值, 表示 EOF, 作用相当于在终端中输入 exit 后回车
+- ctrl-/: 发送 SIGQUIT 信号给前台进程组中的所有进程, 终止前台进程并生成 core 文件
 - ctrl-s: 中断控制台输出
 - ctrl-q: 恢复控制台输出
 
 ** *nix commands
+- pkg-config - Return metainformation about installed libraries
+  #+begin_src sh
+    pkg-config --cflags --libs yaml-cpp 
+  #+end_src
 
+- 查看动态 link directory
+  #+begin_src sh
+    # mac 下查看 shared library(.dylib)
+    otool -L a.out			
+    # linux 下查看 shared library(.so)
+    ldd a.out
+  #+end_src
+
+- 查看某进程的虚拟内存分配情况
 #+begin_src sh
-# 查看某进程的虚拟内存分配情况
-cat /proc/[PID]/maps
+  cat /proc/[PID]/maps
+  pmap [PID]
 #+end_src
 
+- file descriptor
 #+begin_src sh
-#!/bin/sh
-exec 6< 1.txt # 创建一个文件描述符6，用6这个数字代表对1.txt的读操作
-exec 7> 1.txt # 创建一个文件描述符6，用6这个数字代表对1.txt的写操作
-exec 8<> 1.txt # 0u stdin, 1u stdout, 2u stderr, 6r read only, 7w write only, 8u 
+  #!/bin/sh
+  exec 6< a.txt	 # 创建一个 fd 对 a.txt 读操作
+  exec 7> a.txt	 # 创建一个fd 对 a.txt 写操作
+  exec 8<> a.txt # 0u stdin, 1u stdout, 2u stderr, 6r read only, 7w write only, 8u 
 
-lsof -op $$ # 查看当前进程正在使用的文件的描述符
+  echo "hhh" >& 7			# 往 a.txt 里边写数据
+  read a 0<&  6 # 读取第一行数据到 a, 每个文件描述符代表的数据结构中都有自己的偏移量
 
-cd /proc/$$/fd # $$代表当前进程的ID号
+  lsof -op $$			# 查看当前进程正在使用的文件的描述符
 
-pwd
-ls
-
-echo "hhh" >& 7 # 往1.txt里边写数据
-read a  0<&  6 # 读取第一行数据到 a, 每个文件描述符代表的数据结构中都有自己的偏移量
-
-echo $a
+  cd /proc/$$/fd			# $$代表当前进程的ID号
 #+end_src
 
+- readelf 读取 ELF 文件信息
+
+- nslookup: query internet name servers, explore properties of DNS mappings
+
+- telnet [host] [port]: like a echo client
+
+- objdump: readelf -s ~= objdump -t 查看 symbol table, objdump -d 反汇编, objdump -s 查看每段的内容, objdump -h 查看每段的大小
+
+- nc (netcat)
+  #+begin_src sh
+    nc -zv localhost 20-30		# 获取开放的端口
+    nc -l 9999			# Listen for an incoming connection
+  #+end_src
+
+- tcpdump 抓包
+  #+begin_src sh
+  nc -l 9999
+  tcpdump -i any 'port 9999' -XX -nn -vv -S
+  nc -v 9999
+  #+end_src
+
+- kill [options] <pid> [...]  - send a signal to a process
+  + the  default  signal  for  kill is TERM
+  + kill -l 查看可发送的所有信号
+  + a PID of -1 is special: it indicates all processes except the kill process itself and init
+  + kill -9 -1: kill all processes you can kill, 8) SIGFPE  9) SIGKILL  10) SIGUSR1
+
+- strace - trace system calls and signals
+  #+begin_src sh
+    strace -e trace=write ./a.out
+  #+end_src
 * Primer C++
 ** string, vector and array
 - 老的编译器需要区分 >> 和 > >
@@ -590,7 +954,7 @@ echo $a
 #+begin_src c++
 int ia[] = {0,1,2,3,4,5,6,7,8,9}; // ia is an array of ten ints
 int *beg = begin(ia); // pointer to the first element in ia
-int *last = end(ia);  // pointer one past the last element in ia
+int *last = end(ia); // pointer one past the last element in ia
 #+end_src
 
 #+begin_quote
@@ -604,10 +968,10 @@ int *last = end(ia);  // pointer one past the last element in ia
 
 - built-in 数组可以取负数作为下标
 #+begin_src c++
-int *p = &ia[2];  // p points to the element indexed by 2
-int j = p[1];     // p[1] is equivalent to *(p + 1),
+int *p = &ia[2]; // p points to the element indexed by 2
+int j = p[1]; // p[1] is equivalent to *(p + 1),
                   // p[1] is the same element as ia[3]
-int k = p[-2];    // p[-2] is the same element as ia[0]
+int k = p[-2]; // p[-2] is the same element as ia[0]
 #+end_src
 
 #+begin_quote
@@ -621,7 +985,7 @@ char *str = s; // error: can't initialize a char* from a string
 const char *str = s.c_str(); // ok
 #+end_src
 
-- 多维数组的 range for 要使用引用，avoid the normal array to pointer conversion
+- 多维数组的 range for 要使用引用, avoid the normal array to pointer conversion
 #+begin_quote
 "To use a multidimensional array in a range for, the loop control variable for all but the innermost array must be references."
 #+end_quote
@@ -632,17 +996,20 @@ const char *str = s.c_str(); // ok
 "When we apply decltype to an expression (other than a variable), the result is a reference type if the expression yields oan lvalue. As an example, assume p is an int*. Because dereference yields an lvalue, decltype(* p) is int&. On the other hand, because the address of operator yields an rvalue, decltype(&p) is int**, that is, a pointer to a pointer to type int."
 #+end_quote
 
-- 在一条表达式中如有未定义执行顺序的 operators （如int i = f1() * f2();），我们不能确定 f1() 和 f2() 哪个先执行，会造成 has undefined behavior
+- 在一条表达式中如有未定义执行顺序的 operators （如int i = f1() * f2();）, 我们不能确定 f1() 和 f2() 哪个先执行, 会造成 has undefined behavior
 #+begin_quote
 "For operators that do not specify evaluation order, it is an error for an expression to refer to and change the same object. Expressions that do so have undefined behavior. As a simple example, the << operator makes no guarantees about when or how its operands are evaluated. As a result, the following output expression is undefined:"
 #+end_quote
+
 #+begin_src c++
 int i = 0;
 cout << i << " " << ++i << endl; // undefined
 #+end_src
+
 #+begin_quote
 "There are four operators that do guarantee the order in which operands are evaluated. The logical AND (&&) operator guarantees that its left-hand operand is evaluated first. Moreover, we are also guaranteed that the right-hand operand is evaluated only if the left-hand operand is true. The only other operators that guarantee the order in which operands are evaluated are the logical OR (||) operator, the conditional (? :) operator, and the comma (,) operator."
 #+end_quote
+
 #+begin_quote
 • The right side of an && is evaluated if and only if the left side is true.
 • The right side of an || is evaluated if and only if the left side is false.
@@ -657,6 +1024,19 @@ bool b2 = -b; // b2 is true! (-1 is true)
 "bool values should not be used for computation. The result of -b is a good example of what we had in mind"
 #+end_quote
 
+- const_cast 只用于修改 constness
+#+begin_quote
+"If the object was originally not a const, using a cast to obtain write access is legal. However, using a const_cast in order to write to a const object is undefined."
+
+Only a const_cast may be used to change the constness of an expression. Trying to change whether an expression is const with any of the other forms of named cast is a compile-time error. Similarly, we cannot use a const_cast to change the type of an expression
+#+end_quote
+#+begin_src c++
+const char *cp;
+
+char *q = static_cast<char*>(cp); // error: static_cast can't cast away const
+static_cast<string>(cp); // ok: converts string literal to string
+const_cast<string>(cp); // error: const_cast only changes constness
+#+end_src
 * CSAPP
 ** basic
 - registers
@@ -669,26 +1049,45 @@ bool b2 = -b; // b2 is true! (-1 is true)
   + use stack canary
 - rep; ret
   + 汇编中用 rep 后面跟 ret 的组合来避免使 ret 指令成为条件跳转指令的目标
-  + 这里的 rep 指令就是作为一种空操作，因此作为跳转目的插入它，除了能使代码在 AMD 上运行得更快之外，不会改变代码的其他行为
-
+  + 这里的 rep 指令就是作为一种空操作, 因此作为跳转目的插入它, 除了能使代码在 AMD 上运行得更快之外, 不会改变代码的其他行为
+- process
+  + process = process context + code, data and stack
+  + process context = program context(data registers, condition codes, stack pointer, program counter) + kernel context(vm structures, descriptor table, brk pointer)
+  + process = thread + code, data and kernel context
+  + each process's context is described by a task_struct structure
+  + The task_struct holds data such as the scheduling policy, scheduler priority, real time priority, processor allowed time counter, processor registers, file handles (files_struct), virtual memory (mm_struct).
+- thread
+  + threads associated with process form a pool of peers, unlike processes which form a tree hierarchy
+  + single core processor: simulate parallelism by time slicing
+  + multi-core processor: can have true parallelism
+  + one thread can read and write the stack of any other thread
+  
+- thread vs. process
+  + similar
+    - each has its own logical control flow
+    - each can run concurrently with others
+    - each is context switched
+  + different
+    - threads share all code and data (except loacl stacks)
+    - threads are less expensive than processes, ~20k cycles to create and reap a process, ~10k cycles for a thread
 ** optimization
 - conditional move :: 使用 conditional moves 能避免 branch prediction
-- unrolling and accumulating :: 不使用流水线的话最好能优化到 latency bound（单位 clock cycles per element），使用流水线可以达到 throughout bound
+- unrolling and accumulating :: 不使用流水线的话最好能优化到 latency bound（单位 clock cycles per element）, 使用流水线可以达到 throughout bound
 - ymm register :: 使用 SIMD (Single instruction, multiple data) operations 加速运算（vectorizing后）
-- branch misprediction invalidation :: 寄存器有多个副本，当分支预测错误时还原寄存器的值，reload pipline
+- branch misprediction invalidation :: 寄存器有多个副本, 当分支预测错误时还原寄存器的值, reload pipline
 
 ** memory
 - bus interface standard
-  + PCIe 属于全双工模式，而 SATA 是半双工模式，
-  + NVMe 与AHCI 相比使用多队列，所以 NVMe + PCIe 比 AHCI + SATA 快
+  + PCIe 属于全双工模式, 而 SATA 是半双工模式, 
+  + NVMe 与AHCI 相比使用多队列, 所以 NVMe + PCIe 比 AHCI + SATA 快
 - non-volatile memory
-  + 根据浮置栅存储的位的多少，闪存可分为 SLC (Single Level Cell Multi Level Cell), MLC, TLC and QLC
+  + 根据浮置栅存储的位的多少, 闪存可分为 SLC (Single Level Cell Multi Level Cell), MLC, TLC and QLC
 - volatile memory
   + SRAM: cache memory
   + DRAM: main memory, frame buffer
 - locality
   + 程序需考虑 temporal locality and spatial locality
-  + matrix multiplication 通过分块（blocking）增加 temporal locality，通过改变循环的顺序改变 spatial locality（i*k 与 k*j 的矩阵相乘，最佳顺序为 kij）
+  + matrix multiplication 通过分块（blocking）增加 temporal locality, 通过改变循环的顺序改变 spatial locality（i*k 与 k*j 的矩阵相乘, 最佳顺序为 kij）
 
 ** linking
 - linker symbol
@@ -697,6 +1096,12 @@ bool b2 = -b; // b2 is true! (-1 is true)
   + local symbols :: static global functions/variables
 
 - relocation entry: complier 告诉 linker 去填充 symbols 所在的地址
+
+- 可重定位目标文件
+  + .bss: 未初始化的全局和静态 C 变量, 以及所有被初始化为 0 的全局或静态变量。在目标文件中这个节不占据实际的空间, 它仅仅是一个占位符。目标文件格式区分已初始化 和未初始化变量是为了空间效率, 在目标文件中, 未初始化变量不需要占据任何实际的磁盘空间。运行时, 在内存中分配这些变量, 初始值为 0
+  + .symtab: 一个符号表, 它存放在程序中定义和引用的函数和全局变量的信息, 和编译器中的符号表不同, .symtab 符号表不包含局部变量的条目
+
+- GCC -fno-common: 告诉链接器, 在遇到多重定义的全局符号时, 触发一个错误
 
 - static libraries
   + ar -- create and maintain library archives
@@ -735,12 +1140,25 @@ pkg-config --cflags --libs yaml-cpp
   - fork :: called once, returns twice (to parent and child)
   - wait :: parent reap a child, synchronizing with child
   - waitpid :: waiting for specific process
+    #+begin_src c
+      #include <sys/types.h>
+      #include <sys/wait.h>
+      pid_t waitpid(pid_t pid, int *wstatus, int options); 
+      /* The value of options is an OR of zero or more of the following constants:
+       wait()就是 pid = -1、options = 0 的 waitpid()
+       WNOHANG     return 0 immediately if no child has exited.
+       ,*/
+
+       /* wait3() 和 wait4() 函数除了可以获得子进程状态信息外, 还可以获得子进程的资源使用信息, 这些信息是通过参数 rusage 得到的 */
+       pid_t wait3(int *status,int options,struct rusage *rusage);
+       pid_t wait4(pid_t pid,int *status,int options,struct rusage *rusage);
+    #+end_src
     #+begin_quote
     The pid parameter specifies the set of child processes for which to wait.  If pid is -1, the call waits for any child process.  If pid is 0, the call waits for any
      child process in the process group of the caller.  If pid is greater than zero, the call waits for the process with process id pid.  If pid is less than -1, the call
      waits for any process whose process group id equals the absolute value of pid.
     #+end_quote
-  - reap :: 如果 parent 没有 reap child 进程，init process (pid = 1) 这个进程会去 reap zombie child process
+  - reap :: 如果 parent 没有 reap child 进程, init process (pid = 1) 这个进程会去 reap zombie child process
   - execve :: loading and running programs, called once, nerver returns
 
 - shell 
@@ -749,15 +1167,40 @@ pkg-config --cflags --libs yaml-cpp
 - signal
   + pause: wait for the receipt of a signal
   + kill: send signal to a process
+  + 每个信号类型都有一个预定义的默认行为, 是下面中的一种:
+    • 进程终止。
+    • 进程终止并转储内存。
+    • 进程停止(挂起)直到被 SIGCONT 信号重启。
+    • 进程忽略该信号。
   + pnb (pending nonblocked signals) = pending & ~blocked
+  + sighandler_t signal(int signum, sighandler_t handler)
+    - 如果 handler 是 SIG_IGN, 那么忽略类型为 signum 的信号。
+    - 如果 handler 是 SIG_DFL, 那么类型为 signum 的信号行为恢复为默认行为 。
   + a signal handler is a separate logical flow (not process) that runs concurrently with the main program
-  + sigprocmask: explicit blocking and unblocking mechanism
+  + SIGSTOP 和 SIGKILL, 它们的默认行为是不能修改的
+  + sigprocmask: explicit blocking and unblocking mechanism 只为单线程定义的, pthread_sigmasks 可以在多线程中使用
+    #+begin_src c
+      sigset_t mask, prev_mask;
+
+      sigfillset(&mask);			   /* all sigs */
+      sigprocmask(SIG_BLOCK, &mask, &prev_mask);  /* Block sigs */
+
+      sigprocmask(SIG_SETMASK, &prev_mask, NULL); /* Restore sigs */
+
+      /* ---------------------------------------- */
+
+      sigemptyset(&mask);
+      sigaddset(&mask, SIGCHLD);
+      sigprocmask(SIG_BLOCK, &mask, &prev_mask);  /* Block SIGCHLD */
+
+      sigprocmask(SIG_SETMASK, &prev_mask, NULL); /* Restore sigs */
+    #+end_src
   + guideline for writing safe handler
     - as simple as possible
     - call only async-signal-safe functions
     - save and restore errno on entry and exit
     - protect shared data by temporarily blocking all signals
-    - declare global variables as *volatile* (sig_atomic_t)，不能被加载到寄存器上
+    - declare global variables as *volatile* (sig_atomic_t), 不能被加载到寄存器上
   + async-signal-safety
     - "man 7 signal": show async-signal-safe functions
     - *write* is the only async-signal-safe output function
@@ -767,20 +1210,50 @@ pkg-config --cflags --libs yaml-cpp
 - End of line (EOL) indicators in different systems
   + Linux and Mac Os: '\n'(0xa) - line feed
   + Windows and Internet protocols: '\r\n'(0xd 0xa) - carriage return and line feed
-- strace: 追踪程序调用的系统命令
+- strace: 追踪程序调用的系统命令和信号
   + example: strace -e trace=write ./cpstdin
+- 内核维护的 3 个数据结构 
+  + 进程级的文件描述符表 descriptor table
+  + 系统级的打开文件描述符表 open file table
+  + 文件系统的 i-node 表 i-node table
+
 - descriptor table [one table per process]
-  + 不同的 file descriptor 可以指向相同的 file，指向不同的 open file table，其中的 file position 可能不同
-  + child process 会复制一份 parent process 的 descriptor talbe
+  + 不同的 file descriptor 可以指向相同的 file, 指向不同的 open file table, 其中的 file position 可能不同
+  + child process 会复制一份 parent process 的 descriptor table
+
 - open file table [shared by all process]
   + file pos
   + reference count
+
 - v-node table [shared by all process]
   + informations in *stat* struct
-- dup2: duplicate an entry in the descriptor table
+  + difference between inode and vnode
+    #+begin_quote
+    The vnode structure ("virtual node") is an essential part of the virtual file system (VFS) support in Linux.
+
+    The file system dependent/independent split was done just above the UNIX-kernel inode layer. This was an obvious choice, as the inode was the main object for file manipulation in the kernel. [...] The file system dependent inode was renamed vnode (virtual node). All file manipulation is done with a vnode object. Similarly, file systems are manipulated through an object called a vfs (virtual file system). The vfs is the analog to the old mount-table entry. The file system independent layer is generally referred to a the vnode layer.
+    #+end_quote
+
+- dup and dup2 - duplicate a file descriptor
+  + The dup() system call creates a copy of the file descriptor oldfd, using the lowest-numbered unused file descriptor for the new descriptor.
+  + After a successful return, the old and new file descriptors may be used interchangeably.  They refer to the same open file description (see open(2)) and thus share file offset and
+    file status flags; for example, if the file offset is modified by using lseek(2) on one of the file descriptors, the offset is also changed for the other.
+    The two file descriptors do not share file descriptor flags (the close-on-exec flag).  The close-on-exec flag (FD_CLOEXEC; see fcntl(2)) for the duplicate descriptor is off.
+  + The dup2() system call performs the same task as dup(), but instead of using the lowest-numbered unused file descriptor, it uses the file descriptor number specified in newfd.  If
+    the file descriptor newfd was previously open, it is silently closed before being reused.
+  + The  steps  of  closing and reusing the file descriptor newfd are performed atomically.
+  + If oldfd is not a valid file descriptor, then the call fails, and newfd is not closed.
+  + If oldfd is a valid file descriptor, and newfd has the same value as oldfd, then dup2() does nothing, and returns newfd.
   + most common use: I/O redirection (ls > a.txt)
+
+- fcntl - manipulate file descriptor
+  + int fcntl(int fd, int cmd, ... /* arg */ );
+  + when cmd = F_DUPFD (int)
+    - Duplicate the file descriptor fd using the lowest-numbered available file descriptor greater than or equal to arg.
+      This is different from dup2(2), which uses exactly the file descriptor specified. On success, the new file descriptor is returned.
+  
 - standard I/O
-  + 先 write/read 到 internal buffer，再 transfers bytes from an internal buffer to a user buffer (flush)
+  + 先 write/read 到 internal buffer, 再 transfers bytes from an internal buffer to a user buffer (flush)
   + 遇到换行符会自动调用 fflush
 
 ** virtual memory
@@ -788,15 +1261,15 @@ pkg-config --cflags --libs yaml-cpp
   + write-back rather than write-through: try to defer writing back to disk
   + each process has its own page table (an array of page table entries (PTEs) that maps virtual pages to physical pages) in DRAM
   + page miss cause page fault (an exception)
-  + allocating pages: call sbrk，会改变 program break 的位置 (heap 的结束地址)
+  + allocating pages: call sbrk, 会改变 program break 的位置 (heap 的结束地址)
 - memory management
   + *execve* allocate virtual pages for .text and .data section & create PTEs marked as invalid
   + .text and .data section are copied, page by page
 - memory protection
   + extend PTEs with permission bits (sup, read, write, exec)
-  + 64位的地址只使用了低48位，高位全为1的是用于内核，高位全为0的是用于用户
+  + 64位的地址只使用了低48位, 高位全为1的是用于内核, 高位全为0的是用于用户
 
-- Page Table Base Register: CR3 寄存器保存着当前进程页目录的物理地址，切换进程就会改变 CR3 的值 (part of the process' context)
+- Page Table Base Register: CR3 寄存器保存着当前进程页目录的物理地址, 切换进程就会改变 CR3 的值 (part of the process' context)
 
 - multi-level page tables
   + PGD：page global directory (47-39), 页全局目录, 查看大小: *getconf PAGE_SIZE* = 4096
@@ -822,10 +1295,17 @@ pkg-config --cflags --libs yaml-cpp
 
 - Linux VM organization
   + task_struct 进程描述符: 有指向内存描述符的指针 struct mm_struct *mm, *active_mm
-  + mm_struct 内存描述符: 有指向线性区对象的链表头 struct vm_area_struct *mmap 和指向线性区对象的红黑树 struct rb_root mm_rb， 有 pgd_t * pgd
+  + mm_struct 内存描述符: 有指向线性区对象的链表头 struct vm_area_struct *mmap , 
+    有指向线性区对象的红黑树 struct rb_root mm_rb,  
+    有 pgd_t * pgd 指向第一级页表(页全局目录)的基址, 当内核运行这个进程时, 就将 pgd存放在 CR3 控制寄存器中
   + vm_area_truct: 描述了虚拟地址空间的一个区间
     - vm_prot: read/write premission for this area
     - vm_flags: pages shared with other processes or private for this process
+
+- page fault
+  + 段错误: 不在任何一个 vm_area_truct 的 vm_start 到 vm_end 之间
+  + 终止: 没有访问权限
+  + 选择一个牺牲页面, 如果这个牺牲页面被修改过, 那么就将它交换出去, 换入新的页面并更新页表
 
 - private copy-on-write objects: make a copy when write instead of it reflecting changes to disk
 
@@ -841,6 +1321,11 @@ pkg-config --cflags --libs yaml-cpp
   + throughput: number of completed requests per unit time
   + peak memory utilization = max_playload / heap_size
   + placement policy, splitting policy, coalescing policy
+
+- placement policy
+  + 首次适配从头开始搜索空闲链表, 选择第一个合适的空闲块。
+  + 下一次适配和首次适配很相似, 只不过不是从链表的起始处开始每次搜索, 而是从上一次查询结束的地方开始。
+  + 最佳适配检查每个空闲块, 选择适合所需请求大小的最小空闲块。
 
 - keeping track of free blocks
   + method 1: implicit list using length -- links all blocks
@@ -872,7 +1357,7 @@ pkg-config --cflags --libs yaml-cpp
     - mark-compact collection
     - conservation collection
     - incremental collection
-    - 基于引用计数只需要局部信息，基于 trace 需要全局信息，引用计数缺少全局信息，无法处理循环引用，可使用*弱引用*解决
+    - 基于引用计数只需要局部信息, 基于 trace 需要全局信息, 引用计数缺少全局信息, 无法处理循环引用, 可使用 *弱引用* 解决
 
 - dealing with memory-related perils and pitfalls
   + debugger: gdb
@@ -881,6 +1366,220 @@ pkg-config --cflags --libs yaml-cpp
   + glibc malloc contains checking code: setenv MALLOC_CHECK_ 3
 
 ** network programming
+- DNS is multi-multi mapping
+- struct sockaddr: 
+  + sa_family(2 bytes - uint16_t) tells which protocol family it is
+  + sa_data(14 bytes) is the address data
+- struct sockaddr_in: 
+  + sin_family(2 bytes) protocol family always AF_INET
+  + sin_port(2 bytes) port number in network bytes order(big endian order)
+  + sin_addr(4 bytes) IP address in network bytes order
+  + sin_zero(8 bytes) pad to sizeof(struct sockaddr)
+  + must cast sockaddr_in * to sockaddr * for functions
+  #+begin_src c++
+    //ex:
+    // _in 后缀是互联网络 (internet) 的缩写
+    struct sockaddr_in serverAddr;
+    memset(&serverAddr, 0, sizeof(serverAddr)); // memset in <string.h>
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(5188); // htons in <arpa/inet.h>
+    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    bind(listenfd, (sockaddr*)&serverAddr, sizeof(serverAddr))
+
+    struct sockaddr_in peerAddr;
+
+    connfd = accept4(listenfd, (sockaddr*)&peerAddr, &peerLength, SOCK_NONBLOCK | SOCK_CLOEXEC);
+
+    std::cout << "ip = " << inet_ntoa(peerAddr.sin_addr)
+              << "port = " << ntohs(peerAddr.sin_port) << std::endl;
+  #+end_src
+- AF = Address Family, PF = Protocol Family
+- server: socket, setsockopt, bind, listen, accept, session(read/write)
+  + socket
+    #+begin_src c++
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    int socket(int domain, int type, int protocol);
+
+    // SOCK_STREAM indicates that the socket will be the end point of a connection
+    listenfd = socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
+    #+end_src
+  + bind
+    #+begin_src c++
+    int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+
+    bind(listenfd, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+    #+end_src
+  + listen
+    #+begin_src c++
+      int listen(int sockfd, int backlog);
+      // backlog 参数暗示了内核在开始拒绝连接请求之前, 队列中要排队的未完成的连接请求的数量, 一般为 128
+      listen(listenfd, SOMAXCONN);
+    #+end_src
+  + accept
+    #+begin_src c++
+     int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+     int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
+
+     connfd = accept4(listenfd, (sockaddr*)&peerAddr, &peerLength, SOCK_NONBLOCK | SOCK_CLOEXEC);
+    #+end_src
+- client: socket, connect, getsockname, session(read/write)
+  + socket
+    #+begin_src c++
+    clientfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    #+end_src
+  + connect
+    #+begin_src c++
+    int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+
+    struct sockaddr_in serverAddr;
+    memset(&serverAddr, 0, sizeof(serverAddr));
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(5188);
+    serverAddr.sin_addr.s_addr = inet_addr("0.0.0.0");
+
+    connect(clientfd, (sockaddr*)&serverAddr, sizeof(serverAddr));
+    #+end_src
+- getaddrinfo
+  #+begin_src c++
+  #include <sys/types.h>
+  #include <sys/socket.h>
+  #include <netdb.h>
+  
+  int getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
+  void freeaddrinfo(struct addrinfo *res);
+  const char *gai_strerror(int errcode);
+
+  struct addrinfo {
+             int ai_flags;           /* input flags */
+             int ai_family;          /* protocol family for socket */
+             int ai_socktype;        /* socket type */
+             int ai_protocol;        /* protocol for socket */
+             socklen_t ai_addrlen;   /* length of socket-address */
+             struct sockaddr *ai_addr; /* socket-address for socket */
+             char *ai_canonname;     /* canonical name for service location */
+             struct addrinfo *ai_next; /* pointer to next in list */
+     };
+  #+end_src
+- getnameinfo
+  #+begin_src c++
+  int getnameinfo(const struct sockaddr *addr, socklen_t addrlen,
+                  char *host, socklen_t hostlen,
+                  char *serv, socklen_t servlen, int flags);
+  #+end_src
+
+- URI and URL: 
+  URI = Universal Resource Identifier 统一资源标志符
+  URL = Universal Resource Locator 统一资源定位符
+  URN = Universal Resource Name 统一资源名称
+  url 是 uri 的子集: URI = URL + URN
+  
+- CGI (common gateway interface)
+  + in environment variable QUERY_STRING, the server pass arguments to the child
+  + the server capture the content produced by the child: 
+    the child generates it output on stdout, server uses dup2 to redirect stdout to its connected socket
+** concurrent programming
+- approches for writing concurrent servers
+  + process-based ::
+    kernel automatically interleaves multiple logical flows, 
+    each flow has its own private address space.
+  + event-based ::
+    programmer manually interleaves multiple logical flow, 
+    all flows share the same address space, 
+    use technique called I/O multiplexing.
+  + thread-based ::
+    kernel automatically interleaves multiple logical flows,
+    all flows share the same address space,
+    hybrid of process-based and event-based
+
+- process-based
+  + must reap zombie children
+    #+begin_src c
+    void sigchld_handler(int sig) 
+    {
+    while (waitpid(-1, 0, WNOHANG) > 0)
+	;
+    return;
+    }
+
+    signal(SIGCHLD, sigchld_handler);
+    #+end_src
+  + parent must close its copy connfd, after fork, refcnt(connfd) = 2, connection will not be closed until refcnt(connfd) = 0
+ 
+- event-based
+  + no process or thread control overhead, design for high-performance web servers and search engiens, e.g., Node.js, nginx, Tornado
+  + hard to provide fine-grained concurrency (very coarse-grained)
+  + cannot take advantage of multi-core
+
+- thread-based
+  + malloc connfdp, and free it in the thread
+  + pthread_detach(pthread_self()): 主线程与子线程分离, 状态改为 unjoinable 状态
+  + must be careful to avoid unintended sharing
+  + all functions called by a thread must be thread-safe
+
+** synchronization
+- semaphores(信号量): non-negative global integer synchronization variable. Manipulated by P and V operations.
+  #+begin_src c
+    #include <semaphore.h>
+
+    int sem_init(sem_t *s, 0, unsigned int val); /* s = val */
+    int sem_wait(sem_t *s);			     /* P(s) */
+    int sem_post(sem_t *s);			     /* V(s) */
+  #+end_src
+  + P(s) proberen (测试)
+    - if s is non-zero, then decrement s by 1 and return immediately. (test and decrement operations occur atomically)
+    - if s is zero, then suspend thread until s become non-zero and the thread is restarted by a V operation.
+    - after restarting, the P operation decrements s and return control to the caller.
+  + V(s) Verhogen (增加)
+    - increment by 1. (increment operation occurs atomically)
+    - if there are any threads blocked in a P operation waiting for s to become non-zero, 
+      then restart exaclty one of the threads, which then completes operation by decrementing s.
+  + semaphore invariant: s >= 0
+  + mutex: binary semaphore (only 0 and 1) used for mutual exclusion, P lock the mutex, V release the mutex.
+  + using semaphores to coordinate access to shared resources
+    - producer-consumer problem: 
+      + 有三个信号量 mutex, slots, items
+      + insert 时 P(slots), V(items)
+      + remove 时 P(items), V(slots)
+    - readers-writers problem:
+      + guaranteeing each thread mutually exclusive access to its critical section
+      + favors readers: writer could be starved sort of indefinitely waiting for all these readers to finish
+      + favors writers: writer could starve out readers
+      + pthread_once: pthread_once() 指定的函数执行且仅执行一次
+        #+begin_src c
+          #include <pthread.h>
+          int pthread_once(pthread_once_t *once_control, void (*init_routine)(void));
+
+          static pthread_once_t once = PTHREAD_ONCE_INIT;
+          pthread_once(&once, init_routine);
+        #+end_src
+- thread-unsafe functions
+  + class 1: failing to protect shared varibles
+  + class 2: relying on persistent state across multiple function invocations
+    - lib.c rand() function relies on static state (next)
+  + class 3: returning a pointer to a static variable
+    - use lock-and-copy wrap lib.c ctime() function
+  + class 4: calling thread-unsafe functions
+  
+ 
+- reentrant functions
+  + def: a function is reentrant iff it accesses no shared variables when called by multiple threads
+  + a subset of thread-safe functions
+  + gethostbyname, gethostbyaddr 和 inet_ntoa 函数是已弃用的网络编程函数, 已经分别被可重入的 getaddrinfo, getnameinfo 和 inet_ntop 函数取代
+
+- thread-safe library functions
+  + all functions in standard c library, such as malloc, free, printf, scanf
+  + most unix system calls, with a few exceptions:
+    - asctime, ctime, gethostbyname, gethostbyaddr, inet_ntoa, localtime, rand
+    - reentrant version denoted by _r: asctime_r, rand_r
+
+** thread level parallelism
+- out-of-order processor structure
+- memory consistency
+  + sequential consistency: overall effect consistent with each individual thread, arbitrary interleaving between threads
+  + non-coherent cache senario: may violate sequential consistency
+  + snoopy caches: tagged cahce line in main memory with its state (shared, exclusive), snoopy caches will get the correct copy of other threads' cache
 * Introduction to Computer Networking
 ** intro
 + layers
@@ -893,6 +1592,7 @@ pkg-config --cflags --libs yaml-cpp
 + endianness
   - helper functions for convert network byte order (include <arpa/inet.h>):
   - htons(), ntohs(), htonl(), ntohl(): htons means "host to network short", ntohl means "network to host long"
+  - inet_pton / inet_ntop: dotted decimal string (presentation) <---> IP address in network byte order (network)
 
 ** tcp
 - stream of bytes
@@ -922,9 +1622,10 @@ pkg-config --cflags --libs yaml-cpp
   + active closer goes into TIME WAIT: sending fin before receiving one, keep socket around 2 MSL(maximun segment lifetime)
   + 尽可能在服务器端避免 TIME WAIT
 
-
-
+** ucp
+- very few applications use UDP, examples: DNS, DHCP
 ** ICMP
+Internet Control Message Protocol (ICMP) 
 - self-contained message reporting error.
 - new datagram: first 8 byte payload + header + type + code
 - ping uses ICMP:
@@ -982,6 +1683,11 @@ pkg-config --cflags --libs yaml-cpp
   + go-back-N: one loss will lead to entire window retransmitting
   + selective repeat: one loss will lead to only that packet retransmitting
 
+** packet switching
+- propagation delay: the time it takes a single bit to travel over a link at propagation speed c
+- packetization delay: the time from when the first to the last bit of a packet is transmitted
+- queuing delay: wait in the routers' packet buffers
+
 * Practical Network Programming
 ** intro
 - layered network
@@ -996,61 +1702,16 @@ pkg-config --cflags --libs yaml-cpp
 ** other
 - 大型网站的构建
   + web 静动态资源分离
-  + 缓存处理：客户端（浏览器）缓存，前端页面缓存（squid），页面片段缓存（Edge Side Includes），本地数据缓存
+  + 缓存处理：客户端（浏览器）缓存, 前端页面缓存（squid）, 页面片段缓存（Edge Side Includes）, 本地数据缓存
   + web server 集群
   + 数据库读写分离
   + 负载均衡
     - 前端负载均衡：DNS, NAT, 反向代理
     - 应用服务器负载均衡
     - 数据库负载均衡
-  + CDN（内容分发网络），分布式缓存，分库分表
-  + 多数据中心，分布式存储与计算
+  + CDN（内容分发网络）, 分布式缓存, 分库分表
+  + 多数据中心, 分布式存储与计算
 
-- signal
-  + SIGPIPE :: client close socket, server call write, then server will receive a RST segment, if server do a write again, then it will cause SIGPIPE
-  + SIGCHLD :: zombie child process
-
-- poll
-  + ignore SIGPIPE and SIGCHLD
-  + non-blocking sokcet + I/O multiplexing
-  + create listenfd: socket_nonblocking, sokcet_cloexec (or call fcntl f_setfl(o_nonblock), f_setfd(fd_cloexec))
-  + &*pollfds.begin() 等同于 pollfds.data()
-  + 每次调用传一个 struct pollfd 的数组给内核，内核使用链表存储
-  + specifying a negative value in timeout means an infinite timeout.
-  + specifying a timeout of zero causes poll() to return immediately, even if no file descriptors are ready.
-  + accept(2) return EMFILE 处理（太多文件）
-    #+begin_src c++
-	      idlefd = open("dev/null", O_RDONLY | O_CLOEXEC);
-	      if (errno == EMFILE)
-		{
-		  close(idlefd);
-		  idlefd = accept(listenfd, nullptr, nullptr);
-		  close(idlefd);
-		  idlefd = open("dev/null", O_RDONLY | O_CLOEXEC);
-		  continue;
-
-    #+end_src
-
-- epoll
-  + 使用 epoll_create1(EPOLL_CLOEXEC) 创建 epollfd
-  + 使用 epoll_ctl(epollfd, EPOLL_CTL_ADD, listenfd, &event) 添加 event
-    #+begin_src c++
-
-       // The struct epoll_event is defined as:
-
-           typedef union epoll_data {
-               void    *ptr;
-               int      fd;
-               uint32_t u32;
-               uint64_t u64;
-           } epoll_data_t;
-
-           struct epoll_event {
-               uint32_t     events;    /* Epoll events */
-               epoll_data_t data;      /* User data variable */
-           };
-    #+end_src
-  + 调用 epoll_wait(epollfd, epoll_event 数组, epoll_event 数组的 size), 将就绪 event 的传入 epoll_event 数组
 * source code
 ** epoll
 初始化
@@ -1080,81 +1741,86 @@ fs_initcall(eventpoll_init);
 结构体
 #+begin_src c
 
-/* 每创建一个 epollfd, 内核就会分配一个 eventpoll 与之对应, 可以说是
- * 内核态的 epollfd. */
-struct eventpoll {
-    spinlock_t lock;
+  /* 每创建一个 epollfd, 内核就会分配一个 eventpoll 与之对应, 可以说是
+   * 内核态的 epollfd. */
+  struct eventpoll {
+      spinlock_t lock;
 
-    struct mutex mtx;     /* 防止使用时被删除 */
+      struct mutex mtx;     /* 防止使用时被删除 */
 
-    wait_queue_head_t wq;     /* sys_epoll_wait() 使用的等待队列 */
+      wait_queue_head_t wq;     /* sys_epoll_wait() 使用的等待队列 */
 
-    wait_queue_head_t poll_wait;     /* file->epoll() 使用的等待队列 */
+      wait_queue_head_t poll_wait;     /* file->epoll() 使用的等待队列 */
 
-    struct list_head rdllist;     /* List of ready file descriptors */
+      struct list_head rdllist;     /* List of ready file descriptors */
     
-    struct rb_root rbr; /* RB tree root used to store monitored fd structs */
+      struct rb_root rbr; /* RB tree root used to store monitored fd structs */
 
-    struct epitem *ovflist;
+      struct epitem *ovflist; /* 一个单链表链接着所有的 struct epitem 当 event 转移到用户空间时 */
 
-    struct user_struct *user;
-};
+      struct user_struct *user;
+  };
 
-/* epitem 表示一个被监听的 fd */
-struct epitem {
-    struct rb_node rbn;     /* RB tree node used to link this structure to the eventpoll RB tree */
+  /* epitem 表示一个被监听的 fd */
+  struct epitem {
+      struct rb_node rbn;     /* RB tree node used to link this structure to the eventpoll RB tree */
 
-    struct list_head rdllink;     /* List header used to link this structure to the eventpoll ready list */
+      struct list_head rdllink;     /* List header used to link this structure to the eventpoll ready list */
 
-    struct epitem *next;
+      struct epitem *next;
 
-    struct epoll_filefd ffd;     /* The file descriptor information this item refers to */
+      struct epoll_filefd ffd;     /* The file descriptor information this item refers to */
 
-    int nwait;     /* Number of active wait queue attached to poll operations */
+      int nwait;     /* Number of active wait queue attached to poll operations */
     
-    struct list_head pwqlist;     /* List containing poll wait queues */
+      struct list_head pwqlist;     /* List containing poll wait queues */
     
-    struct eventpoll *ep;     /* 当前 epitem 属于哪个 eventpoll */
+      struct eventpoll *ep;     /* 当前 epitem 属于哪个 eventpoll */
     
-    struct list_head fllink;
+      struct list_head fllink;
     
-    struct epoll_event event;     /* 当前的 epitem 关系哪些 events, 这个数据是调用 epoll_ctl 时从用户态传递过来 */
-};
+      struct epoll_event event;     /* 当前的 epitem 关系哪些 events, 这个数据是调用 epoll_ctl 时从用户态传递过来 */
+  };
 
-struct epoll_filefd {
-    struct file *file;
-    int fd;
-};
+  struct epoll_filefd {
+      struct file *file;
+      int fd;
+  };
 
-/* poll 所用到的钩子 Wait structure used by the poll hooks */
-struct eppoll_entry {
+  /* poll 所用到的钩子 Wait structure used by the poll hooks */
+  struct eppoll_entry {
 
-    struct list_head llink;     /* List header used to link this structure to the "struct epitem" */
+      struct list_head llink;     /* List header used to link this structure to the "struct epitem" */
     
-    struct epitem *base; /* The "base" pointer is set to the container "struct epitem" */
+      struct epitem *base; /* The "base" pointer is set to the container "struct epitem" */
     
-    wait_queue_t wait;
+      wait_queue_t wait;
     
-    wait_queue_head_t *whead;
-};
+      wait_queue_head_t *whead;
+  };
 
-/* Wrapper struct used by poll queueing */
-struct ep_pqueue {
-    poll_table pt;
-    struct epitem *epi;
-};
+  /* Wrapper struct used by poll queueing */
+  struct ep_pqueue {
+      poll_table pt;
+      struct epitem *epi;
+  };
 
-/* Used by the ep_send_events() function as callback private data */
-struct ep_send_events_data {
-    int maxevents;
-    struct epoll_event __user *events;
-};
+  /* Used by the ep_send_events() function as callback private data */
+  struct ep_send_events_data {
+      int maxevents;
+      struct epoll_event __user *events;
+  };
 
 #+end_src
 
 函数
 
 create
+
+从 slab 缓存中创建一个 eventpoll 对象,并且创建一个匿名的 fd 跟 fd 对应的 file 对象,
+而 eventpoll 对象保存在 struct file 结构的 private 指针中,并且返回,
+该 fd 对应的 file operations 实现了 poll 跟 release 操作
+
 #+begin_src c
 
 SYSCALL_DEFINE1(epoll_create, int, size)
@@ -1194,131 +1860,545 @@ SYSCALL_DEFINE1(epoll_create1, int, flags)
 #+end_src
 
 control
-#+begin_src c
-// 使用范例
-struct epoll_event event;
-event.data.fd = listenfd;
-event.events = EPOLLIN;
-epoll_ctl(epollfd, EPOLL_CTL_ADD, listenfd, &event);
 
-// epoll_ctl
-SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
-        struct epoll_event __user *, event)
+将 epoll_event 结构拷贝到内核空间中
+
+插入操作: 创建一个与 fd 对应的 epitem 结构
+指定了调用 poll_wait 时的回调函数用于数据就绪时唤醒进程, 初始化设备的等待队列, 将该进程注册到等待队列, 
+完成这一步, epitem 就跟这个 socket 关联起来了, 当它有状态变化时, 会通过 ep_poll_callback() 来通知. 
+最后调用加入的 fd 的 file operation->poll 函数(最后会调用 poll_wait 操作)用于完成注册操作, 
+最后将epitem结构添加到红黑树中
+#+begin_src c
+  // 使用范例
+  struct epoll_event event;
+  event.data.fd = listenfd;
+  event.events = EPOLLIN;
+  epoll_ctl(epollfd, EPOLL_CTL_ADD, listenfd, &event);
+
+  // epoll_ctl
+  SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
+          struct epoll_event __user *, event)
+  {
+      int error;
+      struct file *file, *tfile;
+      struct eventpoll *ep;
+      struct epitem *epi;
+      struct epoll_event epds;
+      error = -EFAULT;
+
+      /*
+       * 错误处理以及从用户空间将 epoll_event 结构的 event copy 到内核空间.
+       */
+      if (ep_op_has_event(op) &&
+          copy_from_user(&epds, event, sizeof(struct epoll_event)))
+          goto error_return;
+
+      /* Get the "struct file *" for the eventpoll file 
+       * 这个结构在 epoll_create1() 中, 由函数 anon_inode_getfd() 分配 */
+      error = -EBADF;
+      file = fget(epfd);
+      if (!file)
+          goto error_return;
+
+      /* Get the "struct file *" for the target file */
+      /* 我们需要监听的 fd, 也有个 struct file 结构 */
+      tfile = fget(fd);
+      if (!tfile)
+          goto error_fput;
+
+      /* The target file descriptor must support poll */
+      /* 监听的文件需要支持 poll */
+      error = -EPERM;
+      if (!tfile->f_op || !tfile->f_op->poll)
+          goto error_tgt_fput;
+
+      /*
+       * We have to check that the file structure underneath the file descriptor
+       * the user passed to us _is_ an eventpoll file. And also we do not permit
+       * adding an epoll file descriptor inside itself.
+       */
+      /* epoll 不能自己监听自己 */
+      error = -EINVAL;
+      if (file == tfile || !is_file_epoll(file))
+          goto error_tgt_fput;
+
+      /*
+       ,* At this point it is safe to assume that the "private_data" contains
+       ,* our own data structure.
+       ,*/
+      /* 获取 eventpoll 结构, 来自与 epoll_create1() 中的分配 */
+      ep = file->private_data;
+
+      /* 接下来的操作有可能修改数据结构内容, 加锁 */
+      mutex_lock(&ep->mtx);
+
+      /*
+       ,* Try to lookup the file inside our RB tree, Since we grabbed "mtx"
+       ,* above, we can be sure to be able to use the item looked up by
+       ,* ep_find() till we release the mutex.
+       ,*/
+      /* 对于每一个监听的 fd, 内核都有分配一个 epitem 结构,
+       ,* epoll 不允许重复添加 fd, 首先查找该 fd 是不是已经存在,
+       ,* ep_find() rbtree 查找, O(lgn) 的时间复杂度
+       ,*/
+      epi = ep_find(ep, tfile, fd);
+      error = -EINVAL;
+
+      switch (op) {
+          /* 添加 */
+      case EPOLL_CTL_ADD:
+          if (!epi) {
+              /* 之前的 find 没有找到有效的 epitem, 证明是第一次插入, 接受 */
+              epds.events |= POLLERR | POLLHUP;
+              /* rbtree 插入 */
+              error = ep_insert(ep, &epds, tfile, fd);
+          } else
+              /* 重复添加 */
+              error = -EEXIST;
+          break;
+
+          /* 删除 */
+      case EPOLL_CTL_DEL:
+          if (epi)
+              error = ep_remove(ep, epi);
+          else
+              error = -ENOENT;
+          break;
+
+          /* 修改 */
+      case EPOLL_CTL_MOD:
+          if (epi) {
+              epds.events |= POLLERR | POLLHUP;
+              error = ep_modify(ep, epi, &epds);
+          } else
+              error = -ENOENT;
+          break;
+      }
+
+      mutex_unlock(&ep->mtx);
+
+  error_tgt_fput:
+      fput(tfile);
+  error_fput:
+      fput(file);
+  error_return:
+      return error;
+  }
+#+end_src
+
+#+begin_src c
+/* 分配一个 eventpoll 结构 */
+static int ep_alloc(struct eventpoll **pep);
+
+
+/* 从 slab 中分配一个 epitem */
+/* UDP socket 的流程: 
+ * f_op->poll(), sock_poll(), udp_poll(), datagram_poll(), sock_poll_wait(), ep_ptable_queue_proc()
+ * epitem 跟这个 socket 关联起来后, 当它有状态变化时, 会通过 ep_poll_callback() 来通知
+ * 后将 epitem 插入到对应的 eventpoll 中
+ */
+static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
+                     struct file *tfile, int fd);
+
+
+/*
+ * This is the callback that is used to add our wait queue to the
+ * target file wakeup lists.
+ */
+/*
+ * 该函数在调用 f_op->poll() 时会被调用
+ * epoll 主动 poll 某个 fd 时, 用来将 epitem 与指定的 fd 关联起来
+ * 关联的办法是使用等待队列(waitqueue)
+ * 指定 ep_poll_callback 为唤醒时的回调函数
+ */
+static void ep_ptable_queue_proc(struct file *file, wait_queue_head_t *whead, poll_table *pt);
+
+
+/*
+ * This is the callback that is passed to the wait queue wakeup
+ * machanism. It is called by the stored file descriptors when they
+ * have events to report.
+ */
+/*
+ * 这个是关键性的回调函数, 当我们监听的 fd 发生状态改变时, 它会被调用
+ * 参数 key 被当作一个 unsigned long 整数使用, 携带的是 events
+ * 将当前的 epitem 放入 ready list
+ */
+static int ep_poll_callback(wait_queue_t *wait, unsigned mode, int sync, void *key);
+#+end_src
+
+wait
+#+begin_src c
+/*
+ * Implement the event wait interface for the eventpoll file. It is the kernel
+ * part of the user space epoll_wait(2).
+ */
+// Usage:
+// #include <sys/epoll.h>
+
+// int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout);
+
+// nready = epoll_wait(epollfd, events.data(), static_cast<int>(events.size()), -1);
+SYSCALL_DEFINE4(epoll_wait, int, epfd, struct epoll_event __user *, events,
+        int, maxevents, int, timeout)
 {
     int error;
-    struct file *file, *tfile;
+    struct file *file;
     struct eventpoll *ep;
-    struct epitem *epi;
-    struct epoll_event epds;
-    error = -EFAULT;
-
-    /*
-     * 错误处理以及从用户空间将 epoll_event 结构的 event copy 到内核空间.
+    /* The maximum number of event must be greater than zero */
+    if (maxevents <= 0 || maxevents > EP_MAX_EVENTS)
+        return -EINVAL;
+    /* Verify that the area passed by the user is writeable */
+    /* 内核对应用程序采取的策略是"绝对不信任",
+     * 所以内核跟应用程序之间的数据交互大都是 copy
+     * epoll_wait() 需要内核返回数据给用户空间, 内存由用户程序提供,
+     * 所以内核会用一些手段来验证这一段内存空间是不是有效的
      */
-    if (ep_op_has_event(op) &&
-        copy_from_user(&epds, event, sizeof(struct epoll_event)))
+    if (!access_ok(VERIFY_WRITE, events, maxevents * sizeof(struct epoll_event))) {
+        error = -EFAULT;
         goto error_return;
-
-    /* Get the "struct file *" for the eventpoll file 
-     * 这个结构在 epoll_create1() 中, 由函数 anon_inode_getfd() 分配 */
+    }
+    /* Get the "struct file *" for the eventpoll file */
     error = -EBADF;
+    
     file = fget(epfd);
     if (!file)
         goto error_return;
-
-    /* Get the "struct file *" for the target file */
-    /* 我们需要监听的 fd, 也有个 struct file 结构 */
-    tfile = fget(fd);
-    if (!tfile)
-        goto error_fput;
-
-    /* The target file descriptor must support poll */
-    /* 监听的文件需要支持 poll */
-    error = -EPERM;
-    if (!tfile->f_op || !tfile->f_op->poll)
-        goto error_tgt_fput;
-
     /*
-     * We have to check that the file structure underneath the file descriptor
-     * the user passed to us _is_ an eventpoll file. And also we do not permit
-     * adding an epoll file descriptor inside itself.
+     * We have to check that the file structure underneath the fd
+     * the user passed to us _is_ an eventpoll file.
      */
-    /* epoll 不能自己监听自己 */
     error = -EINVAL;
-    if (file == tfile || !is_file_epoll(file))
-        goto error_tgt_fput;
-
+    
+    if (!is_file_epoll(file))
+        goto error_fput;
     /*
      * At this point it is safe to assume that the "private_data" contains
      * our own data structure.
      */
-    /* 获取 eventpoll 结构, 来自与 epoll_create1() 中的分配 */
     ep = file->private_data;
-
-    /* 接下来的操作有可能修改数据结构内容, 加锁 */
-    mutex_lock(&ep->mtx);
-
-    /*
-     * Try to lookup the file inside our RB tree, Since we grabbed "mtx"
-     * above, we can be sure to be able to use the item looked up by
-     * ep_find() till we release the mutex.
-     */
-    /* 对于每一个监听的fd, 内核都有分配一个epitem结构,
-     * 而且我们也知道, epoll是不允许重复添加fd的,
-     * 所以我们首先查找该fd是不是已经存在了.
-     * ep_find()其实就是RBTREE查找, 跟C++STL的map差不多一回事, O(lgn)的时间复杂度.
-     */
-    epi = ep_find(ep, tfile, fd);
-    error = -EINVAL;
-    switch (op) {
-        /* 首先我们关心添加 */
-    case EPOLL_CTL_ADD:
-        if (!epi) {
-            /* 之前的find没有找到有效的epitem, 证明是第一次插入, 接受!
-             * 这里我们可以知道, POLLERR和POLLHUP事件内核总是会关心的
-             * */
-            epds.events |= POLLERR | POLLHUP;
-            /* rbtree插入, 详情见ep_insert()的分析
-             * 其实我觉得这里有insert的话, 之前的find应该
-             * 是可以省掉的... */
-            error = ep_insert(ep, &epds, tfile, fd);
-        } else
-            /* 找到了!? 重复添加! */
-            error = -EEXIST;
-        break;
-        /* 删除和修改操作都比较简单 */
-    case EPOLL_CTL_DEL:
-        if (epi)
-            error = ep_remove(ep, epi);
-        else
-            error = -ENOENT;
-        break;
-    case EPOLL_CTL_MOD:
-        if (epi) {
-            epds.events |= POLLERR | POLLHUP;
-            error = ep_modify(ep, epi, &epds);
-        } else
-            error = -ENOENT;
-        break;
-    }
-    mutex_unlock(&ep->mtx);
-error_tgt_fput:
-    fput(tfile);
+    /* Time to fish for events ... */
+    error = ep_poll(ep, events, maxevents, timeout);
 error_fput:
     fput(file);
 error_return:
     return error;
 }
+
+
+
+
+/* 这个函数真正将执行 epoll_wait 的进程带入睡眠状态 */
+static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+           int maxevents, long timeout)
+{
+    int res, eavail;
+    unsigned long flags;
+    long jtimeout;
+    wait_queue_t wait;//等待队列
+    /*
+     * Calculate the timeout by checking for the "infinite" value (-1)
+     * and the overflow condition. The passed timeout is in milliseconds,
+     * that why (t * HZ) / 1000.
+     */
+    /* 计算睡觉时间, 毫秒要转换为 HZ */
+    jtimeout = (timeout < 0 || timeout >= EP_MAX_MSTIMEO) ?
+        MAX_SCHEDULE_TIMEOUT : (timeout * HZ + 999) / 1000;
+retry:
+    spin_lock_irqsave(&ep->lock, flags);
+    res = 0;
+    /* 如果 ready list 不为空, 就不睡了, 直接干活 */
+    if (list_empty(&ep->rdllist)) {
+        /*
+         * We don't have any available event to return to the caller.
+         * We need to sleep here, and we will be wake up by
+         * ep_poll_callback() when events will become available.
+         */
+        /* 初始化一个等待队列, 准备直接把自己挂起,
+         * current 是一个宏, 代表当前进程 */
+        init_waitqueue_entry(&wait, current); //初始化等待队列, wait 表示当前进程
+        __add_wait_queue_exclusive(&ep->wq, &wait); //挂载到 ep 结构的等待队列
+        for (;;) {
+            /*
+             * We don't want to sleep if the ep_poll_callback() sends us
+             * a wakeup in between. That's why we set the task state
+             * to TASK_INTERRUPTIBLE before doing the checks.
+             */
+            
+            set_current_state(TASK_INTERRUPTIBLE);
+
+            if (!list_empty(&ep->rdllist) || !jtimeout)
+                break;
+
+            /* 如果有信号产生, 也起床 */
+            if (signal_pending(current)) {
+                res = -EINTR;
+                break;
+            }
+            
+            spin_unlock_irqrestore(&ep->lock, flags);
+            
+            jtimeout = schedule_timeout(jtimeout); //睡觉
+            spin_lock_irqsave(&ep->lock, flags);
+        }
+        __remove_wait_queue(&ep->wq, &wait);
+        /* 醒来 */
+        set_current_state(TASK_RUNNING);
+    }
+    /* Is it worth to try to dig for events ? */
+    eavail = !list_empty(&ep->rdllist) || ep->ovflist != EP_UNACTIVE_PTR;
+    spin_unlock_irqrestore(&ep->lock, flags);
+    /*
+     * Try to transfer events to user space. In case we get 0 events and
+     * there's still timeout left over, we go trying again in search of
+     * more luck.
+     */
+    /* 如果一切正常, 有 event 发生, 就开始准备数据 copy 给用户空间了 */
+    if (!res && eavail &&
+        !(res = ep_send_events(ep, events, maxevents)) && jtimeout)
+        goto retry;
+    return res;
+}
 #+end_src
 
-* plan
+#+begin_src c
 
-vedio: csapp(), networking(), asio()
+static int ep_send_events(struct eventpoll *ep,
+              struct epoll_event __user *events, int maxevents)
+{
+    struct ep_send_events_data esed;
+    esed.maxevents = maxevents;
+    esed.events = events;
+    return ep_scan_ready_list(ep, ep_send_events_proc, &esed);
+}
 
-e-book: csapp(), c++ primer()
+/**
+ * ep_scan_ready_list - Scans the ready list in a way that makes possible for
+ *                      the scan code, to call f_op->poll(). Also allows for
+ *                      O(NumReady) performance.
+ *
+ * @ep: Pointer to the epoll private data structure.
+ * @sproc: Pointer to the scan callback.
+ * @priv: Private opaque data passed to the @sproc callback.
+ *
+ * Returns: The same integer error code returned by the @sproc callback.
+ */
+static int ep_scan_ready_list(struct eventpoll *ep,
+                  int (*sproc)(struct eventpoll *,
+                       struct list_head *, void *),
+                  void *priv)
+{
+    int error, pwake = 0;
+    unsigned long flags;
+    struct epitem *epi, *nepi;
+    LIST_HEAD(txlist);
+    /*
+     * We need to lock this because we could be hit by
+     * eventpoll_release_file() and epoll_ctl().
+     */
+    mutex_lock(&ep->mtx);
+    /*
+     * Steal the ready list, and re-init the original one to the
+     * empty list. Also, set ep->ovflist to NULL so that events
+     * happening while looping w/out locks, are not lost. We cannot
+     * have the poll callback to queue directly on ep->rdllist,
+     * because we want the "sproc" callback to be able to do it
+     * in a lockless way.
+     */
+    spin_lock_irqsave(&ep->lock, flags);
+    /* 所有监听到 events 的 epitem 都链到 rdllist 上了,
+     * 但是这一步之后, 所有的 epitem 都转移到了 txlist 上, 而 rdllist 被清空了,
+     */
+    list_splice_init(&ep->rdllist, &txlist);
+    
+    ep->ovflist = NULL;
+    spin_unlock_irqrestore(&ep->lock, flags);
+    /*
+     * Now call the callback function.
+     */
+    error = (*sproc)(ep, &txlist, priv);
+    spin_lock_irqsave(&ep->lock, flags);
+    /*
+     * During the time we spent inside the "sproc" callback, some
+     * other events might have been queued by the poll callback.
+     * We re-insert them inside the main ready-list here.
+     */
+    /* 现在我们来处理ovflist, 这些 epitem 都是我们在传递数据给用户空间时
+     * 监听到了事件 All the events that happens during that period of time are
+     * chained in ep->ovflist and requeued later on
+     */
+    for (nepi = ep->ovflist; (epi = nepi) != NULL;
+         nepi = epi->next, epi->next = EP_UNACTIVE_PTR) {
+        /*
+         * We need to check if the item is already in the list.
+         * During the "sproc" callback execution time, items are
+         * queued into ->ovflist but the "txlist" might already
+         * contain them, and the list_splice() below takes care of them.
+         */
+        /* 将这些直接放入 ready list */
+        if (!ep_is_linked(&epi->rdllink))
+            list_add_tail(&epi->rdllink, &ep->rdllist);
+    }
+    /*
+     * We need to set back ep->ovflist to EP_UNACTIVE_PTR, so that after
+     * releasing the lock, events will be queued in the normal way inside
+     * ep->rdllist.
+     */
+    ep->ovflist = EP_UNACTIVE_PTR;
+    /*
+     * Quickly re-inject items left on "txlist".
+     */
+    /* 上一次没有处理完的 epitem, 重新插入到 ready list */
+    list_splice(&txlist, &ep->rdllist);
+    /* ready list不为空, 直接唤醒... */
+    if (!list_empty(&ep->rdllist)) {
+        /*
+         * Wake up (if active) both the eventpoll wait list and
+         * the ->poll() wait list (delayed after we release the lock).
+         */
+        if (waitqueue_active(&ep->wq))
+            wake_up_locked(&ep->wq);
+        if (waitqueue_active(&ep->poll_wait))
+            pwake++;
+    }
+    spin_unlock_irqrestore(&ep->lock, flags);
+    mutex_unlock(&ep->mtx);
+    /* We have to call this outside the lock */
+    if (pwake)
+        ep_poll_safewake(&ep->poll_wait);
+    return error;
+}
 
-book: os(), network()
 
-practical: leetcode()
+/* 该函数作为 callback 在 ep_scan_ready_list() 中被调用
+ * head 是一个链表, 包含了已经 ready 的 epitem,
+ * 这个不是 eventpoll 里面的 ready list, 而是上面函数中的 txlist
+ */
+static int ep_send_events_proc(struct eventpoll *ep, struct list_head *head,
+                   void *priv)
+{
+    struct ep_send_events_data *esed = priv;
+    int eventcnt;
+    unsigned int revents;
+    struct epitem *epi;
+    struct epoll_event __user *uevent;
+    /*
+     * We can loop without lock because we are passed a task private list.
+     * Items cannot vanish during the loop because ep_scan_ready_list() is
+     * holding "mtx" during this call.
+     */
+    /* 扫描整个链表 */
+    for (eventcnt = 0, uevent = esed->events;
+         !list_empty(head) && eventcnt < esed->maxevents;) {
+        /* 取出第一个成员 */
+        epi = list_first_entry(head, struct epitem, rdllink);
+        /* 然后从链表里面移除 */
+        list_del_init(&epi->rdllink);
+        /* 读取events */
+        revents = epi->ffd.file->f_op->poll(epi->ffd.file, NULL) &
+            epi->event.events;
+        if (revents) {
+            /* 将当前的事件和用户传入的数据都 copy 给用户空间 */
+            if (__put_user(revents, &uevent->events) ||
+                __put_user(epi->event.data, &uevent->data)) {
+                list_add(&epi->rdllink, head);
+                return eventcnt ? eventcnt : -EFAULT;
+            }
+            eventcnt++;
+            uevent++;
+            if (epi->event.events & EPOLLONESHOT)
+                epi->event.events &= EP_PRIVATE_BITS;
+            else if (!(epi->event.events & EPOLLET)) {
+                /* EPOLL ET 和非 ET 的区别:
+                 *
+                 * 如果是 ET, epitem 是不会再进入到 readly list,
+                 * 除非 fd 再次发生了状态改变, ep_poll_callback 被调用.
+                 *
+                 * 如果是非 ET, 不管有没有有效的事件或者数据,
+                 * 都会被重新插入到 ready list, 再下一次 epoll_wait
+                 * 时, 会立即返回, 并通知给用户空间, 如果这个
+                 * 被监听的 fd 确实没事件也没数据了, epoll_wait会返回一个0,
+                 * 空转一次.
+                 */
+                list_add_tail(&epi->rdllink, &ep->rdllist);
+            }
+        }
+    }
+    return eventcnt;
+}
 
-other: muduo()
+
+/* ep_free 在 epollfd 被 close 时调用 */ 
+static void ep_free(struct eventpoll *ep)
+{
+    struct rb_node *rbp;
+    struct epitem *epi;
+    /* We need to release all tasks waiting for these file */
+    if (waitqueue_active(&ep->poll_wait))
+        ep_poll_safewake(&ep->poll_wait);
+    /*
+     * We need to lock this because we could be hit by
+     * eventpoll_release_file() while we're freeing the "struct eventpoll".
+     * We do not need to hold "ep->mtx" here because the epoll file
+     * is on the way to be removed and no one has references to it
+     * anymore. The only hit might come from eventpoll_release_file() but
+     * holding "epmutex" is sufficent here.
+     */
+    mutex_lock(&epmutex);
+    /*
+     * Walks through the whole tree by unregistering poll callbacks.
+     */
+    for (rbp = rb_first(&ep->rbr); rbp; rbp = rb_next(rbp)) {
+        epi = rb_entry(rbp, struct epitem, rbn);
+        ep_unregister_pollwait(ep, epi);
+    }
+    /*
+     * Walks through the whole tree by freeing each "struct epitem". At this
+     * point we are sure no poll callbacks will be lingering around, and also by
+     * holding "epmutex" we can be sure that no file cleanup code will hit
+     * us during this operation. So we can avoid the lock on "ep->lock".
+     */
+    
+    while ((rbp = rb_first(&ep->rbr)) != NULL) {
+        epi = rb_entry(rbp, struct epitem, rbn);
+        ep_remove(ep, epi);
+    }
+    mutex_unlock(&epmutex);
+    mutex_destroy(&ep->mtx);
+    free_uid(ep->user);
+    kfree(ep);
+}
+/* File callbacks that implement the eventpoll file behaviour */
+static const struct file_operations eventpoll_fops = {
+    .release    = ep_eventpoll_release,
+    .poll       = ep_eventpoll_poll
+};
+/* Fast test to see if the file is an evenpoll file */
+static inline int is_file_epoll(struct file *f)
+{
+    return f->f_op == &eventpoll_fops;
+}
+
+
+#+end_src
+
+* miscellaneous
+** 页框和伙伴算法
+- 内核使用 page 结构体表示一个 4k 大小的物理页, 也叫页框
+
+- linux 把空闲的页框分组为 11 个块链表, 在第 i 个链表中每个页框块包含 2 的 i 次方个连续的页框
+
+- 页框操作 alloc_pages(), page_address()
+  #+begin_src c
+    /* 分配 2^order 个连续的物理页, 返回一个指针指向第一个物理页的 page 结构体 */
+    static inline struct page *alloc_pages(gfp_t gfp_mask, unsigned int order)
+    /* 返回 page 所映射的虚拟地址 */
+    void *page_address(const struct page *page)
+  #+end_src
+** slab
+- 每种对象类型对应着一个高速缓存
+- 每个高速缓存由多个 slab 组成, 每个 slab 由一个或多个物理上连续的页组成
+- 减少伙伴算法在分配小块连续内存时产生的内部碎片
+- 将频繁使用的对象缓存起来
+- 通过着色技术调整对象以更好的使用硬件高速缓存
+- slob / slub

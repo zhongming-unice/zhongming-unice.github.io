@@ -5,154 +5,167 @@
 <link rel="alternate"
       type="application/rss+xml"
       href="https://zhongming-unice.github.io/rss.xml"
-      title="RSS feed for https://zhongming-unice.github.io/"/>
+      title="RSS feed for https://zhongming-unice.github.io/">
 <title>c++ note</title>
 <meta name="author" content="ming"><meta name="referrer" content="no-referrer"><link href="static/usual-org-front-matter.css" rel="stylesheet" type="text/css" /><link href="static/org-notes-style.css" rel="stylesheet" type="text/css" /><link href="static/floating-toc.css" rel="stylesheet" type="text/css" /><link href="static/blog-banner.css" rel="stylesheet" type="text/css" /><link rel="icon" href="static/favicon.ico"></head>
 <body>
-<div id="preamble" class="status">
-<div class="header">  <div class="sitelinks">    <a href="https://zhongming-unice.github.io/about.html">about</a>    | <a href="https://zhongming-unice.github.io/archive.html">archive</a>    | <a href="https://zhongming-unice.github.io/rss.xml">rss</a>  </div></div></div>
+<div id="preamble" class="status"><div class="header">  <div class="sitelinks">    <a href="https://zhongming-unice.github.io/about.html">about</a>    | <a href="https://zhongming-unice.github.io/archive.html">archive</a>    | <a href="https://zhongming-unice.github.io/rss.xml">rss</a>  </div></div></div>
 <div id="content">
 <div class="post-date">30  1 2021</div><h1 class="post-title"><a href="https://zhongming-unice.github.io/2021-01-30-c++-note.html">c++ note</a></h1>
 <nav id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgcad28e0">1. basic</a>
+<li><a href="#org3e82e42">1. basic</a>
 <ul>
-<li><a href="#org19f6ef5">1.1. static</a></li>
-<li><a href="#orgd313102">1.2. virtual</a></li>
-<li><a href="#org5e4d4db">1.3. lvalue and rvalue</a></li>
-<li><a href="#orgd8fdaa5">1.4. cast</a></li>
-<li><a href="#org35c1841">1.5. inheritance</a></li>
-<li><a href="#org49c687c">1.6. smart pointer</a></li>
-<li><a href="#orga360fa1">1.7. RAII</a></li>
-<li><a href="#org3c316d8">1.8. value semantics</a></li>
-<li><a href="#orgb295e08">1.9. CRTP</a></li>
-<li><a href="#org8434f7f">1.10. network I/O basic</a></li>
-<li><a href="#org046172d">1.11. malloc</a></li>
-<li><a href="#orgb180026">1.12. thread</a></li>
-<li><a href="#orga73964b">1.13. future</a></li>
+<li><a href="#org5f198f5">1.1. static</a></li>
+<li><a href="#orgcee9d6a">1.2. virtual</a></li>
+<li><a href="#org6b2eab5">1.3. lvalue and rvalue</a></li>
+<li><a href="#org20e6606">1.4. cast</a></li>
+<li><a href="#org747cebb">1.5. inheritance</a></li>
+<li><a href="#orgbb1f4b5">1.6. time</a></li>
+<li><a href="#org508eca2">1.7. smart pointer</a></li>
+<li><a href="#org37e9443">1.8. RAII</a></li>
+<li><a href="#org0d4a3a2">1.9. value semantics</a></li>
+<li><a href="#orgc0a1ed7">1.10. CRTP</a></li>
+<li><a href="#org93fa478">1.11. network I/O basic</a>
+<ul>
+<li><a href="#orgdafb797">1.11.1. socket</a></li>
+<li><a href="#org3ee4771">1.11.2. select</a></li>
+<li><a href="#orgda853fe">1.11.3. poll</a></li>
+<li><a href="#org9212e51">1.11.4. epoll</a></li>
 </ul>
 </li>
-<li><a href="#orgefe1116">2. std container</a>
-<ul>
-<li><a href="#orgea2ec7c">2.1. std::array</a></li>
-<li><a href="#org95acec9">2.2. std::vector</a></li>
-<li><a href="#org9a20de3">2.3. std::deque</a></li>
-<li><a href="#org0fa111a">2.4. std::list</a></li>
-<li><a href="#org108e051">2.5. std::forward_list</a></li>
-<li><a href="#org2680d96">2.6. std::set</a></li>
-<li><a href="#org2911466">2.7. std::map</a></li>
-<li><a href="#org1ae4642">2.8. std::unordered_map</a></li>
-<li><a href="#org2d0d7b3">2.9. std::remove</a></li>
+<li><a href="#org99cafa4">1.12. malloc</a></li>
+<li><a href="#orge0a8e32">1.13. thread-Safe, async-signal-safe and reentrant</a></li>
 </ul>
 </li>
-<li><a href="#org59b445d">3. multithread</a>
+<li><a href="#org4a437e8">2. stl container</a>
 <ul>
-<li><a href="#orgfbc32cf">3.1. basic</a></li>
-<li><a href="#org640ed3a">3.2. atomic</a></li>
-<li><a href="#orgf8b319b">3.3. mutex</a></li>
-<li><a href="#orgce18892">3.4. condition variable</a></li>
+<li><a href="#orgc8cef76">2.1. std::array</a></li>
+<li><a href="#org8f765a5">2.2. std::vector</a></li>
+<li><a href="#orgf3f9761">2.3. std::deque</a></li>
+<li><a href="#orgc315034">2.4. std::list</a></li>
+<li><a href="#org54af254">2.5. std::forward_list</a></li>
+<li><a href="#orgbefc118">2.6. std::set</a></li>
+<li><a href="#org747eb45">2.7. std::map</a></li>
+<li><a href="#orgc5f3907">2.8. std::unordered_map</a></li>
+<li><a href="#orgff5a86c">2.9. std::remove</a></li>
 </ul>
 </li>
-<li><a href="#org4865172">4. coroutines</a></li>
-<li><a href="#orgcdac987">5. asio</a>
+<li><a href="#org1b5139b">3. concurrency</a>
 <ul>
-<li><a href="#orgd47f099">5.1. timer</a></li>
-<li><a href="#org9e1f7a1">5.2. daytime</a></li>
-<li><a href="#org5412b22">5.3. chat</a></li>
+<li><a href="#orge7bd31b">3.1. basic</a></li>
+<li><a href="#org817e927">3.2. atomic</a></li>
+<li><a href="#orgf5d6bea">3.3. mutex</a></li>
+<li><a href="#org6fd94cb">3.4. condition variable</a></li>
 </ul>
 </li>
-<li><a href="#org157ab91">6. design patterns</a>
+<li><a href="#org6fa7362">4. asio</a>
 <ul>
-<li><a href="#orgc7ac633">6.1. Creational Patterns</a></li>
-<li><a href="#org40faf0b">6.2. Structural Patterns</a></li>
-<li><a href="#org51e093c">6.3. Behavioral Patterns</a></li>
+<li><a href="#org324a030">4.1. timer</a></li>
+<li><a href="#orgeb7ad54">4.2. daytime</a></li>
+<li><a href="#org1d8932f">4.3. chat</a></li>
 </ul>
 </li>
-<li><a href="#orgc704e1f">7. unix</a>
+<li><a href="#orgb8d8e8e">5. muduo</a>
 <ul>
-<li><a href="#orge1a643e">7.1. baisc</a></li>
-<li><a href="#orgb482001">7.2. man sections</a></li>
-<li><a href="#org6c2c44b">7.3. ctrl</a></li>
-<li><a href="#orgcc04d69">7.4. *nix commands</a></li>
+<li><a href="#org4ffec2c">5.1. timestamp</a></li>
 </ul>
 </li>
-<li><a href="#orgf6ca257">8. Primer C++</a>
+<li><a href="#orgf3cee83">6. unix</a>
 <ul>
-<li><a href="#org0801536">8.1. string, vector and array</a></li>
-<li><a href="#org922723c">8.2. expression</a></li>
+<li><a href="#orgb0e34a6">6.1. baisc</a></li>
+<li><a href="#orgdd33851">6.2. man sections</a></li>
+<li><a href="#org2a84f92">6.3. ctrl</a></li>
+<li><a href="#org7dee4f5">6.4. *nix commands</a></li>
 </ul>
 </li>
-<li><a href="#org2618cd5">9. CSAPP</a>
+<li><a href="#org5ec6def">7. Primer C++</a>
 <ul>
-<li><a href="#org76a1918">9.1. basic</a></li>
-<li><a href="#orgc4b4813">9.2. optimization</a></li>
-<li><a href="#orgdb7b002">9.3. memory</a></li>
-<li><a href="#org950c375">9.4. linking</a></li>
-<li><a href="#org493ea95">9.5. exceptional control flow</a></li>
-<li><a href="#org13f28cb">9.6. system level I/O</a></li>
-<li><a href="#org043fb7a">9.7. virtual memory</a></li>
-<li><a href="#org3070acb">9.8. dynamic memory allocation</a></li>
-<li><a href="#orgfeecbd1">9.9. network programming</a></li>
+<li><a href="#org2b1cc15">7.1. string, vector and array</a></li>
+<li><a href="#org9d6e780">7.2. expression</a></li>
 </ul>
 </li>
-<li><a href="#org645bafc">10. Introduction to Computer Networking</a>
+<li><a href="#orgc4d9181">8. CSAPP</a>
 <ul>
-<li><a href="#org9533270">10.1. intro</a></li>
-<li><a href="#orgd545e6c">10.2. tcp</a></li>
-<li><a href="#org7c28617">10.3. ICMP</a></li>
-<li><a href="#org278e292">10.4. error detection</a></li>
-<li><a href="#org0721966">10.5. sliding window</a></li>
+<li><a href="#orge21a9a9">8.1. basic</a></li>
+<li><a href="#orgfcef1f3">8.2. optimization</a></li>
+<li><a href="#org1c366be">8.3. memory</a></li>
+<li><a href="#org81e0f58">8.4. linking</a></li>
+<li><a href="#orgd99dacb">8.5. exceptional control flow</a></li>
+<li><a href="#orgee5fde9">8.6. system level I/O</a></li>
+<li><a href="#orgf20b4f9">8.7. virtual memory</a></li>
+<li><a href="#org329d17c">8.8. dynamic memory allocation</a></li>
+<li><a href="#orgcb637ad">8.9. network programming</a></li>
+<li><a href="#orgb33eeb3">8.10. concurrent programming</a></li>
+<li><a href="#orgfdd98ba">8.11. synchronization</a></li>
+<li><a href="#org6bbdfe8">8.12. thread level parallelism</a></li>
 </ul>
 </li>
-<li><a href="#orgc8e3210">11. Practical Network Programming</a>
+<li><a href="#orgc021d8b">9. Introduction to Computer Networking</a>
 <ul>
-<li><a href="#org542744a">11.1. intro</a></li>
-<li><a href="#orgac70470">11.2. tcp self-connection</a></li>
-<li><a href="#orge07555f">11.3. other</a></li>
+<li><a href="#org773addb">9.1. intro</a></li>
+<li><a href="#orgb3266f8">9.2. tcp</a></li>
+<li><a href="#orgcda4759">9.3. ucp</a></li>
+<li><a href="#orga943212">9.4. ICMP</a></li>
+<li><a href="#org23873f7">9.5. error detection</a></li>
+<li><a href="#org0248751">9.6. sliding window</a></li>
+<li><a href="#org8c2c895">9.7. packet switching</a></li>
 </ul>
 </li>
-<li><a href="#org2fe9b36">12. source code</a>
+<li><a href="#org9060225">10. Practical Network Programming</a>
 <ul>
-<li><a href="#orgc7d7d51">12.1. epoll</a></li>
+<li><a href="#orgc86996b">10.1. intro</a></li>
+<li><a href="#orgeb95e47">10.2. tcp self-connection</a></li>
+<li><a href="#org75bda91">10.3. other</a></li>
 </ul>
 </li>
-<li><a href="#orgef9393d">13. plan</a></li>
+<li><a href="#org89af805">11. source code</a>
+<ul>
+<li><a href="#orgf973ef6">11.1. epoll</a></li>
+</ul>
+</li>
+<li><a href="#org859dc87">12. miscellaneous</a>
+<ul>
+<li><a href="#org1ab0eca">12.1. 页框和伙伴算法</a></li>
+<li><a href="#orgf117076">12.2. slab</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </nav>
 
-<div id="outline-container-orgcad28e0" class="outline-2">
-<h2 id="orgcad28e0"><span class="section-number-2">1</span> basic</h2>
+<div id="outline-container-org3e82e42" class="outline-2">
+<h2 id="org3e82e42"><span class="section-number-2">1</span> basic</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org19f6ef5" class="outline-3">
-<h3 id="org19f6ef5"><span class="section-number-3">1.1</span> static</h3>
+<div id="outline-container-org5f198f5" class="outline-3">
+<h3 id="org5f198f5"><span class="section-number-3">1.1</span> static</h3>
 <div class="outline-text-3" id="text-1-1">
 <dl class="org-dl">
 <dt>copy constructor</dt><dd></dd>
 </dl>
 <p>
-在使用包含静态成员的类时，调用拷贝构造函数生成临时对象，
-这个临时对象在调用析构函数时可能会产生对静态成员的副作用（如 count 自减1），
-我们需要重写拷贝构造函数，在该拷贝构造函数中完成构造函数里的操作（如 count 自增1）。
+在使用包含静态成员的类时, 调用拷贝构造函数生成临时对象, 
+这个临时对象在调用析构函数时可能会产生对静态成员的副作用（如 count 自减1）, 
+我们需要重写拷贝构造函数, 在该拷贝构造函数中完成构造函数里的操作（如 count 自增1）。
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgd313102" class="outline-3">
-<h3 id="orgd313102"><span class="section-number-3">1.2</span> virtual</h3>
+<div id="outline-container-orgcee9d6a" class="outline-3">
+<h3 id="orgcee9d6a"><span class="section-number-3">1.2</span> virtual</h3>
 <div class="outline-text-3" id="text-1-2">
 <ul class="org-ul">
-<li>在构造函数和析构函数中调用虚的成员函数不会有虚函数的效果，即还是调用父类的成员函数，可以使用工厂模式来解决。</li>
-<li>类中有虚函数时，析构函数要为虚或者 protected</li>
+<li>在构造函数和析构函数中调用虚的成员函数不会有虚函数的效果, 即还是调用父类的成员函数, 可以使用工厂模式来解决。</li>
+<li>类中有虚函数时, 析构函数要为虚或者 protected</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org5e4d4db" class="outline-3">
-<h3 id="org5e4d4db"><span class="section-number-3">1.3</span> lvalue and rvalue</h3>
+<div id="outline-container-org6b2eab5" class="outline-3">
+<h3 id="org6b2eab5"><span class="section-number-3">1.3</span> lvalue and rvalue</h3>
 <div class="outline-text-3" id="text-1-3">
 <ul class="org-ul">
 <li>rvalue
@@ -161,10 +174,10 @@
 <li>prvalue(Pure Right Value)</li>
 </ul></li>
 
-<li id="rvo">Return Value Optimization, 编译器减少函数返回时生成临时值（对象）的个数，编译器默认使用，编译时使用 -fno-elide-constructors 来禁用</li>
+<li id="rvo">Return Value Optimization, 编译器减少函数返回时生成临时值（对象）的个数, 编译器默认使用, 编译时使用 -fno-elide-constructors 来禁用</li>
 <li id="nrvo">Named Return Value Optimization</li>
 
-<li>std::forward 完美转发，defined in header &lt;utility&gt;，能保留const，可以被static_cast替代，能转发：
+<li>std::forward 完美转发, defined in header &lt;utility&gt;, 能保留const, 可以被static_cast替代, 能转发：
 <ul class="org-ul">
 <li>const T &amp;</li>
 <li>T &amp;</li>
@@ -175,21 +188,22 @@
 </div>
 </div>
 
-<div id="outline-container-orgd8fdaa5" class="outline-3">
-<h3 id="orgd8fdaa5"><span class="section-number-3">1.4</span> cast</h3>
+<div id="outline-container-org20e6606" class="outline-3">
+<h3 id="org20e6606"><span class="section-number-3">1.4</span> cast</h3>
 <div class="outline-text-3" id="text-1-4">
 <dl class="org-dl">
-<dt>const_cast</dt><dd>可 cast const 的对象，除 function pointers</dd>
+<dt>const_cast</dt><dd>可 cast const 的对象, 除 function pointers</dd>
+<dt>reinterpret_cast</dt><dd>将内存里的值重新解释</dd>
+<dt>dynamic_cast</dt><dd>一般地讲, 能用虚函数解决的问题就不要用 dynamic_cast, 能够用 dynamic_cast 解决的就不要用 typeid</dd>
 </dl>
 </div>
 </div>
-
-<div id="outline-container-org35c1841" class="outline-3">
-<h3 id="org35c1841"><span class="section-number-3">1.5</span> inheritance</h3>
+<div id="outline-container-org747cebb" class="outline-3">
+<h3 id="org747cebb"><span class="section-number-3">1.5</span> inheritance</h3>
 <div class="outline-text-3" id="text-1-5">
 <ul class="org-ul">
 <li><p>
-强制要求派生类显式地使用接口，又为派生类准备一个可调用的默认实现：为纯虚函数提供定义，这种定义不会存入虚表，因此基类本身仍然是抽象类，并且派生类仍然需要提供一个显式实现
+强制要求派生类显式地使用接口, 又为派生类准备一个可调用的默认实现：为纯虚函数提供定义, 这种定义不会存入虚表, 因此基类本身仍然是抽象类, 并且派生类仍然需要提供一个显式实现
 </p>
 <div class="org-src-container">
 <pre class="src src-c++">class Base
@@ -238,16 +252,90 @@ int main() {
 </div></li>
 <li>组合正交的多个功能
 <ul class="org-ul">
-<li>有一个 TaskManager 类，负责管理所有拥有 ITask 接口的对象，现在需要为 ITask 类型增加两个功能：一是 timing 功能，即在 ITask 对象执行 Execute 方法前后计时；二是 logging 功能，即在 ITask 对象执行 Execute 方法前后打印日志</li>
-<li>将 TimingTask 和 LoggingTask 的基类都换成模板参数，实现 mixin</li>
+<li>有一个 TaskManager 类, 负责管理所有拥有 ITask 接口的对象, 现在需要为 ITask 类型增加两个功能：一是 timing 功能, 即在 ITask 对象执行 Execute 方法前后计时；二是 logging 功能, 即在 ITask 对象执行 Execute 方法前后打印日志</li>
+<li>将 TimingTask 和 LoggingTask 的基类都换成模板参数, 实现 mixin</li>
 </ul></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org49c687c" class="outline-3">
-<h3 id="org49c687c"><span class="section-number-3">1.6</span> smart pointer</h3>
+<div id="outline-container-orgbb1f4b5" class="outline-3">
+<h3 id="orgbb1f4b5"><span class="section-number-3">1.6</span> time</h3>
 <div class="outline-text-3" id="text-1-6">
+<table>
+
+
+<colgroup>
+<col  class="org-left">
+
+<col  class="org-left">
+
+<col  class="org-left">
+
+<col  class="org-left">
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Function</th>
+<th scope="col" class="org-left">Type</th>
+<th scope="col" class="org-left">Precision</th>
+<th scope="col" class="org-left">Remark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">time(2)</td>
+<td class="org-left">time_t</td>
+<td class="org-left">second</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">ftime(3)</td>
+<td class="org-left">struct timeb</td>
+<td class="org-left">millisecond</td>
+<td class="org-left">obsolete</td>
+</tr>
+
+<tr>
+<td class="org-left">gettimeofday(2)</td>
+<td class="org-left">struct timeval</td>
+<td class="org-left">microsecond</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">clock_gettime(2)</td>
+<td class="org-left">struct timespec</td>
+<td class="org-left">nanosecond</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">Time Stamp Counter</td>
+<td class="org-left">64-bit register</td>
+<td class="org-left">CPU related</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+<ul class="org-ul">
+<li><p>
+clock_gettime(): 系统调用 (_sys_clock_gettime()), 可指定参数 CLOCK_REALTIME_COARSE 和 CLOCK_MONOTONIC_COARSE,
+粗粒度地获取时间, 而不需要发生上下文切换 (和 gettimeofday() 一样也是 vdso 技术)
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">struct timespec ts;
+clock_gettime(CLOCK_MONOTONIC_COARSE, &amp;ts);
+unsigned long long millisecs = ts.tv_sec * 1000 + ts.tv_nsec / (1000 * 1000);
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org508eca2" class="outline-3">
+<h3 id="org508eca2"><span class="section-number-3">1.7</span> smart pointer</h3>
+<div class="outline-text-3" id="text-1-7">
 <dl class="org-dl">
 <dt>enable_shared_from_this</dt><dd><ul class="org-ul">
 <li>是一种 CRTP</li>
@@ -316,112 +404,451 @@ int main()
 </ul>
 </div>
 </div>
-<div id="outline-container-orga360fa1" class="outline-3">
-<h3 id="orga360fa1"><span class="section-number-3">1.7</span> RAII</h3>
-<div class="outline-text-3" id="text-1-7">
+<div id="outline-container-org37e9443" class="outline-3">
+<h3 id="org37e9443"><span class="section-number-3">1.8</span> RAII</h3>
+<div class="outline-text-3" id="text-1-8">
 <p>
-资源获取即初始化（Resource Acquisition Is Initialization），或称 RAII，
+资源获取即初始化（Resource Acquisition Is Initialization）, 或称 RAII, 
 它将必须在使用前请求的资源的生命周期与一个对象的生命周期相绑定。
 </p>
 
 <ul class="org-ul">
-<li>拥有 open()/close()、lock()/unlock()，或 init()/copyFrom()/destroy() 成员函数的类是非 RAII 类的典型的例子</li>
+<li>拥有 open()/close()、lock()/unlock(), 或 init()/copyFrom()/destroy() 成员函数的类是非 RAII 类的典型的例子</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org3c316d8" class="outline-3">
-<h3 id="org3c316d8"><span class="section-number-3">1.8</span> value semantics</h3>
-<div class="outline-text-3" id="text-1-8">
-<p>
-<a href="https://akrzemi1.wordpress.com/2012/02/03/value-semantics/">Value semantics</a>
-</p>
-
+<div id="outline-container-org0d4a3a2" class="outline-3">
+<h3 id="org0d4a3a2"><span class="section-number-3">1.9</span> value semantics</h3>
+<div class="outline-text-3" id="text-1-9">
 <ul class="org-ul">
 <li>对一个具有值语义的原始变量变量赋值可以转换成内存的 bit-wise-copy</li>
 <li>如果一个type X 具有值语义, 则：
 <ul class="org-ul">
 <li>X 的 size 在编译时可以确定</li>
-<li>将 X 的变量 x，赋值与另一个变量 y，无须专门的 = operator，简单的 bit-wise-copy 即可</li>
-<li>当上述赋值发生后，x 和 y 脱离关系：x 和 y 可以独立销毁，其内存也可以独立释放</li>
+<li>将 X 的变量 x, 赋值与另一个变量 y, 无须专门的 = operator, 简单的 bit-wise-copy 即可</li>
+<li>当上述赋值发生后, x 和 y 脱离关系：x 和 y 可以独立销毁, 其内存也可以独立释放</li>
 </ul></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgb295e08" class="outline-3">
-<h3 id="orgb295e08"><span class="section-number-3">1.9</span> CRTP</h3>
-<div class="outline-text-3" id="text-1-9">
+<div id="outline-container-orgc0a1ed7" class="outline-3">
+<h3 id="orgc0a1ed7"><span class="section-number-3">1.10</span> CRTP</h3>
+<div class="outline-text-3" id="text-1-10">
 <p>
-Curiously Recurring Template Pattern 奇异递归模板模式，更一般地被称作 F-bound polymorphism
+Curiously Recurring Template Pattern 奇异递归模板模式, 更一般地被称作 F-bound polymorphism
 </p>
 <ul class="org-ul">
-<li>派生类继承自模板类，派生类将自身作为参数传给模板类</li>
-<li>基类转换成派生类用的是 static_cast 而不是 dynamic_cast，降低了继承带来的虚函数表查询开销</li>
+<li>派生类继承自模板类, 派生类将自身作为参数传给模板类</li>
+<li>基类转换成派生类用的是 static_cast 而不是 dynamic_cast, 降低了继承带来的虚函数表查询开销</li>
 <li>enable_shared_from_this 和 ranges::view_interface 属于 CRTP</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org8434f7f" class="outline-3">
-<h3 id="org8434f7f"><span class="section-number-3">1.10</span> network I/O basic</h3>
-<div class="outline-text-3" id="text-1-10">
-<dl class="org-dl">
-<dt>synchronous</dt><dd></dd>
-
-<dt>asynchronous</dt><dd></dd>
-
-<dt>blocking</dt><dd></dd>
-
-<dt>non-blocking</dt><dd></dd>
-
-<dt>reactor</dt><dd></dd>
-
-<dt>proactor</dt><dd></dd>
-
-
-<dt>kqueue</dt><dd></dd>
-
-<dt>select</dt><dd><ul class="org-ul">
-<li>当前进程使用 O(N) 时间轮询 bitmap 中准备就绪的 socket, 并将其保存进 socket 的等待队列中（作为等待者）, 如果没有准备就绪的 socket, 该进程将会被挂起, 等有数据传输完毕触发中断程序（kernel 也可以启动 interrupt coalescing 机制, 让网卡做中断合并）使 cpu 让出时间片去将数据导入 socket 的读缓冲区并将等待者移入工作队列</li>
-</ul></dd>
-<dt>poll</dt><dd><ul class="org-ul">
-<li>用数组代替 select 中的 bitmap 使其监听的 socket 数可以大于1024</li>
-</ul></dd>
-<dt>epoll</dt><dd><ul class="org-ul">
-<li>select 和 poll 的不足:
-<ul class="org-ul">
-<li>每次调用都需要所有需要监听的 socket 的 fd 的集合</li>
-<li>返回值为 socket 就绪/错误的数量</li>
-</ul></li>
-<li>解决:
-<ul class="org-ul">
-<li>epoll 在内核空间使用 eventpoll 存放 socket fd 列表（红黑树）和就绪的 socket 列表</li>
-<li>socket 的等待队列中不再是进程, 而是 eventpoll 对象引用</li>
-<li>epoll_ctl(): 增删改 eventpoll 中的 socket fd 列表</li>
-<li>epoll_wait(): 阻塞线程直到指定的 socket 就绪, 将就绪的 socket 信息传入 epoll_event 事件数组指针</li>
-<li>将 epoll_wait() 中的阻塞时间设置为0即为非阻塞</li>
-<li>eventpoll 的等待队列保存了调用了 epoll_wait() 的进程</li>
-</ul></li>
-</ul></dd>
-
-<dt>IOCP</dt><dd></dd>
-
-<dt>asio</dt><dd></dd>
-
-<dt>muduo</dt><dd></dd>
-
-<dt>(no term)</dt><dd>misc
-<ul class="org-ul">
-<li>需要的线程数 = qps * latency (单位秒)</li>
-</ul></dd>
-</dl>
-</div>
-</div>
-
-<div id="outline-container-org046172d" class="outline-3">
-<h3 id="org046172d"><span class="section-number-3">1.11</span> malloc</h3>
+<div id="outline-container-org93fa478" class="outline-3">
+<h3 id="org93fa478"><span class="section-number-3">1.11</span> network I/O basic</h3>
 <div class="outline-text-3" id="text-1-11">
+</div>
+<div id="outline-container-orgdafb797" class="outline-4">
+<h4 id="orgdafb797"><span class="section-number-4">1.11.1</span> socket</h4>
+<div class="outline-text-4" id="text-1-11-1">
+<ul class="org-ul">
+<li>setsockopt
+<ul class="org-ul">
+<li>SO_REUSEADDR    enables local address reuse 对 time-wait 链接, 确保 server 重启成功</li>
+<li><p>
+SO_REUSEPORT    enables duplicate address and port bindings 可解决 thundering herd problem
+</p>
+<blockquote>
+<p>
+SO_REUSEPORT (since Linux 3.9)
+ Permits  multiple  AF_INET  or  AF_INET6  sockets to be bound to an identical
+ socket address.  This option must be set on each socket (including the  first
+ socket)  prior  to calling bind(2) on the socket.  To prevent port hijacking,
+ all of the processes binding to the same address must have the same effective
+ UID.  This option can be employed with both TCP and UDP sockets.
+</p>
+
+<p>
+For  TCP  sockets, this option allows accept(2) load distribution in a multi-
+threaded server to be improved by using a distinct listener socket  for  each
+thread.   This provides improved load distribution as compared to traditional
+techniques such using a single accept(2)ing thread that  distributes  connec‐
+tions,  or  having  multiple  threads that compete to accept(2) from the same
+socket.
+</p>
+
+<p>
+For UDP sockets, the use of this option can provide  better  distribution  of
+incoming datagrams to multiple processes (or threads) as compared to the tra‐
+ditional technique of having multiple processes compete to receive  datagrams
+on the same socket.
+</p>
+</blockquote></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org3ee4771" class="outline-4">
+<h4 id="org3ee4771"><span class="section-number-4">1.11.2</span> select</h4>
+<div class="outline-text-4" id="text-1-11-2">
+<ul class="org-ul">
+<li>当前进程使用 O(N) 时间轮询 bitmap 中准备就绪的 socket, 并将其保存进 socket 的等待队列中（作为等待者）, 如果没有准备就绪的 socket, 该进程将会被挂起, 等有数据传输完毕触发中断程序（kernel 也可以启动 interrupt coalescing 机制, 让网卡做中断合并）使 cpu 让出时间片去将数据导入 socket 的读缓冲区并将等待者移入工作队列</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgda853fe" class="outline-4">
+<h4 id="orgda853fe"><span class="section-number-4">1.11.3</span> poll</h4>
+<div class="outline-text-4" id="text-1-11-3">
+<ul class="org-ul">
+<li>用数组代替 select 中的 bitmap 使其监听的 socket 数可以大于1024</li>
+<li>signal
+<dl class="org-dl">
+<dt>SIGPIPE</dt><dd>client close socket, server call write, then server will receive a RST segment, if server do a write again, then it will cause SIGPIPE</dd>
+<dt>SIGCHLD</dt><dd>zombie child process</dd>
+</dl></li>
+
+<li>usage
+<ul class="org-ul">
+<li>ignore SIGPIPE and SIGCHLD</li>
+<li>non-blocking sokcet + I/O multiplexing</li>
+<li><p>
+create listenfd: socket_nonblocking, sokcet_cloexec (or call fcntl f_setfl(o_nonblock), f_setfd(fd_cloexec))
+</p>
+<div class="org-src-container">
+<pre class="src src-c">listenfd = socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
+//or
+flags = fcntl (listenfd, F_GETFL, 0);
+flags |= O_NONBLOCK;
+fcntl (listenfd, F_SETFL, flags);
+</pre>
+</div></li>
+<li>&amp;*pollfds.begin() 等同于 pollfds.data()</li>
+<li>每次调用传一个 struct pollfd 的数组给内核, 内核使用链表存储</li>
+<li>specifying a negative value in timeout means an infinite timeout.</li>
+<li>specifying a timeout of zero causes poll() to return immediately, even if no file descriptors are ready.</li>
+<li><p>
+accept(2) return EMFILE 处理（太多文件）
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">idlefd = open("dev/null", O_RDONLY | O_CLOEXEC);
+if (errno == EMFILE)
+  {
+    close(idlefd);
+    idlefd = accept(listenfd, nullptr, nullptr);
+    close(idlefd);
+    idlefd = open("dev/null", O_RDONLY | O_CLOEXEC);
+    continue;
+
+</pre>
+</div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org9212e51" class="outline-4">
+<h4 id="org9212e51"><span class="section-number-4">1.11.4</span> epoll</h4>
+<div class="outline-text-4" id="text-1-11-4">
+<ul class="org-ul">
+<li><p>
+file operations 中的 poll 函数的作用
+</p>
+<div class="org-src-container">
+<pre class="src src-c">// file_operations Struct Reference 
+#include &lt;fs.h&gt;
+unsigned int(* 	poll )(struct file *, struct poll_table_struct *);
+
+typedef struct poll_table_struct {
+  poll_queue_proc _qproc;
+  unsigned long _key;
+ } poll_table;
+</pre>
+</div>
+<ul class="org-ul">
+<li>将当前进程的 task_struct 加入设备驱动的等待队列, 并设置回调函数</li>
+<li>检查已发生的事件 POLLIN, POLLOUT, POLLERR</li>
+</ul></li>
+
+<li>等待队列
+<ul class="org-ul">
+<li><p>
+等待队列包含队列头(wait_queue_head_t)和队列项(wait_queue_t)
+</p>
+<div class="org-src-container">
+<pre class="src src-c">#include &lt;wait.h&gt;
+struct list_head{
+    struct list_head *next, &amp;prev;
+}; // 双向链表
+
+typedef struct __wait_queue_head wait_queue_head_t;
+struct __wait_queue_head {
+    spinlock_t lock;
+    struct list_head task_list;
+};
+
+typedef struct __wait_queue wait_queue_t;
+struct __wait_queue {
+    unsigned int flags;
+#define WQ_FLAG_EXCLUSIVE   0x01
+    void *private;		/* 指向 task_struct */
+    wait_queue_func_t func;	/* callback function */
+    struct list_head task_list;
+};
+
+</pre>
+</div></li>
+</ul></li>
+</ul>
+
+
+<ul class="org-ul">
+<li>epoll_ctl(epfd, EPOLL_ADD_CTL, fd, &amp;event)
+<ul class="org-ul">
+<li>copy_from_user 将用户的 event 拷贝到内核 named epds</li>
+<li>得到 epfd 的 file 结构体 named file, fd 的结构体 named tfile</li>
+<li>tfile 需要支持 poll: tfile-&gt;f_op-&gt;poll</li>
+<li>epfd 不能监听自己: file == tfile</li>
+<li>获取 eventpoll 结构体 (每创建一个 epollfd, 内核就会分配一个 eventpoll 与之对应, 可以说是内核态的 epollfd), 来自与 epoll_create1() 中的分配: ep = file-&gt;private_data</li>
+<li>加锁: mutex_lock(&amp;ep-&gt;mtx)</li>
+<li>对于每一个监听的 fd, 内核都有分配一个 epitem 结构体, epi = ep_find(ep, tfile, fd), rbtree 查找, O(lgn) 的时间复杂度</li>
+<li>if !epi 表示可插入, 复制到内核的 event: epds 添加事件 epds.events |= POLLERR | POLLHUP</li>
+<li>call ep_insert(ep, &amp;epds, tfile, fd)
+<ul class="org-ul">
+<li>从 slab 中分配一个 epitem: epi = kmem_***_alloc(epi_***, GFP_KERNEL)</li>
+<li>初始化 epi-&gt;ep = ep, ep_set_ffd(&amp;epi-&gt;ffd, tfile, fd), epi-&gt;event = *event &#x2026;</li>
+<li>struct ep_pqueue epq: epq.epi = epi</li>
+<li>初始化 epq 的 poll_table, 指定调用 poll_wait 时的回调函数为 ep_ptable_queue_proc: init_poll_funcptr(&amp;epq.pt, ep_ptable_queue_proc)</li>
+<li>revents = tfile-&gt;f_op-&gt;poll(tfile, &amp;epq.pt): f_op-&gt;poll(), sock_poll(), udp/tcp_poll(), datagram_poll(), sock_poll_wait(), ep_ptable_queue_proc()
+<ul class="org-ul">
+<li>static void ep_ptable_queue_proc(struct file *file, wait_queue_head_t *whead, poll_table *pt)
+<ul class="org-ul">
+<li>根据 poll table 获取 epitem: struct epitem *epi = ep_item_from_epqueue(pt)</li>
+<li>创建 struct eppoll_entry * pwq = kmem_***_alloc(pwq_***, GFP_KERNEL)</li>
+<li>指定 ep_poll_callback 为唤醒时的回调函数: init_waitqueue_func_entry(&amp;pwq-&gt;wait, ep_poll_callback)</li>
+<li>pwq-&gt;base = epi</li>
+<li>将 pwq 挂入 sock-&gt;wq-&gt;wait (等待队列): add_wait_queue(whead, &amp;pwq-&gt;wait)</li>
+</ul></li>
+<li>static int ep_poll_callback(wait_queue_t *wait, unsigned mode, int sync, void *key)
+<ul class="org-ul">
+<li>通过等待队列获取 epitem 和 eventpoll: 
+struct epitem *epi = ep_item_from_wait(wait),
+struct eventpoll *ep = epi-&gt;ep</li>
+<li>检查有没有我们关心的事件: if (key &amp;&amp; !((unsigned long) key &amp; epi-&gt;event.events))</li>
+</ul></li>
+</ul></li>
+<li>文件监听自己的 epitem 链起来: list_add_tail(&amp;epi-&gt;fllink, &amp;tfile-&gt;f_ep_links)</li>
+<li>epitem 插入 eventpoll 的 rbtree 中: ep_rbtree_insert(ep, epi)</li>
+<li>监听数加1: atomic_inc(&amp;ep-&gt;user-&gt;epoll_watches)</li>
+</ul></li>
+<li>解锁: mutex_unlock(&amp;ep-&gt;mtx)</li>
+</ul></li>
+
+<li>epoll_wait(epfd, events, maxevents, timeout)
+<ul class="org-ul">
+<li>验证内存空间是否有效: access_ok(VERIFY_WRITE, events, maxevents * sizeof(struct epoll_event))</li>
+<li>获取 epfd 在内核对应的 struct event_poll *ep = fget(epfd)-&gt;private_data</li>
+<li>call ep_poll(ep, events, maxevents, timeout)
+<ul class="org-ul">
+<li>检查 ready list (rdllist) 是否为空: list_empty(&amp;ep-&gt;rdllist)</li>
+<li>初始化等待队列: init_waitqueue_entry(&amp;wait, current), current 是当前进程的 task_struct*</li>
+<li>挂载到 ep 的等待队列: __add_wait_queue_exclusive(&amp;ep-&gt;wq, &amp;wait)</li>
+<li>sleep</li>
+<li>set_current_state(TASK_INTERRUPTIBLE): if the ep_poll_callback() sends us a wakeup in between, we can wake</li>
+<li>wake 后: __remove_wait_queue(&amp;ep-&gt;wq, &amp;wait), set_current_state(TASK_RUNNING)</li>
+<li>call ep_send_events(ep, events, maxevents)
+<ul class="org-ul">
+<li>call ep_scan_ready_list(ep, ep_send_events_proc, &amp;esed)
+<ul class="org-ul">
+<li>监听到 events 的 epitem 都链到 rdllist 上了</li>
+<li>将 rdllist 所有的 epitem 都转移到了 txlist 上, 清空 rdllist: list_splice_init(&amp;ep-&gt;rdllist, &amp;txlist)</li>
+<li>清空 ovflist: ep-&gt;ovflist = NULL</li>
+<li>call the callback function: (*sproc)(ep, &amp;txlist, priv), 即 ep_send_events_proc(ep, &amp;txlist, priv)
+<ul class="org-ul">
+<li>priv: Private opaque data passed to the @sproc callback</li>
+<li>扫描 txlist, 依次取出 epitem: list_first_entry(head, struct epitem, rdllink)</li>
+<li>事件和用户传入的数据都 copy 给用户空间: __put_user(revents, &amp;uevent-&gt;events), __put_user(epi-&gt;event.data, &amp;uevent-&gt;data)</li>
+<li>判断 trigger mode (LT or ET): if (!(epi-&gt;event.events &amp; EPOLLET))</li>
+<li>如果是 LT, 重新插入到 rdllist: list_add_tail(&amp;epi-&gt;rdllink, &amp;ep-&gt;rdllist)</li>
+</ul></li>
+<li>all the events that happens during that period of time are chained in ep-&gt;ovflist and requeued later on</li>
+<li>将 ovflist 中的 epi 加到 rdllist</li>
+<li>上一次没有处理完的 epitem, 重新插入到 rdllist: list_splice(&amp;txlist, &amp;ep-&gt;rdllist)</li>
+<li>如果 rdllist 不为空, 唤醒</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li><p>
+用户态与内核态间的数据交换
+</p>
+<table>
+
+
+<colgroup>
+<col  class="org-left">
+
+<col  class="org-left">
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">user</th>
+<th scope="col" class="org-left">kernel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">int epfd</td>
+<td class="org-left">struct event_poll *ep = fget(epfd)-&gt;private_data</td>
+</tr>
+
+<tr>
+<td class="org-left">int fd (listenfd/connfd)</td>
+<td class="org-left">struct epitem *epi: alloc from slab, ep_set_ffd</td>
+</tr>
+
+<tr>
+<td class="org-left">struct epoll_event event</td>
+<td class="org-left">struct epoll_event epds: copy_from_user</td>
+</tr>
+
+<tr>
+<td class="org-left">events 数组</td>
+<td class="org-left">copy to user by __put_user function</td>
+</tr>
+</tbody>
+</table></li>
+
+<li>LT and ET
+<ul class="org-ul">
+<li><p>
+在 LT 模式下, ready list 上取出的 epitem 上报完事件后会重新加回 ready list
+</p>
+<div class="org-src-container">
+<pre class="src src-c">// static int ep_send_events_proc(struct eventpoll *ep, struct list_head *head, void *priv)
+if (!(epi-&gt;event.events &amp; EPOLLET)) {
+	    list_add_tail(&amp;epi-&gt;rdllink, &amp;ep-&gt;rdllist);
+	}
+</pre>
+</div></li>
+<li><p>
+如果 ready list 不为空, 且此时有进程阻塞在同一个 event_poll 睡眠队列上, 则唤醒它
+</p>
+<div class="org-src-container">
+<pre class="src src-c">// static int ep_scan_ready_list(struct eventpoll *ep, int (*sproc)(struct eventpoll *, struct list_head *, void *), void *priv)
+
+if (!list_empty(&amp;ep-&gt;rdllist)) {
+    /*
+     * Wake up (if active) both the eventpoll wait list and
+     * the -&gt;poll() wait list (delayed after we release the lock).
+     */
+    if (waitqueue_active(&amp;ep-&gt;wq))
+	wake_up_locked(&amp;ep-&gt;wq);
+    if (waitqueue_active(&amp;ep-&gt;poll_wait))
+	pwake++;
+}
+</pre>
+</div></li>
+</ul></li>
+
+<li>usage
+<ul class="org-ul">
+<li>使用 epoll_create1(EPOLL_CLOEXEC) 创建 epollfd</li>
+<li><p>
+使用 epoll_ctl(epollfd, EPOLL_CTL_ADD, listenfd, &amp;event) 添加 event
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">
+// The struct epoll_event is defined as:
+
+    typedef union epoll_data {
+	void    *ptr;
+	int      fd;
+	uint32_t u32;
+	uint64_t u64;
+    } epoll_data_t;
+
+    struct epoll_event {
+	uint32_t     events;    /* Epoll events */
+	epoll_data_t data;      /* User data variable */
+    };
+
+    struct epoll_event event;
+    event.events = EPOLLIN;
+    event.data.fd = listenfd;
+    if (mode == 1)
+      event.events |= EPOLLET;
+    else if (mode == 2)
+      event.events |= EPOLLONESHOT;
+    epoll_ctl(epollfd, EPOLL_CTL_ADD, listenfd, &amp;event);
+</pre>
+</div></li>
+<li><p>
+调用 epoll_wait(epollfd, epoll_event 数组, epoll_event 数组的 size), 将就绪 event 的传入 epoll_event 数组
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">nready = epoll_wait(epollfd, events.data(), static_cast&lt;int&gt;(events.size()), -1);
+</pre>
+</div></li>
+</ul></li>
+<li>thundering herd
+<ul class="org-ul">
+<li>EPOLLEXCLUSIVE: 只适用于多个线程/进程拥有各自的 epfd, 然后监听同一 listenfd</li>
+<li>SO_REUSEPORT: 只适用于多个 listenfd 绑定同一端口</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org99cafa4" class="outline-3">
+<h3 id="org99cafa4"><span class="section-number-3">1.12</span> malloc</h3>
+<div class="outline-text-3" id="text-1-12">
+<blockquote>
+<p>
+The malloc(), calloc(), valloc(), realloc(), and reallocf() functions allocate memory.  The allocated memory is aligned such that it can be used for any data type,
+including AltiVec- and SSE-related types.  The aligned_alloc() function allocates memory with the requested alignment.  The free() function frees allocations that
+were created via the preceding allocation functions.
+</p>
+
+<p>
+The malloc() function allocates size bytes of memory and returns a pointer to the allocated memory.
+</p>
+
+<p>
+The calloc() function contiguously allocates enough space for count objects that are size bytes of memory each and returns a pointer to the allocated memory.  The
+allocated memory is filled with bytes of value zero.
+</p>
+
+<p>
+The valloc() function allocates size bytes of memory and returns a pointer to the allocated memory.  The allocated memory is aligned on a page boundary.
+</p>
+
+<p>
+The aligned_alloc() function allocates size bytes of memory with an alignment specified by alignment and returns a pointer to the allocated memory.
+</p>
+
+<p>
+The realloc() function tries to change the size of the allocation pointed to by ptr to size, and returns ptr.  If there is not enough room to enlarge the memory allo-
+cation pointed to by ptr, realloc() creates a new allocation, copies as much of the old data pointed to by ptr as will fit to the new allocation, frees the old allo-
+cation, and returns a pointer to the allocated memory.  If ptr is NULL, realloc() is identical to a call to malloc() for size bytes.  If size is zero and ptr is not
+NULL, a new, minimum sized object is allocated and the original object is freed.  When extending a region allocated with calloc(3), realloc(3) does not guarantee that
+the additional memory is also zero-filled.
+</p>
+
+<p>
+The reallocf() function is identical to the realloc() function, except that it will free the passed pointer when the requested memory cannot be allocated.  This is a
+FreeBSD specific API designed to ease the problems with traditional coding styles for realloc causing memory leaks in libraries.
+</p>
+
+<p>
+The free() function deallocates the memory allocation pointed to by ptr. If ptr is a NULL pointer, no operation is performed.
+</p>
+</blockquote>
+
 <ul class="org-ul">
 <li>dlmalloc – General purpose allocator</li>
 
@@ -431,7 +858,7 @@ Curiously Recurring Template Pattern 奇异递归模板模式，更一般地被�
 <li>每个 chunk 至少需要 8 个字节的 overhead</li>
 <li>ptmalloc 将相似大小的 chunk 用双向链表链接起来, 这样的一个链表被称为一个 bin, Ptmalloc 一共 维护了 128 个 bin, 并使用一个数组来存储这些 bin</li>
 
-<li>大内存采用mmap()，小内存使用brk()</li>
+<li>大内存采用mmap(), 小内存使用brk()</li>
 <li>有一个主分配区 (main arena), 多个非主分配区, 非主分配区只能使用 mmap 申请虚拟内存</li>
 
 <li>per thread arena: maintain separate heap and freelist data structures for each thread</li>
@@ -496,34 +923,62 @@ Curiously Recurring Template Pattern 奇异递归模板模式，更一般地被�
 </div>
 </div>
 
-<div id="outline-container-orgb180026" class="outline-3">
-<h3 id="orgb180026"><span class="section-number-3">1.12</span> thread</h3>
+<div id="outline-container-orge0a8e32" class="outline-3">
+<h3 id="orge0a8e32"><span class="section-number-3">1.13</span> thread-Safe, async-signal-safe and reentrant</h3>
+<div class="outline-text-3" id="text-1-13">
+<blockquote>
+<p>
+Reentrant Function
+</p>
+
+<p>
+A function whose effect, when called by two or more threads, is guaranteed to be as if the threads each executed the function one after another in an undefined order, even if the actual execution is interleaved.
+</p>
+
+<p>
+Thread-Safe
+</p>
+
+<p>
+A function that may be safely invoked concurrently by multiple threads. Each function defined in the System Interfaces volume of IEEE Std 1003.1-2001 is thread-safe unless explicitly stated otherwise.
+</p>
+
+<p>
+Async-Signal-Safe Function
+</p>
+
+<p>
+A function that may be invoked, without restriction, from signal-catching functions. No function is async-signal-safe unless explicitly described as such.
+</p>
+</blockquote>
+<p>
+可重入函数必然是线程安全函数和异步信号安全函数
+</p>
 </div>
-<div id="outline-container-orga73964b" class="outline-3">
-<h3 id="orga73964b"><span class="section-number-3">1.13</span> future</h3>
 </div>
 </div>
-<div id="outline-container-orgefe1116" class="outline-2">
-<h2 id="orgefe1116"><span class="section-number-2">2</span> std container</h2>
+
+<div id="outline-container-org4a437e8" class="outline-2">
+<h2 id="org4a437e8"><span class="section-number-2">2</span> stl container</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-orgea2ec7c" class="outline-3">
-<h3 id="orgea2ec7c"><span class="section-number-3">2.1</span> std::array</h3>
+<div id="outline-container-orgc8cef76" class="outline-3">
+<h3 id="orgc8cef76"><span class="section-number-3">2.1</span> std::array</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 template&lt;typename T, size_t N&gt;
 </p>
 
 <ul class="org-ul">
-<li>内存分配在栈（stack）上，不会重新分配，随机访问元素</li>
+<li>内存分配在栈（stack）上, 不会重新分配, 随机访问元素</li>
 <li>swap: 交换每一个元素</li>
 <li>fill: 对所有元素赋值</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org95acec9" class="outline-3">
-<h3 id="org95acec9"><span class="section-number-3">2.2</span> std::vector</h3>
+<div id="outline-container-org8f765a5" class="outline-3">
+<h3 id="org8f765a5"><span class="section-number-3">2.2</span> std::vector</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 template&lt;typename T, typename Allocator = allocator&lt;T&gt; &gt;
@@ -535,14 +990,14 @@ template&lt;typename T, typename Allocator = allocator&lt;T&gt; &gt;
 <li>reserve: 预先分配内存</li>
 <li>shrink_to_fit: resize到合适的内存大小</li>
 <li>push_back, emplace_back: 尾部插入</li>
-<li>insert，emplace: 插入</li>
-<li>vector 的元素不能为 bool，vector&lt;bool&gt; 是按 bit 存储</li>
+<li>insert, emplace: 插入</li>
+<li>vector 的元素不能为 bool, vector&lt;bool&gt; 是按 bit 存储</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org9a20de3" class="outline-3">
-<h3 id="org9a20de3"><span class="section-number-3">2.3</span> std::deque</h3>
+<div id="outline-container-orgf3f9761" class="outline-3">
+<h3 id="orgf3f9761"><span class="section-number-3">2.3</span> std::deque</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 acronym of double-ended queue 双端队列
@@ -554,11 +1009,11 @@ acronym of double-ended queue 双端队列
 </div>
 </div>
 
-<div id="outline-container-org0fa111a" class="outline-3">
-<h3 id="org0fa111a"><span class="section-number-3">2.4</span> std::list</h3>
+<div id="outline-container-orgc315034" class="outline-3">
+<h3 id="orgc315034"><span class="section-number-3">2.4</span> std::list</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
-Doubly linked list 双向列表
+Doubly linked list 双向列表(循环)
 </p>
 
 <ul class="org-ul">
@@ -572,8 +1027,8 @@ Doubly linked list 双向列表
 </div>
 </div>
 
-<div id="outline-container-org108e051" class="outline-3">
-<h3 id="org108e051"><span class="section-number-3">2.5</span> std::forward_list</h3>
+<div id="outline-container-org54af254" class="outline-3">
+<h3 id="org54af254"><span class="section-number-3">2.5</span> std::forward_list</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 Single linked list 单向列表
@@ -581,35 +1036,37 @@ Single linked list 单向列表
 
 <ul class="org-ul">
 <li>before_begin: begin的前一个迭代器</li>
-<li>erase_after: 删除下一个元素，返回 void</li>
+<li>erase_after: 删除下一个元素, 返回 void</li>
 <li>insert_after: 插入</li>
 <li>splice_after: 接合</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org2680d96" class="outline-3">
-<h3 id="org2680d96"><span class="section-number-3">2.6</span> std::set</h3>
+<div id="outline-container-orgbefc118" class="outline-3">
+<h3 id="orgbefc118"><span class="section-number-3">2.6</span> std::set</h3>
 <div class="outline-text-3" id="text-2-6">
 <p>
 template&lt;typename T, typename Compare = less&lt;T&gt;, typename Allocator = allocator&lt;T&gt;&gt;
 </p>
 
 <ul class="org-ul">
+<li>通常为红黑树</li>
+<li>std::multiset 允许元素重复, std::set 不允许</li>
 <li>count: 查找元素个数</li>
 <li>find: 查找元素</li>
 <li>lower_bound: 第一个可插入点</li>
 <li>upper_bound: 最后一个可插入点</li>
 <li>equal_range: pair(lower_bound, upper_bound)</li>
-<li>insert: 插入，返回值为 pair&lt;Iterator, bool&gt;</li>
+<li>insert: 插入, 返回值为 pair&lt;Iterator, bool&gt;</li>
 <li>std::find: 根据 operator== 查找；而 std::set::find 根据 Compare 查找</li>
 <li>std::set::find 比 std::find 快</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org2911466" class="outline-3">
-<h3 id="org2911466"><span class="section-number-3">2.7</span> std::map</h3>
+<div id="outline-container-org747eb45" class="outline-3">
+<h3 id="org747eb45"><span class="section-number-3">2.7</span> std::map</h3>
 <div class="outline-text-3" id="text-2-7">
 <p>
 template&lt;typename Key, typename T, typename Compare = less&lt;Key&gt;, typename Allocator = allocator&lt;pair&lt;const Key, T&gt; &gt; &gt;
@@ -618,20 +1075,20 @@ template&lt;typename Key, typename T, typename Compare = less&lt;Key&gt;, typena
 <ul class="org-ul">
 <li>find: 返回 pair&lt;const Key, T&gt;</li>
 <li>emplace_hint: 推荐插入</li>
-<li>[] 和 .at()，[const Key] 不存在时插入pair，返回pair.second，.at(const Key) 不存在时不插入，返回一个异常</li>
+<li>[] 和 .at(), [const Key] 不存在时插入pair, 返回pair.second, .at(const Key) 不存在时不插入, 返回一个异常</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org1ae4642" class="outline-3">
-<h3 id="org1ae4642"><span class="section-number-3">2.8</span> std::unordered_map</h3>
+<div id="outline-container-orgc5f3907" class="outline-3">
+<h3 id="orgc5f3907"><span class="section-number-3">2.8</span> std::unordered_map</h3>
 <div class="outline-text-3" id="text-2-8">
 <p>
 template&lt;typename Key, typename T, typename Hash = hash&lt;Key&gt;, typename EqPred = equal_to&lt;Key&gt;, typename Allocator = allocator&lt;pair&lt;const Key, T&gt; &gt; &gt;
 </p>
 
 <ul class="org-ul">
-<li>需要使用模板类的偏化定义键的 hash 函数，如果有两个值，可以使用 boost 库的 hash_combine</li>
+<li>需要使用模板类的偏化定义键的 hash 函数, 如果有两个值, 可以使用 boost 库的 hash_combine</li>
 </ul>
 
 <div class="org-src-container">
@@ -674,11 +1131,11 @@ namespaece std
 </div>
 </div>
 
-<div id="outline-container-org2d0d7b3" class="outline-3">
-<h3 id="org2d0d7b3"><span class="section-number-3">2.9</span> std::remove</h3>
+<div id="outline-container-orgff5a86c" class="outline-3">
+<h3 id="orgff5a86c"><span class="section-number-3">2.9</span> std::remove</h3>
 <div class="outline-text-3" id="text-2-9">
 <p>
-STL 中 remove() 只是将待删除元素之后的元素移动到容器的前端，而不是删除。若要真正移除，需要搭配使用 erase()
+STL 中 remove() 只是将待删除元素之后的元素移动到容器的前端, 而不是删除。若要真正移除, 需要搭配使用 erase()
 </p>
 <div class="org-src-container">
 <pre class="src src-c++">std::string str2 = "Text\n with\tsome \t  whitespaces\n\n";
@@ -692,24 +1149,53 @@ str2.erase(std::remove_if(str2.begin(),
 </div>
 </div>
 
-<div id="outline-container-org59b445d" class="outline-2">
-<h2 id="org59b445d"><span class="section-number-2">3</span> multithread</h2>
+<div id="outline-container-org1b5139b" class="outline-2">
+<h2 id="org1b5139b"><span class="section-number-2">3</span> concurrency</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-orgfbc32cf" class="outline-3">
-<h3 id="orgfbc32cf"><span class="section-number-3">3.1</span> basic</h3>
+<div id="outline-container-orge7bd31b" class="outline-3">
+<h3 id="orge7bd31b"><span class="section-number-3">3.1</span> basic</h3>
 <div class="outline-text-3" id="text-3-1">
 <ul class="org-ul">
 <li>std::thread::hardware_concurrency 硬件支持的线程数</li>
 <li>std::this_thread::yield() 让出时间片</li>
+<li>Binary semaphore 与 Mutex 的不同:
+mutex 一定要由获得锁的进程释放, 而 semaphore 可以由其它进程释放, 因此semaphore可以用於進程間同步</li>
+<li>spinlock 与 semaphore 的不同: 
+spinlock 是 busy waiting, 而 semaphore 是 sleep。只有多 CPU 的內核态非进程空间, 才会用到 spinlock。 
+Linux kernel 的 spinlock 在非 SMP 的情況下，只是关 irq，沒有別的操作，用於確保該段程序的運行不會被打斷。
+而 spinlock 也一般沒有必要用於可以 sleep 的進程空間。</li>
+<li>用户空间的 spinlock 可以通过 atomic_flag 的 clear/test_and_set 来实现 unlock/lock/try_lock</li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-org640ed3a" class="outline-3">
-<h3 id="org640ed3a"><span class="section-number-3">3.2</span> atomic</h3>
+<div id="outline-container-org817e927" class="outline-3">
+<h3 id="org817e927"><span class="section-number-3">3.2</span> atomic</h3>
 <div class="outline-text-3" id="text-3-2">
 <ul class="org-ul">
+<li><p>
+Compare &amp; Swap: 看一看内存 *reg 里的值是不是 oldval, 如果是的话, 则对其赋值 newval
+</p>
+<div class="org-src-container">
+<pre class="src src-c">int compare_and_swap (int* reg, int oldval, int newval)
+{
+  int old_reg_val = *reg;
+  if (old_reg_val == oldval) {
+    *reg = newval;
+  }
+  return old_reg_val;
+}
+/* gcc CAS */
+bool __sync_bool_compare_and_swap (type *ptr, type oldval type newval, ...);
+type __sync_val_compare_and_swap (type *ptr, type oldval type newval, ...);
+/* c++ 11 CAS */
+template&lt; class T &gt;
+bool atomic_compare_exchange_weak( std::atomic* obj, T* expected, T desired );
+template&lt; class T &gt;
+bool atomic_compare_exchange_weak( volatile std::atomic* obj, T* expected, T desired );
+
+</pre>
+</div></li>
 <li>operators</li>
 </ul>
 
@@ -735,17 +1221,17 @@ str2.erase(std::remove_if(str2.begin(),
 
 <tr>
 <td class="org-left">x.store(n)</td>
-<td class="org-left">把x设为n，什么都不返回。</td>
+<td class="org-left">把x设为n, 什么都不返回。</td>
 </tr>
 
 <tr>
 <td class="org-left">x.exchange(n)</td>
-<td class="org-left">把x设为n，返回设定之前的值。</td>
+<td class="org-left">把x设为n, 返回设定之前的值。</td>
 </tr>
 
 <tr>
 <td class="org-left">x.compare_exchange_strong(expected_ref, desired)</td>
-<td class="org-left">若x等于expected_ref，则设为desired；否则把最新值写入expected_ref。</td>
+<td class="org-left">若x等于expected_ref, 则设为desired；否则把最新值写入expected_ref。</td>
 </tr>
 
 <tr>
@@ -755,7 +1241,7 @@ str2.erase(std::remove_if(str2.begin(),
 
 <tr>
 <td class="org-left">x.fetch_add(n), x.fetch_sub(n)</td>
-<td class="org-left">原子地做x += n, x-= n，返回修改之前的值。</td>
+<td class="org-left">原子地做x += n, x-= n, 返回修改之前的值。</td>
 </tr>
 </tbody>
 </table>
@@ -796,7 +1282,7 @@ str2.erase(std::remove_if(str2.begin(),
 
 <tr>
 <td class="org-left">memory_order_release</td>
-<td class="org-left">前面访存指令勿重排至此条指令之后。当此条指令的结果对其他线程可见后，之前的所有指令都可见</td>
+<td class="org-left">前面访存指令勿重排至此条指令之后。当此条指令的结果对其他线程可见后, 之前的所有指令都可见</td>
 </tr>
 
 <tr>
@@ -815,27 +1301,46 @@ str2.erase(std::remove_if(str2.begin(),
 <dt>限制重排</dt><dd></dd>
 </dl>
 <p>
-Release-Acquire ordering: 在store()之前的所有读写操作，不允许被移动到这个store()的后面。
-在load()之后的所有读写操作，不允许被移动到这个load()的前面。
-假设 Thread-1 store()的那个值，成功被 Thread-2 load()到了，
-那么 Thread-1 在store()之前对内存的所有写入操作，此时对 Thread-2 来说，都是可见的。
+Release-Acquire ordering: 在 store() 之前的所有读写操作, 不允许被移动到这个 store() 的后面。
+在 load() 之后的所有读写操作, 不允许被移动到这个 load() 的前面。
+假设 Thread-1 store() 的那个值, 成功被 Thread-2 load() 到了, 
+那么 Thread-1 在store()之前对内存的所有写入操作, 此时对 Thread-2 来说, 都是可见的。
 </p>
 
 <dl class="org-dl">
 <dt>atomic_flag</dt><dd></dd>
 </dl>
 <p>
-可于用户空间用 atomic_flag 实现自旋互斥，互斥锁是是一种 sleep-waiting 的锁，自旋锁是一种 busy-waiting 的锁
+可于用户空间用 atomic_flag 实现自旋互斥, 互斥锁是是一种 sleep-waiting 的锁, 自旋锁是一种 busy-waiting 的锁
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgf8b319b" class="outline-3">
-<h3 id="orgf8b319b"><span class="section-number-3">3.3</span> mutex</h3>
+<div id="outline-container-orgf5d6bea" class="outline-3">
+<h3 id="orgf5d6bea"><span class="section-number-3">3.3</span> mutex</h3>
 <div class="outline-text-3" id="text-3-3">
 <ul class="org-ul">
-<li>一般设为 mutable 使得 const member function 可以使用</li>
-<li>使用 std::lock_guard&lt;std::mutex&gt; 这种 RAII 防止出现异常导致 mutex 没有 unlock，配合 std::lock 和 std::adopt_lock 可以防止死锁</li>
+<li>mutex 类似于 binary semaphore, 不同的是只能由上锁的进程/线程来解锁</li>
+<li><p>
+一般设为 mutable 使得 const member function 可以使用
+</p>
+<div class="org-src-container">
+<pre class="src src-c">  class ThreadsafeCounter {
+  mutable std::mutex m; // The "M&amp;M rule": mutable and mutex go together
+  int data = 0;
+ public:
+  int get() const {
+    std::lock_guard&lt;std::mutex&gt; lk(m);
+    return data;
+  }
+  void inc() {
+    std::lock_guard&lt;std::mutex&gt; lk(m);
+    ++data;
+  }
+};
+</pre>
+</div></li>
+<li>使用 std::lock_guard&lt;std::mutex&gt; 这种 RAII 防止出现异常导致 mutex 没有 unlock, 配合 std::lock 和 std::adopt_lock 可以防止死锁</li>
 <li>lock_guard, unique_lock and scoped_lock</li>
 </ul>
 <div class="org-src-container">
@@ -846,7 +1351,7 @@ Release-Acquire ordering: 在store()之前的所有读写操作，不允许被�
 // std::lock_guard&lt;std::mutex&gt; lk1(e1.m, std::adopt_lock);
 // std::lock_guard&lt;std::mutex&gt; lk2(e2.m, std::adopt_lock);
 
-// 等价代码 2 （若需要 unique_lock ，例如对于条件变量）
+// 等价代码 2 （若需要 unique_lock , 例如对于条件变量）
 // std::unique_lock&lt;std::mutex&gt; lk1(e1.m, std::defer_lock);
 // std::unique_lock&lt;std::mutex&gt; lk2(e2.m, std::defer_lock);
 // std::lock(lk1, lk2);
@@ -855,37 +1360,47 @@ Release-Acquire ordering: 在store()之前的所有读写操作，不允许被�
 </div>
 </div>
 
-<div id="outline-container-orgce18892" class="outline-3">
-<h3 id="orgce18892"><span class="section-number-3">3.4</span> condition variable</h3>
+<div id="outline-container-org6fd94cb" class="outline-3">
+<h3 id="org6fd94cb"><span class="section-number-3">3.4</span> condition variable</h3>
 <div class="outline-text-3" id="text-3-4">
 <ul class="org-ul">
 <li>notify_one(): notifies one waiting thread</li>
 <li>notify_all(): notifies all waiting threads</li>
+<li><p>
+wait_for()
+</p>
+<div class="org-src-container">
+<pre class="src src-c">    /* template&lt; class Rep, class Period, class Predicate &gt; */
+    /* bool wait_for( std::unique_lock&lt;std::mutex&gt;&amp; lock, */
+    /*              const std::chrono::duration&lt;Rep, Period&gt;&amp; rel_time, */
+    /*              Predicate pred); */
+
+/* Equivalent to */ 
+wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));
+</pre>
+</div></li>
 </ul>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org4865172" class="outline-2">
-<h2 id="org4865172"><span class="section-number-2">4</span> coroutines</h2>
+<div id="outline-container-org6fa7362" class="outline-2">
+<h2 id="org6fa7362"><span class="section-number-2">4</span> asio</h2>
+<div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-orgcdac987" class="outline-2">
-<h2 id="orgcdac987"><span class="section-number-2">5</span> asio</h2>
-<div class="outline-text-2" id="text-5">
-</div>
-<div id="outline-container-orgd47f099" class="outline-3">
-<h3 id="orgd47f099"><span class="section-number-3">5.1</span> timer</h3>
-<div class="outline-text-3" id="text-5-1">
+<div id="outline-container-org324a030" class="outline-3">
+<h3 id="org324a030"><span class="section-number-3">4.1</span> timer</h3>
+<div class="outline-text-3" id="text-4-1">
 <ul class="org-ul">
-<li>boost::asio::deadline_timer 使用的计量时间是系统时间 (posix_time)，因此修改系统时间会影响deadline_timer的行为</li>
+<li>boost::asio::deadline_timer 使用的计量时间是系统时间 (posix_time), 因此修改系统时间会影响deadline_timer的行为</li>
 <li>基于 std::chrono::steady_clock 的 boost::asio::steady_timer 是一个不会受系统时间影响的定时器</li>
-<li>boost::asio::strand 基于 mutex 实现，保证 callback 的顺序</li>
+<li>boost::asio::strand 基于 mutex 实现, 保证 callback 的顺序, 使用 strand.post/wrap 包装非线程安全的操作</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org9e1f7a1" class="outline-3">
-<h3 id="org9e1f7a1"><span class="section-number-3">5.2</span> daytime</h3>
-<div class="outline-text-3" id="text-5-2">
+<div id="outline-container-orgeb7ad54" class="outline-3">
+<h3 id="orgeb7ad54"><span class="section-number-3">4.2</span> daytime</h3>
+<div class="outline-text-3" id="text-4-2">
 <ul class="org-ul">
 <li>client synchronous
 <ul class="org-ul">
@@ -925,9 +1440,9 @@ Release-Acquire ordering: 在store()之前的所有读写操作，不允许被�
 </div>
 </div>
 
-<div id="outline-container-org5412b22" class="outline-3">
-<h3 id="org5412b22"><span class="section-number-3">5.3</span> chat</h3>
-<div class="outline-text-3" id="text-5-3">
+<div id="outline-container-org1d8932f" class="outline-3">
+<h3 id="org1d8932f"><span class="section-number-3">4.3</span> chat</h3>
+<div class="outline-text-3" id="text-4-3">
 <ul class="org-ul">
 <li>char_message
 <ul class="org-ul">
@@ -973,63 +1488,49 @@ Release-Acquire ordering: 在store()之前的所有读写操作，不允许被�
 </div>
 </div>
 
-<div id="outline-container-org157ab91" class="outline-2">
-<h2 id="org157ab91"><span class="section-number-2">6</span> design patterns</h2>
-<div class="outline-text-2" id="text-6">
+<div id="outline-container-orgb8d8e8e" class="outline-2">
+<h2 id="orgb8d8e8e"><span class="section-number-2">5</span> muduo</h2>
+<div class="outline-text-2" id="text-5">
 </div>
-<div id="outline-container-orgc7ac633" class="outline-3">
-<h3 id="orgc7ac633"><span class="section-number-3">6.1</span> Creational Patterns</h3>
-<div class="outline-text-3" id="text-6-1">
-<dl class="org-dl">
-<dt>[Abstract Factory]</dt><dd>families of product objects</dd>
-<dt>[Builder]</dt><dd>how a composite object gets created</dd>
-<dt>[Factory Method]</dt><dd>subclass of object that is instantiated</dd>
-<dt>[Prototype]</dt><dd>class of object that is instantiated</dd>
-<dt>[Singleton]</dt><dd>the sole instance of a class</dd>
-</dl>
-</div>
-</div>
-<div id="outline-container-org40faf0b" class="outline-3">
-<h3 id="org40faf0b"><span class="section-number-3">6.2</span> Structural Patterns</h3>
-<div class="outline-text-3" id="text-6-2">
-<dl class="org-dl">
-<dt>[Adapter]</dt><dd>interface to an object</dd>
-<dt>[Bridge]</dt><dd>implementation of an object</dd>
-<dt>[Composite]</dt><dd>structure and composition of an object</dd>
-<dt>[Decorator]</dt><dd>responsibilities of an object without subclassing</dd>
-<dt>[Façade]</dt><dd>interface to a subsystem</dd>
-<dt>[Flyweight]</dt><dd>storage costs of objects</dd>
-<dt>[Proxy]</dt><dd>how an object is accessed (its location)</dd>
-</dl>
-</div>
-</div>
-<div id="outline-container-org51e093c" class="outline-3">
-<h3 id="org51e093c"><span class="section-number-3">6.3</span> Behavioral Patterns</h3>
-<div class="outline-text-3" id="text-6-3">
-<dl class="org-dl">
-<dt>[Chain of Responsibility]</dt><dd>object that can fulfill a request</dd>
-<dt>[Command]</dt><dd>when and how a request is fulfilled</dd>
-<dt>[Interpreter]</dt><dd>grammar and interpretation of a language</dd>
-<dt>[Iterator]</dt><dd>how an aggregate's elements are accessed</dd>
-<dt>[Mediator]</dt><dd>how and which objects interact with each other</dd>
-<dt>[Memento]</dt><dd>what private information is stored outside an object, and when</dd>
-<dt>[Observer]</dt><dd>how the dependent objects stay up to date</dd>
-<dt>[State]</dt><dd>states of an object</dd>
-<dt>[Strategy]</dt><dd>an algorithm</dd>
-<dt>[Template Method]</dt><dd>steps of an algorithm</dd>
-<dt>[Visitor]</dt><dd>operations that can be applied to objects without changing their classes</dd>
-</dl>
+<div id="outline-container-org4ffec2c" class="outline-3">
+<h3 id="org4ffec2c"><span class="section-number-3">5.1</span> timestamp</h3>
+<div class="outline-text-3" id="text-5-1">
+<ul class="org-ul">
+<li>boost::less_than_comparable&lt;&gt;: 要求实现 operator &lt; , 自动实现 &gt;, &lt;=, &gt;=, 模板元</li>
+<li>BOOST_STATIC_ASSERT: 编译时断言, assert: 运行时断言, 在头文件 &lt;boost/static_assert.hpp&gt;</li>
+<li><p>
+gmtime_r: 秒数转结构体
+</p>
+<div class="org-src-container">
+<pre class="src src-c">time_t seconds = static_cast&lt;time_t&gt;(....);
+struct tm tm_time;
+gmtime_r(&amp;seconds, &amp;tm_time);
+</pre>
+</div></li>
+<li><p>
+PRId64: 跨 32/64 位平台的 lld/ld
+</p>
+<div class="org-src-container">
+<pre class="src src-c">#define __STDC_FORMAT_MACROS
+#include &lt;inttypes.h&gt;
+#undef __STDC_FORMAT_MACROS
+printf("%" PRId64 "\n", value)
+printf("%lld", value);		/* 32 bit OS*/
+printf("%ld", value);		/* 64 bit OS */
+</pre>
+</div></li>
+</ul>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgc704e1f" class="outline-2">
-<h2 id="orgc704e1f"><span class="section-number-2">7</span> unix</h2>
-<div class="outline-text-2" id="text-7">
+<div id="outline-container-orgf3cee83" class="outline-2">
+<h2 id="orgf3cee83"><span class="section-number-2">6</span> unix</h2>
+<div class="outline-text-2" id="text-6">
 </div>
-<div id="outline-container-orge1a643e" class="outline-3">
-<h3 id="orge1a643e"><span class="section-number-3">7.1</span> baisc</h3>
-<div class="outline-text-3" id="text-7-1">
+<div id="outline-container-orgb0e34a6" class="outline-3">
+<h3 id="orgb0e34a6"><span class="section-number-3">6.1</span> baisc</h3>
+<div class="outline-text-3" id="text-6-1">
 <ul class="org-ul">
 <li>int / iret
 <ul class="org-ul">
@@ -1037,32 +1538,74 @@ Release-Acquire ordering: 在store()之前的所有读写操作，不允许被�
 调用 sys_open:
 </p>
 <div class="org-src-container">
-<pre class="src src-asm">mov 0x05 ,eax       /* 设置系统调用号 05: sys_open*/
+<pre class="src src-asm">mov 0x05 ,eax       /* 设置系统调用号 05: sys_open */
 int 0x80
 </pre>
 </div></li>
-<li>调用 int 0x80 后，查找中断描述符表(IDT, Interrupt Descriptor Table)，进行特权级检查(DPL = CPL = 3)，在 GDT / LDT 中找到对应的段描述符</li>
+<li>调用 int 0x80 后, 查找中断描述符表(IDT, Interrupt Descriptor Table), 进行特权级检查(DPL = CPL = 3), 在 GDT / LDT 中找到对应的段描述符</li>
 <li>段寄存器 DPL &gt;= CPL 才能访问内核段的内存空间(通过 set_system_intr_gate 来设置)</li>
-<li>Linux 只为每个 CPU 维护一个 TSS，通过 TSS(Task State Segment) 来切换到内核栈</li>
-<li>系统调用库(glibc) 中，int 0x80 只有在硬件不支持快速系统调用(sysenter / syscall)的时候才会调用</li>
+<li>Linux 只为每个 CPU 维护一个 TSS, 通过 TSS(Task State Segment) 来切换到内核栈</li>
+<li>系统调用库(glibc) 中, int 0x80 只有在硬件不支持快速系统调用(sysenter / syscall)的时候才会调用</li>
 </ul></li>
 
 <li>sysenter / sysexit
 <ul class="org-ul">
-<li>没有特权级别检查(CPL, DPL)，也没有压栈的操作</li>
+<li>没有特权级别检查(CPL, DPL), 也没有压栈的操作</li>
 </ul></li>
 
 <li>syscall / sysret
 <ul class="org-ul">
 <li>64 位</li>
 </ul></li>
+
+<li><p>
+exit / _exit
+exit() 定义在 stdlib.h 中, _exit() 定义在 unistd.h 中, _exit() 是一个 sys_exit 系统调用, 而 exit() 先调用执行各终止处理函数, 关闭所有标准IO, 然后调用sys_exit
+</p>
+<blockquote>
+<p>
+The function _exit() terminates the calling process "immediately".  Any
+open file descriptors belonging to the process are closed; any children
+of the process are inherited by process 1, init, and the process’s par-
+ent is sent a SIGCHLD signal.
+</p>
+
+<p>
+The  exit() function causes normal process termination and the value of
+status &amp; 0377 is returned to the parent (see wait(2)).
+</p>
+
+<p>
+All functions registered with atexit(3) and on_exit(3) are  called,  in
+the  reverse  order  of their registration.  (It is possible for one of
+these functions to use atexit(3) or on_exit(3)  to  register  an  addi-
+tional  function  to be executed during exit processing; the new regis-
+tration is added to the front of the list of functions that  remain  to
+be  called.) If one of these functions does not return (e.g., it calls
+_exit(2), or kills itself with a signal), then none  of  the  remaining
+functions is called, and further exit processing (in particular, flush-
+ing of stdio(3) streams) is abandoned.  If a function has  been  regis-
+tered  multiple  times using atexit(3) or on_exit(3), then it is called
+as many times as it was registered.
+</p>
+
+<p>
+All open stdio(3) streams are flushed and  closed.   Files  created  by
+tmpfile(3) are removed.
+</p>
+
+<p>
+The  C standard specifies two constants, EXIT_SUCCESS and EXIT_FAILURE,
+that may be passed to exit() to  indicate  successful  or  unsuccessful
+termination, respectively.
+</p>
+</blockquote></li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-orgb482001" class="outline-3">
-<h3 id="orgb482001"><span class="section-number-3">7.2</span> man sections</h3>
-<div class="outline-text-3" id="text-7-2">
+<div id="outline-container-orgdd33851" class="outline-3">
+<h3 id="orgdd33851"><span class="section-number-3">6.2</span> man sections</h3>
+<div class="outline-text-3" id="text-6-2">
 <ol class="org-ol">
 <li>Executable programs or shell commands</li>
 <li>System calls (functions provided by the kernel)</li>
@@ -1076,59 +1619,123 @@ int 0x80
 </ol>
 </div>
 </div>
-<div id="outline-container-org6c2c44b" class="outline-3">
-<h3 id="org6c2c44b"><span class="section-number-3">7.3</span> ctrl</h3>
-<div class="outline-text-3" id="text-7-3">
+<div id="outline-container-org2a84f92" class="outline-3">
+<h3 id="org2a84f92"><span class="section-number-3">6.3</span> ctrl</h3>
+<div class="outline-text-3" id="text-6-3">
 <ul class="org-ul">
-<li>ctrl-c: (kill foreground process) 发送 SIGINT 信号给前台进程组中的所有进程，强制终止程序的执行</li>
-<li>ctrl-z: (suspend foreground process) 发送 SIGTSTP 信号给前台进程组中的所有进程，挂起一个进程，使用 fg/bg 操作恢复执行前台或后台的进程</li>
-<li>ctrl-d: (terminate input, or exit shell) 一个特殊的二进制值，表示 EOF，作用相当于在终端中输入exit后回车</li>
-<li>ctrl-/: 发送 SIGQUIT 信号给前台进程组中的所有进程，终止前台进程并生成 core 文件</li>
+<li>ctrl-c: = kill -s INT [PID] (kill foreground process) 发送 SIGINT 信号给前台进程组中的所有进程, 强制终止程序的执行</li>
+<li>ctrl-z: (suspend foreground process) 发送 SIGTSTP 信号给前台进程组中的所有进程, 挂起一个进程, 使用 fg/bg 操作恢复执行前台或后台的进程</li>
+<li>ctrl-d: (terminate input, or exit shell) 一个特殊的二进制值, 表示 EOF, 作用相当于在终端中输入 exit 后回车</li>
+<li>ctrl-/: 发送 SIGQUIT 信号给前台进程组中的所有进程, 终止前台进程并生成 core 文件</li>
 <li>ctrl-s: 中断控制台输出</li>
 <li>ctrl-q: 恢复控制台输出</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgcc04d69" class="outline-3">
-<h3 id="orgcc04d69"><span class="section-number-3">7.4</span> *nix commands</h3>
-<div class="outline-text-3" id="text-7-4">
+<div id="outline-container-org7dee4f5" class="outline-3">
+<h3 id="org7dee4f5"><span class="section-number-3">6.4</span> *nix commands</h3>
+<div class="outline-text-3" id="text-6-4">
+<ul class="org-ul">
+<li><p>
+pkg-config - Return metainformation about installed libraries
+</p>
 <div class="org-src-container">
-<pre class="src src-sh"># 查看某进程的虚拟内存分配情况
-cat /proc/[PID]/maps
+<pre class="src src-sh">pkg-config --cflags --libs yaml-cpp 
+</pre>
+</div></li>
+
+<li><p>
+查看动态 link directory
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"># mac 下查看 shared library(.dylib)
+otool -L a.out			
+# linux 下查看 shared library(.so)
+ldd a.out
+</pre>
+</div></li>
+
+<li>查看某进程的虚拟内存分配情况</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-sh">cat /proc/[PID]/maps
+pmap [PID]
 </pre>
 </div>
 
+<ul class="org-ul">
+<li>file descriptor</li>
+</ul>
 <div class="org-src-container">
 <pre class="src src-sh">#!/bin/sh
-exec 6&lt; 1.txt # 创建一个文件描述符6，用6这个数字代表对1.txt的读操作
-exec 7&gt; 1.txt # 创建一个文件描述符6，用6这个数字代表对1.txt的写操作
-exec 8&lt;&gt; 1.txt # 0u stdin, 1u stdout, 2u stderr, 6r read only, 7w write only, 8u 
+exec 6&lt; a.txt	 # 创建一个 fd 对 a.txt 读操作
+exec 7&gt; a.txt	 # 创建一个fd 对 a.txt 写操作
+exec 8&lt;&gt; a.txt # 0u stdin, 1u stdout, 2u stderr, 6r read only, 7w write only, 8u 
 
-lsof -op $$ # 查看当前进程正在使用的文件的描述符
+echo "hhh" &gt;&amp; 7			# 往 a.txt 里边写数据
+read a 0&lt;&amp;  6 # 读取第一行数据到 a, 每个文件描述符代表的数据结构中都有自己的偏移量
 
-cd /proc/$$/fd # $$代表当前进程的ID号
+lsof -op $$			# 查看当前进程正在使用的文件的描述符
 
-pwd
-ls
-
-echo "hhh" &gt;&amp; 7 # 往1.txt里边写数据
-read a  0&lt;&amp;  6 # 读取第一行数据到 a, 每个文件描述符代表的数据结构中都有自己的偏移量
-
-echo $a
+cd /proc/$$/fd			# $$代表当前进程的ID号
 </pre>
 </div>
-</div>
-</div>
-</div>
 
-<div id="outline-container-orgf6ca257" class="outline-2">
-<h2 id="orgf6ca257"><span class="section-number-2">8</span> Primer C++</h2>
-<div class="outline-text-2" id="text-8">
+<ul class="org-ul">
+<li>readelf 读取 ELF 文件信息</li>
+
+<li>nslookup: query internet name servers, explore properties of DNS mappings</li>
+
+<li>telnet [host] [port]: like a echo client</li>
+
+<li>objdump: readelf -s ~= objdump -t 查看 symbol table, objdump -d 反汇编, objdump -s 查看每段的内容, objdump -h 查看每段的大小</li>
+
+<li><p>
+nc (netcat)
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">nc -zv localhost 20-30		# 获取开放的端口
+nc -l 9999			# Listen for an incoming connection
+</pre>
+</div></li>
+
+<li><p>
+tcpdump 抓包
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">nc -l 9999
+tcpdump -i any 'port 9999' -XX -nn -vv -S
+nc -v 9999
+</pre>
+</div></li>
+
+<li>kill [options] &lt;pid&gt; [&#x2026;]  - send a signal to a process
+<ul class="org-ul">
+<li>the  default  signal  for  kill is TERM</li>
+<li>kill -l 查看可发送的所有信号</li>
+<li>a PID of -1 is special: it indicates all processes except the kill process itself and init</li>
+<li>kill -9 -1: kill all processes you can kill, 8) SIGFPE  9) SIGKILL  10) SIGUSR1</li>
+</ul></li>
+
+<li><p>
+strace - trace system calls and signals
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">strace -e trace=write ./a.out
+</pre>
+</div></li>
+</ul>
 </div>
-<div id="outline-container-org0801536" class="outline-3">
-<h3 id="org0801536"><span class="section-number-3">8.1</span> string, vector and array</h3>
-<div class="outline-text-3" id="text-8-1">
+</div>
+</div>
+<div id="outline-container-org5ec6def" class="outline-2">
+<h2 id="org5ec6def"><span class="section-number-2">7</span> Primer C++</h2>
+<div class="outline-text-2" id="text-7">
+</div>
+<div id="outline-container-org2b1cc15" class="outline-3">
+<h3 id="org2b1cc15"><span class="section-number-3">7.1</span> string, vector and array</h3>
+<div class="outline-text-3" id="text-7-1">
 <ul class="org-ul">
 <li>老的编译器需要区分 &gt;&gt; 和 &gt; &gt;</li>
 </ul>
@@ -1153,7 +1760,7 @@ echo $a
 <div class="org-src-container">
 <pre class="src src-c++">int ia[] = {0,1,2,3,4,5,6,7,8,9}; // ia is an array of ten ints
 int *beg = begin(ia); // pointer to the first element in ia
-int *last = end(ia);  // pointer one past the last element in ia
+int *last = end(ia); // pointer one past the last element in ia
 </pre>
 </div>
 
@@ -1176,10 +1783,10 @@ int *last = end(ia);  // pointer one past the last element in ia
 <li>built-in 数组可以取负数作为下标</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-c++">int *p = &amp;ia[2];  // p points to the element indexed by 2
-int j = p[1];     // p[1] is equivalent to *(p + 1),
+<pre class="src src-c++">int *p = &amp;ia[2]; // p points to the element indexed by 2
+int j = p[1]; // p[1] is equivalent to *(p + 1),
 		  // p[1] is the same element as ia[3]
-int k = p[-2];    // p[-2] is the same element as ia[0]
+int k = p[-2]; // p[-2] is the same element as ia[0]
 </pre>
 </div>
 
@@ -1200,7 +1807,7 @@ const char *str = s.c_str(); // ok
 </div>
 
 <ul class="org-ul">
-<li>多维数组的 range for 要使用引用，avoid the normal array to pointer conversion</li>
+<li>多维数组的 range for 要使用引用, avoid the normal array to pointer conversion</li>
 </ul>
 <blockquote>
 <p>
@@ -1210,9 +1817,9 @@ const char *str = s.c_str(); // ok
 </div>
 </div>
 
-<div id="outline-container-org922723c" class="outline-3">
-<h3 id="org922723c"><span class="section-number-3">8.2</span> expression</h3>
-<div class="outline-text-3" id="text-8-2">
+<div id="outline-container-org9d6e780" class="outline-3">
+<h3 id="org9d6e780"><span class="section-number-3">7.2</span> expression</h3>
+<div class="outline-text-3" id="text-7-2">
 <ul class="org-ul">
 <li>使用 decltype 时会区分 lvalue 和 rvalue</li>
 </ul>
@@ -1223,23 +1830,26 @@ const char *str = s.c_str(); // ok
 </blockquote>
 
 <ul class="org-ul">
-<li>在一条表达式中如有未定义执行顺序的 operators （如int i = f1() * f2();），我们不能确定 f1() 和 f2() 哪个先执行，会造成 has undefined behavior</li>
+<li>在一条表达式中如有未定义执行顺序的 operators （如int i = f1() * f2();）, 我们不能确定 f1() 和 f2() 哪个先执行, 会造成 has undefined behavior</li>
 </ul>
 <blockquote>
 <p>
 "For operators that do not specify evaluation order, it is an error for an expression to refer to and change the same object. Expressions that do so have undefined behavior. As a simple example, the &lt;&lt; operator makes no guarantees about when or how its operands are evaluated. As a result, the following output expression is undefined:"
 </p>
 </blockquote>
+
 <div class="org-src-container">
 <pre class="src src-c++">int i = 0;
 cout &lt;&lt; i &lt;&lt; " " &lt;&lt; ++i &lt;&lt; endl; // undefined
 </pre>
 </div>
+
 <blockquote>
 <p>
 "There are four operators that do guarantee the order in which operands are evaluated. The logical AND (&amp;&amp;) operator guarantees that its left-hand operand is evaluated first. Moreover, we are also guaranteed that the right-hand operand is evaluated only if the left-hand operand is true. The only other operators that guarantee the order in which operands are evaluated are the logical OR (||) operator, the conditional (? :) operator, and the comma (,) operator."
 </p>
 </blockquote>
+
 <blockquote>
 <p>
 • The right side of an &amp;&amp; is evaluated if and only if the left side is true.
@@ -1260,17 +1870,37 @@ bool b2 = -b; // b2 is true! (-1 is true)
 "bool values should not be used for computation. The result of -b is a good example of what we had in mind"
 </p>
 </blockquote>
-</div>
-</div>
-</div>
 
-<div id="outline-container-org2618cd5" class="outline-2">
-<h2 id="org2618cd5"><span class="section-number-2">9</span> CSAPP</h2>
-<div class="outline-text-2" id="text-9">
+<ul class="org-ul">
+<li>const_cast 只用于修改 constness</li>
+</ul>
+<blockquote>
+<p>
+"If the object was originally not a const, using a cast to obtain write access is legal. However, using a const_cast in order to write to a const object is undefined."
+</p>
+
+<p>
+Only a const_cast may be used to change the constness of an expression. Trying to change whether an expression is const with any of the other forms of named cast is a compile-time error. Similarly, we cannot use a const_cast to change the type of an expression
+</p>
+</blockquote>
+<div class="org-src-container">
+<pre class="src src-c++">const char *cp;
+
+char *q = static_cast&lt;char*&gt;(cp); // error: static_cast can't cast away const
+static_cast&lt;string&gt;(cp); // ok: converts string literal to string
+const_cast&lt;string&gt;(cp); // error: const_cast only changes constness
+</pre>
 </div>
-<div id="outline-container-org76a1918" class="outline-3">
-<h3 id="org76a1918"><span class="section-number-3">9.1</span> basic</h3>
-<div class="outline-text-3" id="text-9-1">
+</div>
+</div>
+</div>
+<div id="outline-container-orgc4d9181" class="outline-2">
+<h2 id="orgc4d9181"><span class="section-number-2">8</span> CSAPP</h2>
+<div class="outline-text-2" id="text-8">
+</div>
+<div id="outline-container-orge21a9a9" class="outline-3">
+<h3 id="orge21a9a9"><span class="section-number-3">8.1</span> basic</h3>
+<div class="outline-text-3" id="text-8-1">
 <ul class="org-ul">
 <li>registers
 <ul class="org-ul">
@@ -1287,36 +1917,65 @@ bool b2 = -b; // b2 is true! (-1 is true)
 <li>rep; ret
 <ul class="org-ul">
 <li>汇编中用 rep 后面跟 ret 的组合来避免使 ret 指令成为条件跳转指令的目标</li>
-<li>这里的 rep 指令就是作为一种空操作，因此作为跳转目的插入它，除了能使代码在 AMD 上运行得更快之外，不会改变代码的其他行为</li>
+<li>这里的 rep 指令就是作为一种空操作, 因此作为跳转目的插入它, 除了能使代码在 AMD 上运行得更快之外, 不会改变代码的其他行为</li>
+</ul></li>
+<li>process
+<ul class="org-ul">
+<li>process = process context + code, data and stack</li>
+<li>process context = program context(data registers, condition codes, stack pointer, program counter) + kernel context(vm structures, descriptor table, brk pointer)</li>
+<li>process = thread + code, data and kernel context</li>
+<li>each process's context is described by a task_struct structure</li>
+<li>The task_struct holds data such as the scheduling policy, scheduler priority, real time priority, processor allowed time counter, processor registers, file handles (files_struct), virtual memory (mm_struct).</li>
+</ul></li>
+<li>thread
+<ul class="org-ul">
+<li>threads associated with process form a pool of peers, unlike processes which form a tree hierarchy</li>
+<li>single core processor: simulate parallelism by time slicing</li>
+<li>multi-core processor: can have true parallelism</li>
+<li>one thread can read and write the stack of any other thread</li>
+</ul></li>
+
+<li>thread vs. process
+<ul class="org-ul">
+<li>similar
+<ul class="org-ul">
+<li>each has its own logical control flow</li>
+<li>each can run concurrently with others</li>
+<li>each is context switched</li>
+</ul></li>
+<li>different
+<ul class="org-ul">
+<li>threads share all code and data (except loacl stacks)</li>
+<li>threads are less expensive than processes, ~20k cycles to create and reap a process, ~10k cycles for a thread</li>
+</ul></li>
 </ul></li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-orgc4b4813" class="outline-3">
-<h3 id="orgc4b4813"><span class="section-number-3">9.2</span> optimization</h3>
-<div class="outline-text-3" id="text-9-2">
+<div id="outline-container-orgfcef1f3" class="outline-3">
+<h3 id="orgfcef1f3"><span class="section-number-3">8.2</span> optimization</h3>
+<div class="outline-text-3" id="text-8-2">
 <dl class="org-dl">
 <dt>conditional move</dt><dd>使用 conditional moves 能避免 branch prediction</dd>
-<dt>unrolling and accumulating</dt><dd>不使用流水线的话最好能优化到 latency bound（单位 clock cycles per element），使用流水线可以达到 throughout bound</dd>
+<dt>unrolling and accumulating</dt><dd>不使用流水线的话最好能优化到 latency bound（单位 clock cycles per element）, 使用流水线可以达到 throughout bound</dd>
 <dt>ymm register</dt><dd>使用 SIMD (Single instruction, multiple data) operations 加速运算（vectorizing后）</dd>
-<dt>branch misprediction invalidation</dt><dd>寄存器有多个副本，当分支预测错误时还原寄存器的值，reload pipline</dd>
+<dt>branch misprediction invalidation</dt><dd>寄存器有多个副本, 当分支预测错误时还原寄存器的值, reload pipline</dd>
 </dl>
 </div>
 </div>
 
-<div id="outline-container-orgdb7b002" class="outline-3">
-<h3 id="orgdb7b002"><span class="section-number-3">9.3</span> memory</h3>
-<div class="outline-text-3" id="text-9-3">
+<div id="outline-container-org1c366be" class="outline-3">
+<h3 id="org1c366be"><span class="section-number-3">8.3</span> memory</h3>
+<div class="outline-text-3" id="text-8-3">
 <ul class="org-ul">
 <li>bus interface standard
 <ul class="org-ul">
-<li>PCIe 属于全双工模式，而 SATA 是半双工模式，</li>
-<li>NVMe 与AHCI 相比使用多队列，所以 NVMe + PCIe 比 AHCI + SATA 快</li>
+<li>PCIe 属于全双工模式, 而 SATA 是半双工模式,</li>
+<li>NVMe 与AHCI 相比使用多队列, 所以 NVMe + PCIe 比 AHCI + SATA 快</li>
 </ul></li>
 <li>non-volatile memory
 <ul class="org-ul">
-<li>根据浮置栅存储的位的多少，闪存可分为 SLC (Single Level Cell Multi Level Cell), MLC, TLC and QLC</li>
+<li>根据浮置栅存储的位的多少, 闪存可分为 SLC (Single Level Cell Multi Level Cell), MLC, TLC and QLC</li>
 </ul></li>
 <li>volatile memory
 <ul class="org-ul">
@@ -1326,15 +1985,15 @@ bool b2 = -b; // b2 is true! (-1 is true)
 <li>locality
 <ul class="org-ul">
 <li>程序需考虑 temporal locality and spatial locality</li>
-<li>matrix multiplication 通过分块（blocking）增加 temporal locality，通过改变循环的顺序改变 spatial locality（i*k 与 k*j 的矩阵相乘，最佳顺序为 kij）</li>
+<li>matrix multiplication 通过分块（blocking）增加 temporal locality, 通过改变循环的顺序改变 spatial locality（i*k 与 k*j 的矩阵相乘, 最佳顺序为 kij）</li>
 </ul></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org950c375" class="outline-3">
-<h3 id="org950c375"><span class="section-number-3">9.4</span> linking</h3>
-<div class="outline-text-3" id="text-9-4">
+<div id="outline-container-org81e0f58" class="outline-3">
+<h3 id="org81e0f58"><span class="section-number-3">8.4</span> linking</h3>
+<div class="outline-text-3" id="text-8-4">
 <ul class="org-ul">
 <li>linker symbol
 <dl class="org-dl">
@@ -1344,6 +2003,14 @@ bool b2 = -b; // b2 is true! (-1 is true)
 </dl></li>
 
 <li>relocation entry: complier 告诉 linker 去填充 symbols 所在的地址</li>
+
+<li>可重定位目标文件
+<ul class="org-ul">
+<li>.bss: 未初始化的全局和静态 C 变量, 以及所有被初始化为 0 的全局或静态变量。在目标文件中这个节不占据实际的空间, 它仅仅是一个占位符。目标文件格式区分已初始化 和未初始化变量是为了空间效率, 在目标文件中, 未初始化变量不需要占据任何实际的磁盘空间。运行时, 在内存中分配这些变量, 初始值为 0</li>
+<li>.symtab: 一个符号表, 它存放在程序中定义和引用的函数和全局变量的信息, 和编译器中的符号表不同, .symtab 符号表不包含局部变量的条目</li>
+</ul></li>
+
+<li>GCC -fno-common: 告诉链接器, 在遇到多重定义的全局符号时, 触发一个错误</li>
 
 <li>static libraries
 <ul class="org-ul">
@@ -1377,9 +2044,9 @@ pkg-config --cflags --libs yaml-cpp
 </div>
 </div>
 </div>
-<div id="outline-container-org493ea95" class="outline-3">
-<h3 id="org493ea95"><span class="section-number-3">9.5</span> exceptional control flow</h3>
-<div class="outline-text-3" id="text-9-5">
+<div id="outline-container-orgd99dacb" class="outline-3">
+<h3 id="orgd99dacb"><span class="section-number-3">8.5</span> exceptional control flow</h3>
+<div class="outline-text-3" id="text-8-5">
 <ul class="org-ul">
 <li>asynchronous exceptions (interrputs)
 <ul class="org-ul">
@@ -1402,6 +2069,20 @@ pkg-config --cflags --libs yaml-cpp
 <dt>waitpid</dt><dd><p>
 waiting for specific process
 </p>
+<div class="org-src-container">
+<pre class="src src-c">#include &lt;sys/types.h&gt;
+#include &lt;sys/wait.h&gt;
+pid_t waitpid(pid_t pid, int *wstatus, int options); 
+/* The value of options is an OR of zero or more of the following constants:
+ wait()就是 pid = -1、options = 0 的 waitpid()
+ WNOHANG     return 0 immediately if no child has exited.
+ */
+
+ /* wait3() 和 wait4() 函数除了可以获得子进程状态信息外, 还可以获得子进程的资源使用信息, 这些信息是通过参数 rusage 得到的 */
+ pid_t wait3(int *status,int options,struct rusage *rusage);
+ pid_t wait4(pid_t pid,int *status,int options,struct rusage *rusage);
+</pre>
+</div>
 <blockquote>
 <p>
 The pid parameter specifies the set of child processes for which to wait.  If pid is -1, the call waits for any child process.  If pid is 0, the call waits for any
@@ -1409,7 +2090,7 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
  waits for any process whose process group id equals the absolute value of pid.
 </p>
 </blockquote></dd>
-<dt>reap</dt><dd>如果 parent 没有 reap child 进程，init process (pid = 1) 这个进程会去 reap zombie child process</dd>
+<dt>reap</dt><dd>如果 parent 没有 reap child 进程, init process (pid = 1) 这个进程会去 reap zombie child process</dd>
 <dt>execve</dt><dd>loading and running programs, called once, nerver returns</dd>
 </dl></li>
 
@@ -1422,16 +2103,46 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 <ul class="org-ul">
 <li>pause: wait for the receipt of a signal</li>
 <li>kill: send signal to a process</li>
+<li>每个信号类型都有一个预定义的默认行为, 是下面中的一种:
+• 进程终止。
+• 进程终止并转储内存。
+• 进程停止(挂起)直到被 SIGCONT 信号重启。
+• 进程忽略该信号。</li>
 <li>pnb (pending nonblocked signals) = pending &amp; ~blocked</li>
+<li>sighandler_t signal(int signum, sighandler_t handler)
+<ul class="org-ul">
+<li>如果 handler 是 SIG_IGN, 那么忽略类型为 signum 的信号。</li>
+<li>如果 handler 是 SIG_DFL, 那么类型为 signum 的信号行为恢复为默认行为 。</li>
+</ul></li>
 <li>a signal handler is a separate logical flow (not process) that runs concurrently with the main program</li>
-<li>sigprocmask: explicit blocking and unblocking mechanism</li>
+<li>SIGSTOP 和 SIGKILL, 它们的默认行为是不能修改的</li>
+<li><p>
+sigprocmask: explicit blocking and unblocking mechanism 只为单线程定义的, pthread_sigmasks 可以在多线程中使用
+</p>
+<div class="org-src-container">
+<pre class="src src-c">sigset_t mask, prev_mask;
+
+sigfillset(&amp;mask);			   /* all sigs */
+sigprocmask(SIG_BLOCK, &amp;mask, &amp;prev_mask);  /* Block sigs */
+
+sigprocmask(SIG_SETMASK, &amp;prev_mask, NULL); /* Restore sigs */
+
+/* ---------------------------------------- */
+
+sigemptyset(&amp;mask);
+sigaddset(&amp;mask, SIGCHLD);
+sigprocmask(SIG_BLOCK, &amp;mask, &amp;prev_mask);  /* Block SIGCHLD */
+
+sigprocmask(SIG_SETMASK, &amp;prev_mask, NULL); /* Restore sigs */
+</pre>
+</div></li>
 <li>guideline for writing safe handler
 <ul class="org-ul">
 <li>as simple as possible</li>
 <li>call only async-signal-safe functions</li>
 <li>save and restore errno on entry and exit</li>
 <li>protect shared data by temporarily blocking all signals</li>
-<li>declare global variables as <b>volatile</b> (sig_atomic_t)，不能被加载到寄存器上</li>
+<li>declare global variables as <b>volatile</b> (sig_atomic_t), 不能被加载到寄存器上</li>
 </ul></li>
 <li>async-signal-safety
 <ul class="org-ul">
@@ -1444,56 +2155,98 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 </div>
 </div>
 
-<div id="outline-container-org13f28cb" class="outline-3">
-<h3 id="org13f28cb"><span class="section-number-3">9.6</span> system level I/O</h3>
-<div class="outline-text-3" id="text-9-6">
+<div id="outline-container-orgee5fde9" class="outline-3">
+<h3 id="orgee5fde9"><span class="section-number-3">8.6</span> system level I/O</h3>
+<div class="outline-text-3" id="text-8-6">
 <ul class="org-ul">
 <li>End of line (EOL) indicators in different systems
 <ul class="org-ul">
 <li>Linux and Mac Os: '\n'(0xa) - line feed</li>
 <li>Windows and Internet protocols: '\r\n'(0xd 0xa) - carriage return and line feed</li>
 </ul></li>
-<li>strace: 追踪程序调用的系统命令
+<li>strace: 追踪程序调用的系统命令和信号
 <ul class="org-ul">
 <li>example: strace -e trace=write ./cpstdin</li>
 </ul></li>
+<li>内核维护的 3 个数据结构 
+<ul class="org-ul">
+<li>进程级的文件描述符表 descriptor table</li>
+<li>系统级的打开文件描述符表 open file table</li>
+<li>文件系统的 i-node 表 i-node table</li>
+</ul></li>
+
 <li>descriptor table [one table per process]
 <ul class="org-ul">
-<li>不同的 file descriptor 可以指向相同的 file，指向不同的 open file table，其中的 file position 可能不同</li>
-<li>child process 会复制一份 parent process 的 descriptor talbe</li>
+<li>不同的 file descriptor 可以指向相同的 file, 指向不同的 open file table, 其中的 file position 可能不同</li>
+<li>child process 会复制一份 parent process 的 descriptor table</li>
 </ul></li>
+
 <li>open file table [shared by all process]
 <ul class="org-ul">
 <li>file pos</li>
 <li>reference count</li>
 </ul></li>
+
 <li>v-node table [shared by all process]
 <ul class="org-ul">
 <li>informations in <b>stat</b> struct</li>
+<li><p>
+difference between inode and vnode
+</p>
+<blockquote>
+<p>
+The vnode structure ("virtual node") is an essential part of the virtual file system (VFS) support in Linux.
+</p>
+
+<p>
+The file system dependent/independent split was done just above the UNIX-kernel inode layer. This was an obvious choice, as the inode was the main object for file manipulation in the kernel. [&#x2026;] The file system dependent inode was renamed vnode (virtual node). All file manipulation is done with a vnode object. Similarly, file systems are manipulated through an object called a vfs (virtual file system). The vfs is the analog to the old mount-table entry. The file system independent layer is generally referred to a the vnode layer.
+</p>
+</blockquote></li>
 </ul></li>
-<li>dup2: duplicate an entry in the descriptor table
+
+<li>dup and dup2 - duplicate a file descriptor
 <ul class="org-ul">
+<li>The dup() system call creates a copy of the file descriptor oldfd, using the lowest-numbered unused file descriptor for the new descriptor.</li>
+<li>After a successful return, the old and new file descriptors may be used interchangeably.  They refer to the same open file description (see open(2)) and thus share file offset and
+file status flags; for example, if the file offset is modified by using lseek(2) on one of the file descriptors, the offset is also changed for the other.
+The two file descriptors do not share file descriptor flags (the close-on-exec flag).  The close-on-exec flag (FD_CLOEXEC; see fcntl(2)) for the duplicate descriptor is off.</li>
+<li>The dup2() system call performs the same task as dup(), but instead of using the lowest-numbered unused file descriptor, it uses the file descriptor number specified in newfd.  If
+the file descriptor newfd was previously open, it is silently closed before being reused.</li>
+<li>The  steps  of  closing and reusing the file descriptor newfd are performed atomically.</li>
+<li>If oldfd is not a valid file descriptor, then the call fails, and newfd is not closed.</li>
+<li>If oldfd is a valid file descriptor, and newfd has the same value as oldfd, then dup2() does nothing, and returns newfd.</li>
 <li>most common use: I/O redirection (ls &gt; a.txt)</li>
 </ul></li>
+
+<li>fcntl - manipulate file descriptor
+<ul class="org-ul">
+<li>int fcntl(int fd, int cmd, &#x2026; <i>* arg *</i> );</li>
+<li>when cmd = F_DUPFD (int)
+<ul class="org-ul">
+<li>Duplicate the file descriptor fd using the lowest-numbered available file descriptor greater than or equal to arg.
+This is different from dup2(2), which uses exactly the file descriptor specified. On success, the new file descriptor is returned.</li>
+</ul></li>
+</ul></li>
+
 <li>standard I/O
 <ul class="org-ul">
-<li>先 write/read 到 internal buffer，再 transfers bytes from an internal buffer to a user buffer (flush)</li>
+<li>先 write/read 到 internal buffer, 再 transfers bytes from an internal buffer to a user buffer (flush)</li>
 <li>遇到换行符会自动调用 fflush</li>
 </ul></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org043fb7a" class="outline-3">
-<h3 id="org043fb7a"><span class="section-number-3">9.7</span> virtual memory</h3>
-<div class="outline-text-3" id="text-9-7">
+<div id="outline-container-orgf20b4f9" class="outline-3">
+<h3 id="orgf20b4f9"><span class="section-number-3">8.7</span> virtual memory</h3>
+<div class="outline-text-3" id="text-8-7">
 <ul class="org-ul">
 <li>cache
 <ul class="org-ul">
 <li>write-back rather than write-through: try to defer writing back to disk</li>
 <li>each process has its own page table (an array of page table entries (PTEs) that maps virtual pages to physical pages) in DRAM</li>
 <li>page miss cause page fault (an exception)</li>
-<li>allocating pages: call sbrk，会改变 program break 的位置 (heap 的结束地址)</li>
+<li>allocating pages: call sbrk, 会改变 program break 的位置 (heap 的结束地址)</li>
 </ul></li>
 <li>memory management
 <ul class="org-ul">
@@ -1503,10 +2256,10 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 <li>memory protection
 <ul class="org-ul">
 <li>extend PTEs with permission bits (sup, read, write, exec)</li>
-<li>64位的地址只使用了低48位，高位全为1的是用于内核，高位全为0的是用于用户</li>
+<li>64位的地址只使用了低48位, 高位全为1的是用于内核, 高位全为0的是用于用户</li>
 </ul></li>
 
-<li>Page Table Base Register: CR3 寄存器保存着当前进程页目录的物理地址，切换进程就会改变 CR3 的值 (part of the process' context)</li>
+<li>Page Table Base Register: CR3 寄存器保存着当前进程页目录的物理地址, 切换进程就会改变 CR3 的值 (part of the process' context)</li>
 
 <li>multi-level page tables
 <ul class="org-ul">
@@ -1541,12 +2294,21 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 <li>Linux VM organization
 <ul class="org-ul">
 <li>task_struct 进程描述符: 有指向内存描述符的指针 struct mm_struct *mm, *active_mm</li>
-<li>mm_struct 内存描述符: 有指向线性区对象的链表头 struct vm_area_struct *mmap 和指向线性区对象的红黑树 struct rb_root mm_rb， 有 pgd_t * pgd</li>
+<li>mm_struct 内存描述符: 有指向线性区对象的链表头 struct vm_area_struct *mmap , 
+有指向线性区对象的红黑树 struct rb_root mm_rb,  
+有 pgd_t * pgd 指向第一级页表(页全局目录)的基址, 当内核运行这个进程时, 就将 pgd存放在 CR3 控制寄存器中</li>
 <li>vm_area_truct: 描述了虚拟地址空间的一个区间
 <ul class="org-ul">
 <li>vm_prot: read/write premission for this area</li>
 <li>vm_flags: pages shared with other processes or private for this process</li>
 </ul></li>
+</ul></li>
+
+<li>page fault
+<ul class="org-ul">
+<li>段错误: 不在任何一个 vm_area_truct 的 vm_start 到 vm_end 之间</li>
+<li>终止: 没有访问权限</li>
+<li>选择一个牺牲页面, 如果这个牺牲页面被修改过, 那么就将它交换出去, 换入新的页面并更新页表</li>
 </ul></li>
 
 <li>private copy-on-write objects: make a copy when write instead of it reflecting changes to disk</li>
@@ -1565,15 +2327,22 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 </div>
 </div>
 
-<div id="outline-container-org3070acb" class="outline-3">
-<h3 id="org3070acb"><span class="section-number-3">9.8</span> dynamic memory allocation</h3>
-<div class="outline-text-3" id="text-9-8">
+<div id="outline-container-org329d17c" class="outline-3">
+<h3 id="org329d17c"><span class="section-number-3">8.8</span> dynamic memory allocation</h3>
+<div class="outline-text-3" id="text-8-8">
 <ul class="org-ul">
 <li>performance goals
 <ul class="org-ul">
 <li>throughput: number of completed requests per unit time</li>
 <li>peak memory utilization = max_playload / heap_size</li>
 <li>placement policy, splitting policy, coalescing policy</li>
+</ul></li>
+
+<li>placement policy
+<ul class="org-ul">
+<li>首次适配从头开始搜索空闲链表, 选择第一个合适的空闲块。</li>
+<li>下一次适配和首次适配很相似, 只不过不是从链表的起始处开始每次搜索, 而是从上一次查询结束的地方开始。</li>
+<li>最佳适配检查每个空闲块, 选择适合所需请求大小的最小空闲块。</li>
 </ul></li>
 
 <li>keeping track of free blocks
@@ -1616,7 +2385,7 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 <li>mark-compact collection</li>
 <li>conservation collection</li>
 <li>incremental collection</li>
-<li>基于引用计数只需要局部信息，基于 trace 需要全局信息，引用计数缺少全局信息，无法处理循环引用，可使用*弱引用*解决</li>
+<li>基于引用计数只需要局部信息, 基于 trace 需要全局信息, 引用计数缺少全局信息, 无法处理循环引用, 可使用 <b>弱引用</b> 解决</li>
 </ul></li>
 </ul></li>
 
@@ -1631,17 +2400,332 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 </div>
 </div>
 
-<div id="outline-container-orgfeecbd1" class="outline-3">
-<h3 id="orgfeecbd1"><span class="section-number-3">9.9</span> network programming</h3>
+<div id="outline-container-orgcb637ad" class="outline-3">
+<h3 id="orgcb637ad"><span class="section-number-3">8.9</span> network programming</h3>
+<div class="outline-text-3" id="text-8-9">
+<ul class="org-ul">
+<li>DNS is multi-multi mapping</li>
+<li>struct sockaddr: 
+<ul class="org-ul">
+<li>sa_family(2 bytes - uint16_t) tells which protocol family it is</li>
+<li>sa_data(14 bytes) is the address data</li>
+</ul></li>
+<li><p>
+struct sockaddr_in: 
+</p>
+<ul class="org-ul">
+<li>sin_family(2 bytes) protocol family always AF_INET</li>
+<li>sin_port(2 bytes) port number in network bytes order(big endian order)</li>
+<li>sin_addr(4 bytes) IP address in network bytes order</li>
+<li>sin_zero(8 bytes) pad to sizeof(struct sockaddr)</li>
+<li>must cast sockaddr_in * to sockaddr * for functions</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-c++">//ex:
+// _in 后缀是互联网络 (internet) 的缩写
+struct sockaddr_in serverAddr;
+memset(&amp;serverAddr, 0, sizeof(serverAddr)); // memset in &lt;string.h&gt;
+serverAddr.sin_family = AF_INET;
+serverAddr.sin_port = htons(5188); // htons in &lt;arpa/inet.h&gt;
+serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+bind(listenfd, (sockaddr*)&amp;serverAddr, sizeof(serverAddr))
+
+struct sockaddr_in peerAddr;
+
+connfd = accept4(listenfd, (sockaddr*)&amp;peerAddr, &amp;peerLength, SOCK_NONBLOCK | SOCK_CLOEXEC);
+
+std::cout &lt;&lt; "ip = " &lt;&lt; inet_ntoa(peerAddr.sin_addr)
+	  &lt;&lt; "port = " &lt;&lt; ntohs(peerAddr.sin_port) &lt;&lt; std::endl;
+</pre>
+</div></li>
+<li>AF = Address Family, PF = Protocol Family</li>
+<li>server: socket, setsockopt, bind, listen, accept, session(read/write)
+<ul class="org-ul">
+<li><p>
+socket
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+int socket(int domain, int type, int protocol);
+
+// SOCK_STREAM indicates that the socket will be the end point of a connection
+listenfd = socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
+</pre>
+</div></li>
+<li><p>
+bind
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+
+bind(listenfd, (struct sockaddr*)&amp;serverAddr, sizeof(serverAddr));
+</pre>
+</div></li>
+<li><p>
+listen
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">int listen(int sockfd, int backlog);
+// backlog 参数暗示了内核在开始拒绝连接请求之前, 队列中要排队的未完成的连接请求的数量, 一般为 128
+listen(listenfd, SOMAXCONN);
+</pre>
+</div></li>
+<li><p>
+accept
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
+
+connfd = accept4(listenfd, (sockaddr*)&amp;peerAddr, &amp;peerLength, SOCK_NONBLOCK | SOCK_CLOEXEC);
+</pre>
+</div></li>
+</ul></li>
+<li>client: socket, connect, getsockname, session(read/write)
+<ul class="org-ul">
+<li><p>
+socket
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">clientfd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+</pre>
+</div></li>
+<li><p>
+connect
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+
+struct sockaddr_in serverAddr;
+memset(&amp;serverAddr, 0, sizeof(serverAddr));
+serverAddr.sin_family = AF_INET;
+serverAddr.sin_port = htons(5188);
+serverAddr.sin_addr.s_addr = inet_addr("0.0.0.0");
+
+connect(clientfd, (sockaddr*)&amp;serverAddr, sizeof(serverAddr));
+</pre>
+</div></li>
+</ul></li>
+<li><p>
+getaddrinfo
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+
+int getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
+void freeaddrinfo(struct addrinfo *res);
+const char *gai_strerror(int errcode);
+
+struct addrinfo {
+	   int ai_flags;           /* input flags */
+	   int ai_family;          /* protocol family for socket */
+	   int ai_socktype;        /* socket type */
+	   int ai_protocol;        /* protocol for socket */
+	   socklen_t ai_addrlen;   /* length of socket-address */
+	   struct sockaddr *ai_addr; /* socket-address for socket */
+	   char *ai_canonname;     /* canonical name for service location */
+	   struct addrinfo *ai_next; /* pointer to next in list */
+   };
+</pre>
+</div></li>
+<li><p>
+getnameinfo
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">int getnameinfo(const struct sockaddr *addr, socklen_t addrlen,
+		char *host, socklen_t hostlen,
+		char *serv, socklen_t servlen, int flags);
+</pre>
+</div></li>
+
+<li>URI and URL: 
+URI = Universal Resource Identifier 统一资源标志符
+URL = Universal Resource Locator 统一资源定位符
+URN = Universal Resource Name 统一资源名称
+url 是 uri 的子集: URI = URL + URN</li>
+
+<li>CGI (common gateway interface)
+<ul class="org-ul">
+<li>in environment variable QUERY_STRING, the server pass arguments to the child</li>
+<li>the server capture the content produced by the child: 
+the child generates it output on stdout, server uses dup2 to redirect stdout to its connected socket</li>
+</ul></li>
+</ul>
 </div>
 </div>
-<div id="outline-container-org645bafc" class="outline-2">
-<h2 id="org645bafc"><span class="section-number-2">10</span> Introduction to Computer Networking</h2>
-<div class="outline-text-2" id="text-10">
+<div id="outline-container-orgb33eeb3" class="outline-3">
+<h3 id="orgb33eeb3"><span class="section-number-3">8.10</span> concurrent programming</h3>
+<div class="outline-text-3" id="text-8-10">
+<ul class="org-ul">
+<li>approches for writing concurrent servers
+<dl class="org-dl">
+<dt>process-based</dt><dd>kernel automatically interleaves multiple logical flows, 
+each flow has its own private address space.</dd>
+<dt>event-based</dt><dd>programmer manually interleaves multiple logical flow, 
+all flows share the same address space, 
+use technique called I/O multiplexing.</dd>
+<dt>thread-based</dt><dd>kernel automatically interleaves multiple logical flows,
+all flows share the same address space,
+hybrid of process-based and event-based</dd>
+</dl></li>
+
+<li>process-based
+<ul class="org-ul">
+<li><p>
+must reap zombie children
+</p>
+<div class="org-src-container">
+<pre class="src src-c">void sigchld_handler(int sig) 
+{
+while (waitpid(-1, 0, WNOHANG) &gt; 0)
+    ;
+return;
+}
+
+signal(SIGCHLD, sigchld_handler);
+</pre>
+</div></li>
+<li>parent must close its copy connfd, after fork, refcnt(connfd) = 2, connection will not be closed until refcnt(connfd) = 0</li>
+</ul></li>
+
+<li>event-based
+<ul class="org-ul">
+<li>no process or thread control overhead, design for high-performance web servers and search engiens, e.g., Node.js, nginx, Tornado</li>
+<li>hard to provide fine-grained concurrency (very coarse-grained)</li>
+<li>cannot take advantage of multi-core</li>
+</ul></li>
+
+<li>thread-based
+<ul class="org-ul">
+<li>malloc connfdp, and free it in the thread</li>
+<li>pthread_detach(pthread_self()): 主线程与子线程分离, 状态改为 unjoinable 状态</li>
+<li>must be careful to avoid unintended sharing</li>
+<li>all functions called by a thread must be thread-safe</li>
+</ul></li>
+</ul>
 </div>
-<div id="outline-container-org9533270" class="outline-3">
-<h3 id="org9533270"><span class="section-number-3">10.1</span> intro</h3>
-<div class="outline-text-3" id="text-10-1">
+</div>
+
+<div id="outline-container-orgfdd98ba" class="outline-3">
+<h3 id="orgfdd98ba"><span class="section-number-3">8.11</span> synchronization</h3>
+<div class="outline-text-3" id="text-8-11">
+<ul class="org-ul">
+<li><p>
+semaphores(信号量): non-negative global integer synchronization variable. Manipulated by P and V operations.
+</p>
+<div class="org-src-container">
+<pre class="src src-c">#include &lt;semaphore.h&gt;
+
+int sem_init(sem_t *s, 0, unsigned int val); /* s = val */
+int sem_wait(sem_t *s);			     /* P(s) */
+int sem_post(sem_t *s);			     /* V(s) */
+</pre>
+</div>
+<ul class="org-ul">
+<li>P(s) proberen (测试)
+<ul class="org-ul">
+<li>if s is non-zero, then decrement s by 1 and return immediately. (test and decrement operations occur atomically)</li>
+<li>if s is zero, then suspend thread until s become non-zero and the thread is restarted by a V operation.</li>
+<li>after restarting, the P operation decrements s and return control to the caller.</li>
+</ul></li>
+<li>V(s) Verhogen (增加)
+<ul class="org-ul">
+<li>increment by 1. (increment operation occurs atomically)</li>
+<li>if there are any threads blocked in a P operation waiting for s to become non-zero, 
+then restart exaclty one of the threads, which then completes operation by decrementing s.</li>
+</ul></li>
+<li>semaphore invariant: s &gt;= 0</li>
+<li>mutex: binary semaphore (only 0 and 1) used for mutual exclusion, P lock the mutex, V release the mutex.</li>
+<li>using semaphores to coordinate access to shared resources
+<ul class="org-ul">
+<li>producer-consumer problem: 
+<ul class="org-ul">
+<li>有三个信号量 mutex, slots, items</li>
+<li>insert 时 P(slots), V(items)</li>
+<li>remove 时 P(items), V(slots)</li>
+</ul></li>
+<li>readers-writers problem:
+<ul class="org-ul">
+<li>guaranteeing each thread mutually exclusive access to its critical section</li>
+<li>favors readers: writer could be starved sort of indefinitely waiting for all these readers to finish</li>
+<li>favors writers: writer could starve out readers</li>
+<li><p>
+pthread_once: pthread_once() 指定的函数执行且仅执行一次
+</p>
+<div class="org-src-container">
+<pre class="src src-c">#include &lt;pthread.h&gt;
+int pthread_once(pthread_once_t *once_control, void (*init_routine)(void));
+
+static pthread_once_t once = PTHREAD_ONCE_INIT;
+pthread_once(&amp;once, init_routine);
+</pre>
+</div></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>thread-unsafe functions
+<ul class="org-ul">
+<li>class 1: failing to protect shared varibles</li>
+<li>class 2: relying on persistent state across multiple function invocations
+<ul class="org-ul">
+<li>lib.c rand() function relies on static state (next)</li>
+</ul></li>
+<li>class 3: returning a pointer to a static variable
+<ul class="org-ul">
+<li>use lock-and-copy wrap lib.c ctime() function</li>
+</ul></li>
+<li>class 4: calling thread-unsafe functions</li>
+</ul></li>
+</ul>
+
+
+<ul class="org-ul">
+<li>reentrant functions
+<ul class="org-ul">
+<li>def: a function is reentrant iff it accesses no shared variables when called by multiple threads</li>
+<li>a subset of thread-safe functions</li>
+<li>gethostbyname, gethostbyaddr 和 inet_ntoa 函数是已弃用的网络编程函数, 已经分别被可重入的 getaddrinfo, getnameinfo 和 inet_ntop 函数取代</li>
+</ul></li>
+
+<li>thread-safe library functions
+<ul class="org-ul">
+<li>all functions in standard c library, such as malloc, free, printf, scanf</li>
+<li>most unix system calls, with a few exceptions:
+<ul class="org-ul">
+<li>asctime, ctime, gethostbyname, gethostbyaddr, inet_ntoa, localtime, rand</li>
+<li>reentrant version denoted by _r: asctime_r, rand_r</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org6bbdfe8" class="outline-3">
+<h3 id="org6bbdfe8"><span class="section-number-3">8.12</span> thread level parallelism</h3>
+<div class="outline-text-3" id="text-8-12">
+<ul class="org-ul">
+<li>out-of-order processor structure</li>
+<li>memory consistency
+<ul class="org-ul">
+<li>sequential consistency: overall effect consistent with each individual thread, arbitrary interleaving between threads</li>
+<li>non-coherent cache senario: may violate sequential consistency</li>
+<li>snoopy caches: tagged cahce line in main memory with its state (shared, exclusive), snoopy caches will get the correct copy of other threads' cache</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc021d8b" class="outline-2">
+<h2 id="orgc021d8b"><span class="section-number-2">9</span> Introduction to Computer Networking</h2>
+<div class="outline-text-2" id="text-9">
+</div>
+<div id="outline-container-org773addb" class="outline-3">
+<h3 id="org773addb"><span class="section-number-3">9.1</span> intro</h3>
+<div class="outline-text-3" id="text-9-1">
 <ul class="org-ul">
 <li>layers
 <dl class="org-dl">
@@ -1658,14 +2742,15 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 <ul class="org-ul">
 <li>helper functions for convert network byte order (include &lt;arpa/inet.h&gt;):</li>
 <li>htons(), ntohs(), htonl(), ntohl(): htons means "host to network short", ntohl means "network to host long"</li>
+<li>inet_pton / inet_ntop: dotted decimal string (presentation) &lt;&#x2014;&gt; IP address in network byte order (network)</li>
 </ul></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgd545e6c" class="outline-3">
-<h3 id="orgd545e6c"><span class="section-number-3">10.2</span> tcp</h3>
-<div class="outline-text-3" id="text-10-2">
+<div id="outline-container-orgb3266f8" class="outline-3">
+<h3 id="orgb3266f8"><span class="section-number-3">9.2</span> tcp</h3>
+<div class="outline-text-3" id="text-9-2">
 <ul class="org-ul">
 <li>stream of bytes</li>
 <li>reliable delivery
@@ -1707,11 +2792,20 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 </div>
 </div>
 
-
-
-<div id="outline-container-org7c28617" class="outline-3">
-<h3 id="org7c28617"><span class="section-number-3">10.3</span> ICMP</h3>
-<div class="outline-text-3" id="text-10-3">
+<div id="outline-container-orgcda4759" class="outline-3">
+<h3 id="orgcda4759"><span class="section-number-3">9.3</span> ucp</h3>
+<div class="outline-text-3" id="text-9-3">
+<ul class="org-ul">
+<li>very few applications use UDP, examples: DNS, DHCP</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orga943212" class="outline-3">
+<h3 id="orga943212"><span class="section-number-3">9.4</span> ICMP</h3>
+<div class="outline-text-3" id="text-9-4">
+<p>
+Internet Control Message Protocol (ICMP) 
+</p>
 <ul class="org-ul">
 <li>self-contained message reporting error.</li>
 <li>new datagram: first 8 byte payload + header + type + code</li>
@@ -1734,9 +2828,9 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 </div>
 </div>
 
-<div id="outline-container-org278e292" class="outline-3">
-<h3 id="org278e292"><span class="section-number-3">10.4</span> error detection</h3>
-<div class="outline-text-3" id="text-10-4">
+<div id="outline-container-org23873f7" class="outline-3">
+<h3 id="org23873f7"><span class="section-number-3">9.5</span> error detection</h3>
+<div class="outline-text-3" id="text-9-5">
 <ul class="org-ul">
 <li>checksum
 <ul class="org-ul">
@@ -1760,9 +2854,9 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 </div>
 </div>
 
-<div id="outline-container-org0721966" class="outline-3">
-<h3 id="org0721966"><span class="section-number-3">10.5</span> sliding window</h3>
-<div class="outline-text-3" id="text-10-5">
+<div id="outline-container-org0248751" class="outline-3">
+<h3 id="org0248751"><span class="section-number-3">9.6</span> sliding window</h3>
+<div class="outline-text-3" id="text-9-6">
 <ul class="org-ul">
 <li>sender
 <ul class="org-ul">
@@ -1808,15 +2902,26 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 </ul>
 </div>
 </div>
+
+<div id="outline-container-org8c2c895" class="outline-3">
+<h3 id="org8c2c895"><span class="section-number-3">9.7</span> packet switching</h3>
+<div class="outline-text-3" id="text-9-7">
+<ul class="org-ul">
+<li>propagation delay: the time it takes a single bit to travel over a link at propagation speed c</li>
+<li>packetization delay: the time from when the first to the last bit of a packet is transmitted</li>
+<li>queuing delay: wait in the routers' packet buffers</li>
+</ul>
+</div>
+</div>
 </div>
 
-<div id="outline-container-orgc8e3210" class="outline-2">
-<h2 id="orgc8e3210"><span class="section-number-2">11</span> Practical Network Programming</h2>
-<div class="outline-text-2" id="text-11">
+<div id="outline-container-org9060225" class="outline-2">
+<h2 id="org9060225"><span class="section-number-2">10</span> Practical Network Programming</h2>
+<div class="outline-text-2" id="text-10">
 </div>
-<div id="outline-container-org542744a" class="outline-3">
-<h3 id="org542744a"><span class="section-number-3">11.1</span> intro</h3>
-<div class="outline-text-3" id="text-11-1">
+<div id="outline-container-orgc86996b" class="outline-3">
+<h3 id="orgc86996b"><span class="section-number-3">10.1</span> intro</h3>
+<div class="outline-text-3" id="text-10-1">
 <ul class="org-ul">
 <li>layered network
 <ul class="org-ul">
@@ -1829,23 +2934,23 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 </div>
 </div>
 
-<div id="outline-container-orgac70470" class="outline-3">
-<h3 id="orgac70470"><span class="section-number-3">11.2</span> tcp self-connection</h3>
-<div class="outline-text-3" id="text-11-2">
+<div id="outline-container-orgeb95e47" class="outline-3">
+<h3 id="orgeb95e47"><span class="section-number-3">10.2</span> tcp self-connection</h3>
+<div class="outline-text-3" id="text-10-2">
 <ul class="org-ul">
 <li>port should in net.ipv4.ip_local_port_range (sysctl -A | grep port_range)</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orge07555f" class="outline-3">
-<h3 id="orge07555f"><span class="section-number-3">11.3</span> other</h3>
-<div class="outline-text-3" id="text-11-3">
+<div id="outline-container-org75bda91" class="outline-3">
+<h3 id="org75bda91"><span class="section-number-3">10.3</span> other</h3>
+<div class="outline-text-3" id="text-10-3">
 <ul class="org-ul">
 <li>大型网站的构建
 <ul class="org-ul">
 <li>web 静动态资源分离</li>
-<li>缓存处理：客户端（浏览器）缓存，前端页面缓存（squid），页面片段缓存（Edge Side Includes），本地数据缓存</li>
+<li>缓存处理：客户端（浏览器）缓存, 前端页面缓存（squid）, 页面片段缓存（Edge Side Includes）, 本地数据缓存</li>
 <li>web server 集群</li>
 <li>数据库读写分离</li>
 <li>负载均衡
@@ -1854,78 +2959,21 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 <li>应用服务器负载均衡</li>
 <li>数据库负载均衡</li>
 </ul></li>
-<li>CDN（内容分发网络），分布式缓存，分库分表</li>
-<li>多数据中心，分布式存储与计算</li>
-</ul></li>
-
-<li>signal
-<dl class="org-dl">
-<dt>SIGPIPE</dt><dd>client close socket, server call write, then server will receive a RST segment, if server do a write again, then it will cause SIGPIPE</dd>
-<dt>SIGCHLD</dt><dd>zombie child process</dd>
-</dl></li>
-
-<li>poll
-<ul class="org-ul">
-<li>ignore SIGPIPE and SIGCHLD</li>
-<li>non-blocking sokcet + I/O multiplexing</li>
-<li>create listenfd: socket_nonblocking, sokcet_cloexec (or call fcntl f_setfl(o_nonblock), f_setfd(fd_cloexec))</li>
-<li>&amp;*pollfds.begin() 等同于 pollfds.data()</li>
-<li>每次调用传一个 struct pollfd 的数组给内核，内核使用链表存储</li>
-<li>specifying a negative value in timeout means an infinite timeout.</li>
-<li>specifying a timeout of zero causes poll() to return immediately, even if no file descriptors are ready.</li>
-<li><p>
-accept(2) return EMFILE 处理（太多文件）
-</p>
-<div class="org-src-container">
-<pre class="src src-c++">idlefd = open("dev/null", O_RDONLY | O_CLOEXEC);
-if (errno == EMFILE)
-  {
-    close(idlefd);
-    idlefd = accept(listenfd, nullptr, nullptr);
-    close(idlefd);
-    idlefd = open("dev/null", O_RDONLY | O_CLOEXEC);
-    continue;
-
-</pre>
-</div></li>
-</ul></li>
-
-<li>epoll
-<ul class="org-ul">
-<li>使用 epoll_create1(EPOLL_CLOEXEC) 创建 epollfd</li>
-<li><p>
-使用 epoll_ctl(epollfd, EPOLL_CTL_ADD, listenfd, &amp;event) 添加 event
-</p>
-<div class="org-src-container">
-<pre class="src src-c++">
-// The struct epoll_event is defined as:
-
-    typedef union epoll_data {
-	void    *ptr;
-	int      fd;
-	uint32_t u32;
-	uint64_t u64;
-    } epoll_data_t;
-
-    struct epoll_event {
-	uint32_t     events;    /* Epoll events */
-	epoll_data_t data;      /* User data variable */
-    };
-</pre>
-</div></li>
-<li>调用 epoll_wait(epollfd, epoll_event 数组, epoll_event 数组的 size), 将就绪 event 的传入 epoll_event 数组</li>
+<li>CDN（内容分发网络）, 分布式缓存, 分库分表</li>
+<li>多数据中心, 分布式存储与计算</li>
 </ul></li>
 </ul>
 </div>
 </div>
 </div>
-<div id="outline-container-org2fe9b36" class="outline-2">
-<h2 id="org2fe9b36"><span class="section-number-2">12</span> source code</h2>
-<div class="outline-text-2" id="text-12">
+
+<div id="outline-container-org89af805" class="outline-2">
+<h2 id="org89af805"><span class="section-number-2">11</span> source code</h2>
+<div class="outline-text-2" id="text-11">
 </div>
-<div id="outline-container-orgc7d7d51" class="outline-3">
-<h3 id="orgc7d7d51"><span class="section-number-3">12.1</span> epoll</h3>
-<div class="outline-text-3" id="text-12-1">
+<div id="outline-container-orgf973ef6" class="outline-3">
+<h3 id="orgf973ef6"><span class="section-number-3">11.1</span> epoll</h3>
+<div class="outline-text-3" id="text-11-1">
 <p>
 初始化
 </p>
@@ -1973,7 +3021,7 @@ struct eventpoll {
 
     struct rb_root rbr; /* RB tree root used to store monitored fd structs */
 
-    struct epitem *ovflist;
+    struct epitem *ovflist; /* 一个单链表链接着所有的 struct epitem 当 event 转移到用户空间时 */
 
     struct user_struct *user;
 };
@@ -2038,6 +3086,13 @@ struct ep_send_events_data {
 <p>
 create
 </p>
+
+<p>
+从 slab 缓存中创建一个 eventpoll 对象,并且创建一个匿名的 fd 跟 fd 对应的 file 对象,
+而 eventpoll 对象保存在 struct file 结构的 private 指针中,并且返回,
+该 fd 对应的 file operations 实现了 poll 跟 release 操作
+</p>
+
 <div class="org-src-container">
 <pre class="src src-c">
 SYSCALL_DEFINE1(epoll_create, int, size)
@@ -2079,6 +3134,18 @@ SYSCALL_DEFINE1(epoll_create1, int, flags)
 
 <p>
 control
+</p>
+
+<p>
+将 epoll_event 结构拷贝到内核空间中
+</p>
+
+<p>
+插入操作: 创建一个与 fd 对应的 epitem 结构
+指定了调用 poll_wait 时的回调函数用于数据就绪时唤醒进程, 初始化设备的等待队列, 将该进程注册到等待队列, 
+完成这一步, epitem 就跟这个 socket 关联起来了, 当它有状态变化时, 会通过 ep_poll_callback() 来通知. 
+最后调用加入的 fd 的 file operation-&gt;poll 函数(最后会调用 poll_wait 操作)用于完成注册操作, 
+最后将epitem结构添加到红黑树中
 </p>
 <div class="org-src-container">
 <pre class="src src-c">// 使用范例
@@ -2149,36 +3216,35 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
      * above, we can be sure to be able to use the item looked up by
      * ep_find() till we release the mutex.
      */
-    /* 对于每一个监听的fd, 内核都有分配一个epitem结构,
-     * 而且我们也知道, epoll是不允许重复添加fd的,
-     * 所以我们首先查找该fd是不是已经存在了.
-     * ep_find()其实就是RBTREE查找, 跟C++STL的map差不多一回事, O(lgn)的时间复杂度.
+    /* 对于每一个监听的 fd, 内核都有分配一个 epitem 结构,
+     * epoll 不允许重复添加 fd, 首先查找该 fd 是不是已经存在,
+     * ep_find() rbtree 查找, O(lgn) 的时间复杂度
      */
     epi = ep_find(ep, tfile, fd);
     error = -EINVAL;
+
     switch (op) {
-	/* 首先我们关心添加 */
+	/* 添加 */
     case EPOLL_CTL_ADD:
 	if (!epi) {
-	    /* 之前的find没有找到有效的epitem, 证明是第一次插入, 接受!
-	     * 这里我们可以知道, POLLERR和POLLHUP事件内核总是会关心的
-	     * */
+	    /* 之前的 find 没有找到有效的 epitem, 证明是第一次插入, 接受 */
 	    epds.events |= POLLERR | POLLHUP;
-	    /* rbtree插入, 详情见ep_insert()的分析
-	     * 其实我觉得这里有insert的话, 之前的find应该
-	     * 是可以省掉的... */
+	    /* rbtree 插入 */
 	    error = ep_insert(ep, &amp;epds, tfile, fd);
 	} else
-	    /* 找到了!? 重复添加! */
+	    /* 重复添加 */
 	    error = -EEXIST;
 	break;
-	/* 删除和修改操作都比较简单 */
+
+	/* 删除 */
     case EPOLL_CTL_DEL:
 	if (epi)
 	    error = ep_remove(ep, epi);
 	else
 	    error = -ENOENT;
 	break;
+
+	/* 修改 */
     case EPOLL_CTL_MOD:
 	if (epi) {
 	    epds.events |= POLLERR | POLLHUP;
@@ -2187,7 +3253,9 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
 	    error = -ENOENT;
 	break;
     }
+
     mutex_unlock(&amp;ep-&gt;mtx);
+
 error_tgt_fput:
     fput(tfile);
 error_fput:
@@ -2197,32 +3265,448 @@ error_return:
 }
 </pre>
 </div>
+
+<div class="org-src-container">
+<pre class="src src-c">/* 分配一个 eventpoll 结构 */
+static int ep_alloc(struct eventpoll **pep);
+
+
+/* 从 slab 中分配一个 epitem */
+/* UDP socket 的流程: 
+ * f_op-&gt;poll(), sock_poll(), udp_poll(), datagram_poll(), sock_poll_wait(), ep_ptable_queue_proc()
+ * epitem 跟这个 socket 关联起来后, 当它有状态变化时, 会通过 ep_poll_callback() 来通知
+ * 后将 epitem 插入到对应的 eventpoll 中
+ */
+static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
+		     struct file *tfile, int fd);
+
+
+/*
+ * This is the callback that is used to add our wait queue to the
+ * target file wakeup lists.
+ */
+/*
+ * 该函数在调用 f_op-&gt;poll() 时会被调用
+ * epoll 主动 poll 某个 fd 时, 用来将 epitem 与指定的 fd 关联起来
+ * 关联的办法是使用等待队列(waitqueue)
+ * 指定 ep_poll_callback 为唤醒时的回调函数
+ */
+static void ep_ptable_queue_proc(struct file *file, wait_queue_head_t *whead, poll_table *pt);
+
+
+/*
+ * This is the callback that is passed to the wait queue wakeup
+ * machanism. It is called by the stored file descriptors when they
+ * have events to report.
+ */
+/*
+ * 这个是关键性的回调函数, 当我们监听的 fd 发生状态改变时, 它会被调用
+ * 参数 key 被当作一个 unsigned long 整数使用, 携带的是 events
+ * 将当前的 epitem 放入 ready list
+ */
+static int ep_poll_callback(wait_queue_t *wait, unsigned mode, int sync, void *key);
+</pre>
+</div>
+
+<p>
+wait
+</p>
+<div class="org-src-container">
+<pre class="src src-c">/*
+ * Implement the event wait interface for the eventpoll file. It is the kernel
+ * part of the user space epoll_wait(2).
+ */
+// Usage:
+// #include &lt;sys/epoll.h&gt;
+
+// int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout);
+
+// nready = epoll_wait(epollfd, events.data(), static_cast&lt;int&gt;(events.size()), -1);
+SYSCALL_DEFINE4(epoll_wait, int, epfd, struct epoll_event __user *, events,
+	int, maxevents, int, timeout)
+{
+    int error;
+    struct file *file;
+    struct eventpoll *ep;
+    /* The maximum number of event must be greater than zero */
+    if (maxevents &lt;= 0 || maxevents &gt; EP_MAX_EVENTS)
+	return -EINVAL;
+    /* Verify that the area passed by the user is writeable */
+    /* 内核对应用程序采取的策略是"绝对不信任",
+     * 所以内核跟应用程序之间的数据交互大都是 copy
+     * epoll_wait() 需要内核返回数据给用户空间, 内存由用户程序提供,
+     * 所以内核会用一些手段来验证这一段内存空间是不是有效的
+     */
+    if (!access_ok(VERIFY_WRITE, events, maxevents * sizeof(struct epoll_event))) {
+	error = -EFAULT;
+	goto error_return;
+    }
+    /* Get the "struct file *" for the eventpoll file */
+    error = -EBADF;
+
+    file = fget(epfd);
+    if (!file)
+	goto error_return;
+    /*
+     * We have to check that the file structure underneath the fd
+     * the user passed to us _is_ an eventpoll file.
+     */
+    error = -EINVAL;
+
+    if (!is_file_epoll(file))
+	goto error_fput;
+    /*
+     * At this point it is safe to assume that the "private_data" contains
+     * our own data structure.
+     */
+    ep = file-&gt;private_data;
+    /* Time to fish for events ... */
+    error = ep_poll(ep, events, maxevents, timeout);
+error_fput:
+    fput(file);
+error_return:
+    return error;
+}
+
+
+
+
+/* 这个函数真正将执行 epoll_wait 的进程带入睡眠状态 */
+static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+	   int maxevents, long timeout)
+{
+    int res, eavail;
+    unsigned long flags;
+    long jtimeout;
+    wait_queue_t wait;//等待队列
+    /*
+     * Calculate the timeout by checking for the "infinite" value (-1)
+     * and the overflow condition. The passed timeout is in milliseconds,
+     * that why (t * HZ) / 1000.
+     */
+    /* 计算睡觉时间, 毫秒要转换为 HZ */
+    jtimeout = (timeout &lt; 0 || timeout &gt;= EP_MAX_MSTIMEO) ?
+	MAX_SCHEDULE_TIMEOUT : (timeout * HZ + 999) / 1000;
+retry:
+    spin_lock_irqsave(&amp;ep-&gt;lock, flags);
+    res = 0;
+    /* 如果 ready list 不为空, 就不睡了, 直接干活 */
+    if (list_empty(&amp;ep-&gt;rdllist)) {
+	/*
+	 * We don't have any available event to return to the caller.
+	 * We need to sleep here, and we will be wake up by
+	 * ep_poll_callback() when events will become available.
+	 */
+	/* 初始化一个等待队列, 准备直接把自己挂起,
+	 * current 是一个宏, 代表当前进程 */
+	init_waitqueue_entry(&amp;wait, current); //初始化等待队列, wait 表示当前进程
+	__add_wait_queue_exclusive(&amp;ep-&gt;wq, &amp;wait); //挂载到 ep 结构的等待队列
+	for (;;) {
+	    /*
+	     * We don't want to sleep if the ep_poll_callback() sends us
+	     * a wakeup in between. That's why we set the task state
+	     * to TASK_INTERRUPTIBLE before doing the checks.
+	     */
+
+	    set_current_state(TASK_INTERRUPTIBLE);
+
+	    if (!list_empty(&amp;ep-&gt;rdllist) || !jtimeout)
+		break;
+
+	    /* 如果有信号产生, 也起床 */
+	    if (signal_pending(current)) {
+		res = -EINTR;
+		break;
+	    }
+
+	    spin_unlock_irqrestore(&amp;ep-&gt;lock, flags);
+
+	    jtimeout = schedule_timeout(jtimeout); //睡觉
+	    spin_lock_irqsave(&amp;ep-&gt;lock, flags);
+	}
+	__remove_wait_queue(&amp;ep-&gt;wq, &amp;wait);
+	/* 醒来 */
+	set_current_state(TASK_RUNNING);
+    }
+    /* Is it worth to try to dig for events ? */
+    eavail = !list_empty(&amp;ep-&gt;rdllist) || ep-&gt;ovflist != EP_UNACTIVE_PTR;
+    spin_unlock_irqrestore(&amp;ep-&gt;lock, flags);
+    /*
+     * Try to transfer events to user space. In case we get 0 events and
+     * there's still timeout left over, we go trying again in search of
+     * more luck.
+     */
+    /* 如果一切正常, 有 event 发生, 就开始准备数据 copy 给用户空间了 */
+    if (!res &amp;&amp; eavail &amp;&amp;
+	!(res = ep_send_events(ep, events, maxevents)) &amp;&amp; jtimeout)
+	goto retry;
+    return res;
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c">
+static int ep_send_events(struct eventpoll *ep,
+	      struct epoll_event __user *events, int maxevents)
+{
+    struct ep_send_events_data esed;
+    esed.maxevents = maxevents;
+    esed.events = events;
+    return ep_scan_ready_list(ep, ep_send_events_proc, &amp;esed);
+}
+
+/**
+ * ep_scan_ready_list - Scans the ready list in a way that makes possible for
+ *                      the scan code, to call f_op-&gt;poll(). Also allows for
+ *                      O(NumReady) performance.
+ *
+ * @ep: Pointer to the epoll private data structure.
+ * @sproc: Pointer to the scan callback.
+ * @priv: Private opaque data passed to the @sproc callback.
+ *
+ * Returns: The same integer error code returned by the @sproc callback.
+ */
+static int ep_scan_ready_list(struct eventpoll *ep,
+		  int (*sproc)(struct eventpoll *,
+		       struct list_head *, void *),
+		  void *priv)
+{
+    int error, pwake = 0;
+    unsigned long flags;
+    struct epitem *epi, *nepi;
+    LIST_HEAD(txlist);
+    /*
+     * We need to lock this because we could be hit by
+     * eventpoll_release_file() and epoll_ctl().
+     */
+    mutex_lock(&amp;ep-&gt;mtx);
+    /*
+     * Steal the ready list, and re-init the original one to the
+     * empty list. Also, set ep-&gt;ovflist to NULL so that events
+     * happening while looping w/out locks, are not lost. We cannot
+     * have the poll callback to queue directly on ep-&gt;rdllist,
+     * because we want the "sproc" callback to be able to do it
+     * in a lockless way.
+     */
+    spin_lock_irqsave(&amp;ep-&gt;lock, flags);
+    /* 所有监听到 events 的 epitem 都链到 rdllist 上了,
+     * 但是这一步之后, 所有的 epitem 都转移到了 txlist 上, 而 rdllist 被清空了,
+     */
+    list_splice_init(&amp;ep-&gt;rdllist, &amp;txlist);
+
+    ep-&gt;ovflist = NULL;
+    spin_unlock_irqrestore(&amp;ep-&gt;lock, flags);
+    /*
+     * Now call the callback function.
+     */
+    error = (*sproc)(ep, &amp;txlist, priv);
+    spin_lock_irqsave(&amp;ep-&gt;lock, flags);
+    /*
+     * During the time we spent inside the "sproc" callback, some
+     * other events might have been queued by the poll callback.
+     * We re-insert them inside the main ready-list here.
+     */
+    /* 现在我们来处理ovflist, 这些 epitem 都是我们在传递数据给用户空间时
+     * 监听到了事件 All the events that happens during that period of time are
+     * chained in ep-&gt;ovflist and requeued later on
+     */
+    for (nepi = ep-&gt;ovflist; (epi = nepi) != NULL;
+	 nepi = epi-&gt;next, epi-&gt;next = EP_UNACTIVE_PTR) {
+	/*
+	 * We need to check if the item is already in the list.
+	 * During the "sproc" callback execution time, items are
+	 * queued into -&gt;ovflist but the "txlist" might already
+	 * contain them, and the list_splice() below takes care of them.
+	 */
+	/* 将这些直接放入 ready list */
+	if (!ep_is_linked(&amp;epi-&gt;rdllink))
+	    list_add_tail(&amp;epi-&gt;rdllink, &amp;ep-&gt;rdllist);
+    }
+    /*
+     * We need to set back ep-&gt;ovflist to EP_UNACTIVE_PTR, so that after
+     * releasing the lock, events will be queued in the normal way inside
+     * ep-&gt;rdllist.
+     */
+    ep-&gt;ovflist = EP_UNACTIVE_PTR;
+    /*
+     * Quickly re-inject items left on "txlist".
+     */
+    /* 上一次没有处理完的 epitem, 重新插入到 ready list */
+    list_splice(&amp;txlist, &amp;ep-&gt;rdllist);
+    /* ready list不为空, 直接唤醒... */
+    if (!list_empty(&amp;ep-&gt;rdllist)) {
+	/*
+	 * Wake up (if active) both the eventpoll wait list and
+	 * the -&gt;poll() wait list (delayed after we release the lock).
+	 */
+	if (waitqueue_active(&amp;ep-&gt;wq))
+	    wake_up_locked(&amp;ep-&gt;wq);
+	if (waitqueue_active(&amp;ep-&gt;poll_wait))
+	    pwake++;
+    }
+    spin_unlock_irqrestore(&amp;ep-&gt;lock, flags);
+    mutex_unlock(&amp;ep-&gt;mtx);
+    /* We have to call this outside the lock */
+    if (pwake)
+	ep_poll_safewake(&amp;ep-&gt;poll_wait);
+    return error;
+}
+
+
+/* 该函数作为 callback 在 ep_scan_ready_list() 中被调用
+ * head 是一个链表, 包含了已经 ready 的 epitem,
+ * 这个不是 eventpoll 里面的 ready list, 而是上面函数中的 txlist
+ */
+static int ep_send_events_proc(struct eventpoll *ep, struct list_head *head,
+		   void *priv)
+{
+    struct ep_send_events_data *esed = priv;
+    int eventcnt;
+    unsigned int revents;
+    struct epitem *epi;
+    struct epoll_event __user *uevent;
+    /*
+     * We can loop without lock because we are passed a task private list.
+     * Items cannot vanish during the loop because ep_scan_ready_list() is
+     * holding "mtx" during this call.
+     */
+    /* 扫描整个链表 */
+    for (eventcnt = 0, uevent = esed-&gt;events;
+	 !list_empty(head) &amp;&amp; eventcnt &lt; esed-&gt;maxevents;) {
+	/* 取出第一个成员 */
+	epi = list_first_entry(head, struct epitem, rdllink);
+	/* 然后从链表里面移除 */
+	list_del_init(&amp;epi-&gt;rdllink);
+	/* 读取events */
+	revents = epi-&gt;ffd.file-&gt;f_op-&gt;poll(epi-&gt;ffd.file, NULL) &amp;
+	    epi-&gt;event.events;
+	if (revents) {
+	    /* 将当前的事件和用户传入的数据都 copy 给用户空间 */
+	    if (__put_user(revents, &amp;uevent-&gt;events) ||
+		__put_user(epi-&gt;event.data, &amp;uevent-&gt;data)) {
+		list_add(&amp;epi-&gt;rdllink, head);
+		return eventcnt ? eventcnt : -EFAULT;
+	    }
+	    eventcnt++;
+	    uevent++;
+	    if (epi-&gt;event.events &amp; EPOLLONESHOT)
+		epi-&gt;event.events &amp;= EP_PRIVATE_BITS;
+	    else if (!(epi-&gt;event.events &amp; EPOLLET)) {
+		/* EPOLL ET 和非 ET 的区别:
+		 *
+		 * 如果是 ET, epitem 是不会再进入到 readly list,
+		 * 除非 fd 再次发生了状态改变, ep_poll_callback 被调用.
+		 *
+		 * 如果是非 ET, 不管有没有有效的事件或者数据,
+		 * 都会被重新插入到 ready list, 再下一次 epoll_wait
+		 * 时, 会立即返回, 并通知给用户空间, 如果这个
+		 * 被监听的 fd 确实没事件也没数据了, epoll_wait会返回一个0,
+		 * 空转一次.
+		 */
+		list_add_tail(&amp;epi-&gt;rdllink, &amp;ep-&gt;rdllist);
+	    }
+	}
+    }
+    return eventcnt;
+}
+
+
+/* ep_free 在 epollfd 被 close 时调用 */ 
+static void ep_free(struct eventpoll *ep)
+{
+    struct rb_node *rbp;
+    struct epitem *epi;
+    /* We need to release all tasks waiting for these file */
+    if (waitqueue_active(&amp;ep-&gt;poll_wait))
+	ep_poll_safewake(&amp;ep-&gt;poll_wait);
+    /*
+     * We need to lock this because we could be hit by
+     * eventpoll_release_file() while we're freeing the "struct eventpoll".
+     * We do not need to hold "ep-&gt;mtx" here because the epoll file
+     * is on the way to be removed and no one has references to it
+     * anymore. The only hit might come from eventpoll_release_file() but
+     * holding "epmutex" is sufficent here.
+     */
+    mutex_lock(&amp;epmutex);
+    /*
+     * Walks through the whole tree by unregistering poll callbacks.
+     */
+    for (rbp = rb_first(&amp;ep-&gt;rbr); rbp; rbp = rb_next(rbp)) {
+	epi = rb_entry(rbp, struct epitem, rbn);
+	ep_unregister_pollwait(ep, epi);
+    }
+    /*
+     * Walks through the whole tree by freeing each "struct epitem". At this
+     * point we are sure no poll callbacks will be lingering around, and also by
+     * holding "epmutex" we can be sure that no file cleanup code will hit
+     * us during this operation. So we can avoid the lock on "ep-&gt;lock".
+     */
+
+    while ((rbp = rb_first(&amp;ep-&gt;rbr)) != NULL) {
+	epi = rb_entry(rbp, struct epitem, rbn);
+	ep_remove(ep, epi);
+    }
+    mutex_unlock(&amp;epmutex);
+    mutex_destroy(&amp;ep-&gt;mtx);
+    free_uid(ep-&gt;user);
+    kfree(ep);
+}
+/* File callbacks that implement the eventpoll file behaviour */
+static const struct file_operations eventpoll_fops = {
+    .release    = ep_eventpoll_release,
+    .poll       = ep_eventpoll_poll
+};
+/* Fast test to see if the file is an evenpoll file */
+static inline int is_file_epoll(struct file *f)
+{
+    return f-&gt;f_op == &amp;eventpoll_fops;
+}
+
+
+</pre>
 </div>
 </div>
 </div>
+</div>
 
-<div id="outline-container-orgef9393d" class="outline-2">
-<h2 id="orgef9393d"><span class="section-number-2">13</span> plan</h2>
-<div class="outline-text-2" id="text-13">
-<p>
-vedio: csapp(), networking(), asio()
-</p>
+<div id="outline-container-org859dc87" class="outline-2">
+<h2 id="org859dc87"><span class="section-number-2">12</span> miscellaneous</h2>
+<div class="outline-text-2" id="text-12">
+</div>
+<div id="outline-container-org1ab0eca" class="outline-3">
+<h3 id="org1ab0eca"><span class="section-number-3">12.1</span> 页框和伙伴算法</h3>
+<div class="outline-text-3" id="text-12-1">
+<ul class="org-ul">
+<li>内核使用 page 结构体表示一个 4k 大小的物理页, 也叫页框</li>
 
-<p>
-e-book: csapp(), c++ primer()
-</p>
+<li>linux 把空闲的页框分组为 11 个块链表, 在第 i 个链表中每个页框块包含 2 的 i 次方个连续的页框</li>
 
-<p>
-book: os(), network()
+<li><p>
+页框操作 alloc_pages(), page_address()
 </p>
-
-<p>
-practical: leetcode()
-</p>
-
-<p>
-other: muduo()
-</p>
+<div class="org-src-container">
+<pre class="src src-c">/* 分配 2^order 个连续的物理页, 返回一个指针指向第一个物理页的 page 结构体 */
+static inline struct page *alloc_pages(gfp_t gfp_mask, unsigned int order)
+/* 返回 page 所映射的虚拟地址 */
+void *page_address(const struct page *page)
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgf117076" class="outline-3">
+<h3 id="orgf117076"><span class="section-number-3">12.2</span> slab</h3>
+<div class="outline-text-3" id="text-12-2">
+<ul class="org-ul">
+<li>每种对象类型对应着一个高速缓存</li>
+<li>每个高速缓存由多个 slab 组成, 每个 slab 由一个或多个物理上连续的页组成</li>
+<li>减少伙伴算法在分配小块连续内存时产生的内部碎片</li>
+<li>将频繁使用的对象缓存起来</li>
+<li>通过着色技术调整对象以更好的使用硬件高速缓存</li>
+<li>slob / slub</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="taglist"><a href="https://zhongming-unice.github.io/tags.html">Tags</a>: <a href="https://zhongming-unice.github.io/tag-c++.html">c++</a> </div></div>
