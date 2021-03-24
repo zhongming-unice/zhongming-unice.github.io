@@ -1,138 +1,390 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<meta charset="UTF-8">
-<link rel="alternate"
-      type="application/rss+xml"
-      href="https://zhongming-unice.github.io/rss.xml"
-      title="RSS feed for https://zhongming-unice.github.io/">
+<!-- 2021-03-24 三 22:55 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>c++ note</title>
-<meta name="author" content="ming"><meta name="referrer" content="no-referrer"><link href="static/usual-org-front-matter.css" rel="stylesheet" type="text/css" /><link href="static/org-notes-style.css" rel="stylesheet" type="text/css" /><link href="static/floating-toc.css" rel="stylesheet" type="text/css" /><link href="static/blog-banner.css" rel="stylesheet" type="text/css" /><link rel="icon" href="static/favicon.ico"></head>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="ming" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
 <body>
-<div id="preamble" class="status"><div class="header">  <div class="sitelinks">    <a href="https://zhongming-unice.github.io/about.html">about</a>    | <a href="https://zhongming-unice.github.io/archive.html">archive</a>    | <a href="https://zhongming-unice.github.io/rss.xml">rss</a>  </div></div></div>
 <div id="content">
-<div class="post-date">30  1 2021</div><h1 class="post-title"><a href="https://zhongming-unice.github.io/2021-01-30-c++-note.html">c++ note</a></h1>
-<nav id="table-of-contents">
+<h1 class="title">c++ note</h1>
+<div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org87738a1">1. basic</a>
+<li><a href="#orgc6132d0">1. basic</a>
 <ul>
-<li><a href="#org3a79fd9">1.1. static</a></li>
-<li><a href="#org4cb4ddb">1.2. virtual</a></li>
-<li><a href="#orgb43ae57">1.3. lvalue and rvalue</a></li>
-<li><a href="#org713a719">1.4. cast</a></li>
-<li><a href="#orga40c6d9">1.5. inheritance</a></li>
-<li><a href="#org43f3846">1.6. time</a></li>
-<li><a href="#org880b441">1.7. smart pointer</a></li>
-<li><a href="#org95835f3">1.8. RAII</a></li>
-<li><a href="#org5fed355">1.9. value semantics</a></li>
-<li><a href="#orgbea46cb">1.10. CRTP</a></li>
-<li><a href="#org8d6a641">1.11. network I/O basic</a>
+<li><a href="#org4068abd">1.1. static</a></li>
+<li><a href="#orgce8a8df">1.2. virtual</a></li>
+<li><a href="#org3453344">1.3. lvalue and rvalue</a></li>
+<li><a href="#org49de13c">1.4. cast</a></li>
+<li><a href="#orgd04b308">1.5. inheritance</a></li>
+<li><a href="#orgc5e7ff9">1.6. time</a></li>
+<li><a href="#orgc2a35da">1.7. smart pointer</a></li>
+<li><a href="#org2da7fca">1.8. RAII</a></li>
+<li><a href="#orgd70294b">1.9. value semantics</a></li>
+<li><a href="#org7366d56">1.10. CRTP</a></li>
+<li><a href="#orge863634">1.11. network I/O basic</a>
 <ul>
-<li><a href="#orgdbf8dfc">1.11.1. socket</a></li>
-<li><a href="#orgc830635">1.11.2. select</a></li>
-<li><a href="#org7fa0fb5">1.11.3. poll</a></li>
-<li><a href="#org95d0509">1.11.4. epoll</a></li>
+<li><a href="#orgc9dc612">1.11.1. socket</a></li>
+<li><a href="#org9316c9c">1.11.2. select</a></li>
+<li><a href="#orgbc2691d">1.11.3. poll</a></li>
+<li><a href="#orgf49e939">1.11.4. epoll</a></li>
 </ul>
 </li>
-<li><a href="#org6e41a0a">1.12. malloc</a></li>
-<li><a href="#orgfa4f006">1.13. thread-Safe, async-signal-safe and reentrant</a></li>
+<li><a href="#orgc8890f7">1.12. malloc</a></li>
+<li><a href="#org90a1578">1.13. thread-Safe, async-signal-safe and reentrant</a></li>
 </ul>
 </li>
-<li><a href="#org85ac6bc">2. stl container</a>
+<li><a href="#org1e82b3b">2. stl container</a>
 <ul>
-<li><a href="#orgbbbf92d">2.1. std::array</a></li>
-<li><a href="#org1bd53c6">2.2. std::vector</a></li>
-<li><a href="#org2a5d9e2">2.3. std::deque</a></li>
-<li><a href="#orgcc50590">2.4. std::list</a></li>
-<li><a href="#org576ede2">2.5. std::forward_list</a></li>
-<li><a href="#orgfe926e1">2.6. std::set</a></li>
-<li><a href="#org6966719">2.7. std::map</a></li>
-<li><a href="#org64933ea">2.8. std::unordered_map</a></li>
-<li><a href="#org170949d">2.9. std::remove</a></li>
+<li><a href="#org82e08f3">2.1. std::array</a></li>
+<li><a href="#org979b20a">2.2. std::vector</a></li>
+<li><a href="#org5290a3e">2.3. std::deque</a></li>
+<li><a href="#orgd5a3012">2.4. std::list</a></li>
+<li><a href="#org4d9047b">2.5. std::forward_list</a></li>
+<li><a href="#org52a42ea">2.6. std::set</a></li>
+<li><a href="#org24b3d23">2.7. std::map</a></li>
+<li><a href="#org526908d">2.8. std::unordered_map</a></li>
+<li><a href="#orgff1e4a2">2.9. std::remove</a></li>
 </ul>
 </li>
-<li><a href="#orgc299f80">3. concurrency</a>
+<li><a href="#orgab7bf12">3. concurrency</a>
 <ul>
-<li><a href="#org6571c2b">3.1. basic</a></li>
-<li><a href="#org2092836">3.2. atomic</a></li>
-<li><a href="#org8fe2c5f">3.3. mutex</a></li>
-<li><a href="#org79d6e3f">3.4. condition variable</a></li>
+<li><a href="#org5eb2e18">3.1. basic</a></li>
+<li><a href="#orgdb5a792">3.2. atomic</a></li>
+<li><a href="#orgfa61529">3.3. mutex</a></li>
+<li><a href="#org4f47427">3.4. condition variable</a></li>
 </ul>
 </li>
-<li><a href="#org63394b2">4. asio</a>
+<li><a href="#org9c21bc5">4. asio</a>
 <ul>
-<li><a href="#org1116615">4.1. timer</a></li>
-<li><a href="#org5662adb">4.2. daytime</a></li>
-<li><a href="#org3ceba0f">4.3. chat</a></li>
+<li><a href="#orgee90986">4.1. timer</a></li>
+<li><a href="#org2d8fab0">4.2. daytime</a></li>
+<li><a href="#orgd8cdd26">4.3. chat</a></li>
 </ul>
 </li>
-<li><a href="#orgb50e6a2">5. muduo</a>
+<li><a href="#org9847b8d">5. muduo</a>
 <ul>
-<li><a href="#org89b1b5e">5.1. timestamp</a></li>
-<li><a href="#org0e0717d">5.2. exception</a></li>
+<li><a href="#org1ac6257">5.1. timestamp</a></li>
+<li><a href="#orgffefd84">5.2. exception</a></li>
 </ul>
 </li>
-<li><a href="#org0983d93">6. unix</a>
+<li><a href="#orgdf1276a">6. unix</a>
 <ul>
-<li><a href="#orgf1921ce">6.1. baisc</a></li>
-<li><a href="#orgff0e6b1">6.2. man sections</a></li>
-<li><a href="#org0e30741">6.3. ctrl</a></li>
-<li><a href="#org9a040d8">6.4. *nix commands</a></li>
+<li><a href="#org3d20ad3">6.1. baisc</a></li>
+<li><a href="#org6b839d0">6.2. man sections</a></li>
+<li><a href="#orgb923309">6.3. ctrl</a></li>
+<li><a href="#org79d280c">6.4. *nix commands</a></li>
 </ul>
 </li>
-<li><a href="#org8f85f0a">7. Primer C++</a>
+<li><a href="#orgf74c290">7. Primer C++</a>
 <ul>
-<li><a href="#org4f1954d">7.1. string, vector and array</a></li>
-<li><a href="#org75b8bd5">7.2. expression</a></li>
+<li><a href="#org9fef504">7.1. string, vector and array</a></li>
+<li><a href="#org93976f5">7.2. expression</a></li>
 </ul>
 </li>
-<li><a href="#org7d0716b">8. CSAPP</a>
+<li><a href="#orgd0c8649">8. CSAPP</a>
 <ul>
-<li><a href="#orgc852f4d">8.1. basic</a></li>
-<li><a href="#org88a60ff">8.2. optimization</a></li>
-<li><a href="#org921c2a0">8.3. memory</a></li>
-<li><a href="#orgaaca4b4">8.4. linking</a></li>
-<li><a href="#orgb4e104f">8.5. exceptional control flow</a></li>
-<li><a href="#orgbfc8eeb">8.6. system level I/O</a></li>
-<li><a href="#orge9bd118">8.7. virtual memory</a></li>
-<li><a href="#org8179e7a">8.8. dynamic memory allocation</a></li>
-<li><a href="#org6d4dfb3">8.9. network programming</a></li>
-<li><a href="#orge888a01">8.10. concurrent programming</a></li>
-<li><a href="#org31c3004">8.11. synchronization</a></li>
-<li><a href="#org447481a">8.12. thread level parallelism</a></li>
+<li><a href="#orga8aab65">8.1. basic</a></li>
+<li><a href="#orgc7abc3d">8.2. optimization</a></li>
+<li><a href="#orgbb823bb">8.3. memory</a></li>
+<li><a href="#orgac396a2">8.4. linking</a></li>
+<li><a href="#org988ce63">8.5. exceptional control flow</a></li>
+<li><a href="#orgc9d1073">8.6. system level I/O</a></li>
+<li><a href="#org8510d7a">8.7. virtual memory</a></li>
+<li><a href="#orge0ce84a">8.8. dynamic memory allocation</a></li>
+<li><a href="#org2aeb2ea">8.9. network programming</a></li>
+<li><a href="#orgaab7c73">8.10. concurrent programming</a></li>
+<li><a href="#org544bff2">8.11. synchronization</a></li>
+<li><a href="#org174faf6">8.12. thread level parallelism</a></li>
 </ul>
 </li>
-<li><a href="#orga6d4649">9. Introduction to Computer Networking</a>
+<li><a href="#org62a028c">9. Introduction to Computer Networking</a>
 <ul>
-<li><a href="#orgd6e49b8">9.1. intro</a></li>
-<li><a href="#org3f90df8">9.2. tcp</a></li>
-<li><a href="#org073f643">9.3. ucp</a></li>
-<li><a href="#org5c48ef0">9.4. ICMP</a></li>
-<li><a href="#orgcaf283b">9.5. error detection</a></li>
-<li><a href="#org2f9e0dd">9.6. sliding window</a></li>
-<li><a href="#orgfd2f181">9.7. packet switching</a></li>
+<li><a href="#org8c451a9">9.1. intro</a></li>
+<li><a href="#org07d6dc1">9.2. tcp</a></li>
+<li><a href="#org3c3d413">9.3. ucp</a></li>
+<li><a href="#org4f1d405">9.4. ICMP</a></li>
+<li><a href="#org2309888">9.5. error detection</a></li>
+<li><a href="#org6e9c925">9.6. sliding window</a></li>
+<li><a href="#org48f2a37">9.7. packet switching</a></li>
 </ul>
 </li>
-<li><a href="#org4b6933f">10. Computer Networking: A Top-Down Approach</a></li>
-<li><a href="#orgb487232">11. Modern Operating Systems</a></li>
-<li><a href="#org628dffa">12. source code</a>
+<li><a href="#orgb8083a7">10. Computer Networking: A Top-Down Approach</a></li>
+<li><a href="#org571650e">11. Modern Operating Systems</a></li>
+<li><a href="#org122b925">12. source code</a>
 <ul>
-<li><a href="#org8af4ad4">12.1. epoll</a></li>
+<li><a href="#orgd326602">12.1. epoll</a></li>
 </ul>
 </li>
-<li><a href="#orgac43a15">13. miscellaneous</a></li>
+<li><a href="#orgbb5d448">13. miscellaneous</a></li>
 </ul>
 </div>
-</nav>
+</div>
 
-<div id="outline-container-org87738a1" class="outline-2">
-<h2 id="org87738a1"><span class="section-number-2">1</span> basic</h2>
+<div id="outline-container-orgc6132d0" class="outline-2">
+<h2 id="orgc6132d0"><span class="section-number-2">1</span> basic</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org3a79fd9" class="outline-3">
-<h3 id="org3a79fd9"><span class="section-number-3">1.1</span> static</h3>
+<div id="outline-container-org4068abd" class="outline-3">
+<h3 id="org4068abd"><span class="section-number-3">1.1</span> static</h3>
 <div class="outline-text-3" id="text-1-1">
 <dl class="org-dl">
 <dt>copy constructor</dt><dd></dd>
@@ -145,8 +397,8 @@
 </div>
 </div>
 
-<div id="outline-container-org4cb4ddb" class="outline-3">
-<h3 id="org4cb4ddb"><span class="section-number-3">1.2</span> virtual</h3>
+<div id="outline-container-orgce8a8df" class="outline-3">
+<h3 id="orgce8a8df"><span class="section-number-3">1.2</span> virtual</h3>
 <div class="outline-text-3" id="text-1-2">
 <ul class="org-ul">
 <li>在构造函数和析构函数中调用虚的成员函数不会有虚函数的效果, 即还是调用父类的成员函数, 可以使用工厂模式来解决。</li>
@@ -155,8 +407,8 @@
 </div>
 </div>
 
-<div id="outline-container-orgb43ae57" class="outline-3">
-<h3 id="orgb43ae57"><span class="section-number-3">1.3</span> lvalue and rvalue</h3>
+<div id="outline-container-org3453344" class="outline-3">
+<h3 id="org3453344"><span class="section-number-3">1.3</span> lvalue and rvalue</h3>
 <div class="outline-text-3" id="text-1-3">
 <ul class="org-ul">
 <li>rvalue
@@ -179,8 +431,8 @@
 </div>
 </div>
 
-<div id="outline-container-org713a719" class="outline-3">
-<h3 id="org713a719"><span class="section-number-3">1.4</span> cast</h3>
+<div id="outline-container-org49de13c" class="outline-3">
+<h3 id="org49de13c"><span class="section-number-3">1.4</span> cast</h3>
 <div class="outline-text-3" id="text-1-4">
 <dl class="org-dl">
 <dt>const_cast</dt><dd>可 cast const 的对象, 除 function pointers</dd>
@@ -189,8 +441,8 @@
 </dl>
 </div>
 </div>
-<div id="outline-container-orga40c6d9" class="outline-3">
-<h3 id="orga40c6d9"><span class="section-number-3">1.5</span> inheritance</h3>
+<div id="outline-container-orgd04b308" class="outline-3">
+<h3 id="orgd04b308"><span class="section-number-3">1.5</span> inheritance</h3>
 <div class="outline-text-3" id="text-1-5">
 <ul class="org-ul">
 <li><p>
@@ -250,20 +502,20 @@ int main() {
 </div>
 </div>
 
-<div id="outline-container-org43f3846" class="outline-3">
-<h3 id="org43f3846"><span class="section-number-3">1.6</span> time</h3>
+<div id="outline-container-orgc5e7ff9" class="outline-3">
+<h3 id="orgc5e7ff9"><span class="section-number-3">1.6</span> time</h3>
 <div class="outline-text-3" id="text-1-6">
-<table>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="org-left">
+<col  class="org-left" />
 
-<col  class="org-left">
+<col  class="org-left" />
 
-<col  class="org-left">
+<col  class="org-left" />
 
-<col  class="org-left">
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
@@ -324,8 +576,8 @@ unsigned long long millisecs = ts.tv_sec * 1000 + ts.tv_nsec / (1000 * 1000);
 </ul>
 </div>
 </div>
-<div id="outline-container-org880b441" class="outline-3">
-<h3 id="org880b441"><span class="section-number-3">1.7</span> smart pointer</h3>
+<div id="outline-container-orgc2a35da" class="outline-3">
+<h3 id="orgc2a35da"><span class="section-number-3">1.7</span> smart pointer</h3>
 <div class="outline-text-3" id="text-1-7">
 <dl class="org-dl">
 <dt>enable_shared_from_this</dt><dd><ul class="org-ul">
@@ -395,8 +647,8 @@ int main()
 </ul>
 </div>
 </div>
-<div id="outline-container-org95835f3" class="outline-3">
-<h3 id="org95835f3"><span class="section-number-3">1.8</span> RAII</h3>
+<div id="outline-container-org2da7fca" class="outline-3">
+<h3 id="org2da7fca"><span class="section-number-3">1.8</span> RAII</h3>
 <div class="outline-text-3" id="text-1-8">
 <p>
 资源获取即初始化（Resource Acquisition Is Initialization）, 或称 RAII, 
@@ -409,8 +661,8 @@ int main()
 </div>
 </div>
 
-<div id="outline-container-org5fed355" class="outline-3">
-<h3 id="org5fed355"><span class="section-number-3">1.9</span> value semantics</h3>
+<div id="outline-container-orgd70294b" class="outline-3">
+<h3 id="orgd70294b"><span class="section-number-3">1.9</span> value semantics</h3>
 <div class="outline-text-3" id="text-1-9">
 <ul class="org-ul">
 <li>对一个具有值语义的原始变量变量赋值可以转换成内存的 bit-wise-copy</li>
@@ -424,8 +676,8 @@ int main()
 </div>
 </div>
 
-<div id="outline-container-orgbea46cb" class="outline-3">
-<h3 id="orgbea46cb"><span class="section-number-3">1.10</span> CRTP</h3>
+<div id="outline-container-org7366d56" class="outline-3">
+<h3 id="org7366d56"><span class="section-number-3">1.10</span> CRTP</h3>
 <div class="outline-text-3" id="text-1-10">
 <p>
 Curiously Recurring Template Pattern 奇异递归模板模式, 更一般地被称作 F-bound polymorphism
@@ -438,12 +690,12 @@ Curiously Recurring Template Pattern 奇异递归模板模式, 更一般地被�
 </div>
 </div>
 
-<div id="outline-container-org8d6a641" class="outline-3">
-<h3 id="org8d6a641"><span class="section-number-3">1.11</span> network I/O basic</h3>
+<div id="outline-container-orge863634" class="outline-3">
+<h3 id="orge863634"><span class="section-number-3">1.11</span> network I/O basic</h3>
 <div class="outline-text-3" id="text-1-11">
 </div>
-<div id="outline-container-orgdbf8dfc" class="outline-4">
-<h4 id="orgdbf8dfc"><span class="section-number-4">1.11.1</span> socket</h4>
+<div id="outline-container-orgc9dc612" class="outline-4">
+<h4 id="orgc9dc612"><span class="section-number-4">1.11.1</span> socket</h4>
 <div class="outline-text-4" id="text-1-11-1">
 <ul class="org-ul">
 <li>setsockopt
@@ -482,16 +734,16 @@ on the same socket.
 </ul>
 </div>
 </div>
-<div id="outline-container-orgc830635" class="outline-4">
-<h4 id="orgc830635"><span class="section-number-4">1.11.2</span> select</h4>
+<div id="outline-container-org9316c9c" class="outline-4">
+<h4 id="org9316c9c"><span class="section-number-4">1.11.2</span> select</h4>
 <div class="outline-text-4" id="text-1-11-2">
 <ul class="org-ul">
 <li>当前进程使用 O(N) 时间轮询 bitmap 中准备就绪的 socket, 并将其保存进 socket 的等待队列中（作为等待者）, 如果没有准备就绪的 socket, 该进程将会被挂起, 等有数据传输完毕触发中断程序（kernel 也可以启动 interrupt coalescing 机制, 让网卡做中断合并）使 cpu 让出时间片去将数据导入 socket 的读缓冲区并将等待者移入工作队列</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org7fa0fb5" class="outline-4">
-<h4 id="org7fa0fb5"><span class="section-number-4">1.11.3</span> poll</h4>
+<div id="outline-container-orgbc2691d" class="outline-4">
+<h4 id="orgbc2691d"><span class="section-number-4">1.11.3</span> poll</h4>
 <div class="outline-text-4" id="text-1-11-3">
 <ul class="org-ul">
 <li>用数组代替 select 中的 bitmap 使其监听的 socket 数可以大于1024</li>
@@ -540,8 +792,8 @@ if (errno == EMFILE)
 </div>
 </div>
 
-<div id="outline-container-org95d0509" class="outline-4">
-<h4 id="org95d0509"><span class="section-number-4">1.11.4</span> epoll</h4>
+<div id="outline-container-orgf49e939" class="outline-4">
+<h4 id="orgf49e939"><span class="section-number-4">1.11.4</span> epoll</h4>
 <div class="outline-text-4" id="text-1-11-4">
 <ul class="org-ul">
 <li><p>
@@ -676,13 +928,13 @@ struct eventpoll *ep = epi-&gt;ep</li>
 <li><p>
 用户态与内核态间的数据交换
 </p>
-<table>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="org-left">
+<col  class="org-left" />
 
-<col  class="org-left">
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
@@ -795,8 +1047,8 @@ if (!list_empty(&amp;ep-&gt;rdllist)) {
 </div>
 </div>
 
-<div id="outline-container-org6e41a0a" class="outline-3">
-<h3 id="org6e41a0a"><span class="section-number-3">1.12</span> malloc</h3>
+<div id="outline-container-orgc8890f7" class="outline-3">
+<h3 id="orgc8890f7"><span class="section-number-3">1.12</span> malloc</h3>
 <div class="outline-text-3" id="text-1-12">
 <blockquote>
 <p>
@@ -914,8 +1166,8 @@ The free() function deallocates the memory allocation pointed to by ptr. If ptr 
 </div>
 </div>
 
-<div id="outline-container-orgfa4f006" class="outline-3">
-<h3 id="orgfa4f006"><span class="section-number-3">1.13</span> thread-Safe, async-signal-safe and reentrant</h3>
+<div id="outline-container-org90a1578" class="outline-3">
+<h3 id="org90a1578"><span class="section-number-3">1.13</span> thread-Safe, async-signal-safe and reentrant</h3>
 <div class="outline-text-3" id="text-1-13">
 <blockquote>
 <p>
@@ -948,12 +1200,12 @@ A function that may be invoked, without restriction, from signal-catching functi
 </div>
 </div>
 </div>
-<div id="outline-container-org85ac6bc" class="outline-2">
-<h2 id="org85ac6bc"><span class="section-number-2">2</span> stl container</h2>
+<div id="outline-container-org1e82b3b" class="outline-2">
+<h2 id="org1e82b3b"><span class="section-number-2">2</span> stl container</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-orgbbbf92d" class="outline-3">
-<h3 id="orgbbbf92d"><span class="section-number-3">2.1</span> std::array</h3>
+<div id="outline-container-org82e08f3" class="outline-3">
+<h3 id="org82e08f3"><span class="section-number-3">2.1</span> std::array</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 template&lt;typename T, size_t N&gt;
@@ -967,8 +1219,8 @@ template&lt;typename T, size_t N&gt;
 </div>
 </div>
 
-<div id="outline-container-org1bd53c6" class="outline-3">
-<h3 id="org1bd53c6"><span class="section-number-3">2.2</span> std::vector</h3>
+<div id="outline-container-org979b20a" class="outline-3">
+<h3 id="org979b20a"><span class="section-number-3">2.2</span> std::vector</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 template&lt;typename T, typename Allocator = allocator&lt;T&gt; &gt;
@@ -986,8 +1238,8 @@ template&lt;typename T, typename Allocator = allocator&lt;T&gt; &gt;
 </div>
 </div>
 
-<div id="outline-container-org2a5d9e2" class="outline-3">
-<h3 id="org2a5d9e2"><span class="section-number-3">2.3</span> std::deque</h3>
+<div id="outline-container-org5290a3e" class="outline-3">
+<h3 id="org5290a3e"><span class="section-number-3">2.3</span> std::deque</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 acronym of double-ended queue 双端队列
@@ -999,8 +1251,8 @@ acronym of double-ended queue 双端队列
 </div>
 </div>
 
-<div id="outline-container-orgcc50590" class="outline-3">
-<h3 id="orgcc50590"><span class="section-number-3">2.4</span> std::list</h3>
+<div id="outline-container-orgd5a3012" class="outline-3">
+<h3 id="orgd5a3012"><span class="section-number-3">2.4</span> std::list</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 Doubly linked list 双向列表(循环)
@@ -1017,8 +1269,8 @@ Doubly linked list 双向列表(循环)
 </div>
 </div>
 
-<div id="outline-container-org576ede2" class="outline-3">
-<h3 id="org576ede2"><span class="section-number-3">2.5</span> std::forward_list</h3>
+<div id="outline-container-org4d9047b" class="outline-3">
+<h3 id="org4d9047b"><span class="section-number-3">2.5</span> std::forward_list</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 Single linked list 单向列表
@@ -1033,8 +1285,8 @@ Single linked list 单向列表
 </div>
 </div>
 
-<div id="outline-container-orgfe926e1" class="outline-3">
-<h3 id="orgfe926e1"><span class="section-number-3">2.6</span> std::set</h3>
+<div id="outline-container-org52a42ea" class="outline-3">
+<h3 id="org52a42ea"><span class="section-number-3">2.6</span> std::set</h3>
 <div class="outline-text-3" id="text-2-6">
 <p>
 template&lt;typename T, typename Compare = less&lt;T&gt;, typename Allocator = allocator&lt;T&gt;&gt;
@@ -1055,8 +1307,8 @@ template&lt;typename T, typename Compare = less&lt;T&gt;, typename Allocator = a
 </div>
 </div>
 
-<div id="outline-container-org6966719" class="outline-3">
-<h3 id="org6966719"><span class="section-number-3">2.7</span> std::map</h3>
+<div id="outline-container-org24b3d23" class="outline-3">
+<h3 id="org24b3d23"><span class="section-number-3">2.7</span> std::map</h3>
 <div class="outline-text-3" id="text-2-7">
 <p>
 template&lt;typename Key, typename T, typename Compare = less&lt;Key&gt;, typename Allocator = allocator&lt;pair&lt;const Key, T&gt; &gt; &gt;
@@ -1070,8 +1322,8 @@ template&lt;typename Key, typename T, typename Compare = less&lt;Key&gt;, typena
 </div>
 </div>
 
-<div id="outline-container-org64933ea" class="outline-3">
-<h3 id="org64933ea"><span class="section-number-3">2.8</span> std::unordered_map</h3>
+<div id="outline-container-org526908d" class="outline-3">
+<h3 id="org526908d"><span class="section-number-3">2.8</span> std::unordered_map</h3>
 <div class="outline-text-3" id="text-2-8">
 <p>
 template&lt;typename Key, typename T, typename Hash = hash&lt;Key&gt;, typename EqPred = equal_to&lt;Key&gt;, typename Allocator = allocator&lt;pair&lt;const Key, T&gt; &gt; &gt;
@@ -1122,8 +1374,8 @@ namespaece std
 </div>
 </div>
 
-<div id="outline-container-org170949d" class="outline-3">
-<h3 id="org170949d"><span class="section-number-3">2.9</span> std::remove</h3>
+<div id="outline-container-orgff1e4a2" class="outline-3">
+<h3 id="orgff1e4a2"><span class="section-number-3">2.9</span> std::remove</h3>
 <div class="outline-text-3" id="text-2-9">
 <p>
 STL 中 remove() 只是将待删除元素之后的元素移动到容器的前端, 而不是删除。若要真正移除, 需要搭配使用 erase()
@@ -1139,12 +1391,12 @@ str2.erase(std::remove_if(str2.begin(),
 </div>
 </div>
 </div>
-<div id="outline-container-orgc299f80" class="outline-2">
-<h2 id="orgc299f80"><span class="section-number-2">3</span> concurrency</h2>
+<div id="outline-container-orgab7bf12" class="outline-2">
+<h2 id="orgab7bf12"><span class="section-number-2">3</span> concurrency</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-org6571c2b" class="outline-3">
-<h3 id="org6571c2b"><span class="section-number-3">3.1</span> basic</h3>
+<div id="outline-container-org5eb2e18" class="outline-3">
+<h3 id="org5eb2e18"><span class="section-number-3">3.1</span> basic</h3>
 <div class="outline-text-3" id="text-3-1">
 <ul class="org-ul">
 <li>std::thread::hardware_concurrency 硬件支持的线程数</li>
@@ -1159,8 +1411,8 @@ Linux kernel 的 spinlock 在非 SMP 的情況下，只是关 irq，沒有別的
 </ul>
 </div>
 </div>
-<div id="outline-container-org2092836" class="outline-3">
-<h3 id="org2092836"><span class="section-number-3">3.2</span> atomic</h3>
+<div id="outline-container-orgdb5a792" class="outline-3">
+<h3 id="orgdb5a792"><span class="section-number-3">3.2</span> atomic</h3>
 <div class="outline-text-3" id="text-3-2">
 <ul class="org-ul">
 <li><p>
@@ -1189,13 +1441,13 @@ bool atomic_compare_exchange_weak( volatile std::atomic* obj, T* expected, T des
 <li>operators</li>
 </ul>
 
-<table>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="org-left">
+<col  class="org-left" />
 
-<col  class="org-left">
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
@@ -1240,13 +1492,13 @@ bool atomic_compare_exchange_weak( volatile std::atomic* obj, T* expected, T des
 <li>memory order</li>
 </ul>
 
-<table>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="org-left">
+<col  class="org-left" />
 
-<col  class="org-left">
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
@@ -1306,8 +1558,8 @@ Release-Acquire ordering: 在 store() 之前的所有读写操作, 不允许被�
 </div>
 </div>
 
-<div id="outline-container-org8fe2c5f" class="outline-3">
-<h3 id="org8fe2c5f"><span class="section-number-3">3.3</span> mutex</h3>
+<div id="outline-container-orgfa61529" class="outline-3">
+<h3 id="orgfa61529"><span class="section-number-3">3.3</span> mutex</h3>
 <div class="outline-text-3" id="text-3-3">
 <ul class="org-ul">
 <li>mutex 类似于 binary semaphore, 不同的是只能由上锁的进程/线程来解锁</li>
@@ -1371,8 +1623,8 @@ pthread_mutex_init(&amp;g_mutex, &amp;attr);
 </div>
 </div>
 
-<div id="outline-container-org79d6e3f" class="outline-3">
-<h3 id="org79d6e3f"><span class="section-number-3">3.4</span> condition variable</h3>
+<div id="outline-container-org4f47427" class="outline-3">
+<h3 id="org4f47427"><span class="section-number-3">3.4</span> condition variable</h3>
 <div class="outline-text-3" id="text-3-4">
 <ul class="org-ul">
 <li>notify_one(): notifies one waiting thread</li>
@@ -1394,12 +1646,12 @@ wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));
 </div>
 </div>
 </div>
-<div id="outline-container-org63394b2" class="outline-2">
-<h2 id="org63394b2"><span class="section-number-2">4</span> asio</h2>
+<div id="outline-container-org9c21bc5" class="outline-2">
+<h2 id="org9c21bc5"><span class="section-number-2">4</span> asio</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-org1116615" class="outline-3">
-<h3 id="org1116615"><span class="section-number-3">4.1</span> timer</h3>
+<div id="outline-container-orgee90986" class="outline-3">
+<h3 id="orgee90986"><span class="section-number-3">4.1</span> timer</h3>
 <div class="outline-text-3" id="text-4-1">
 <ul class="org-ul">
 <li>boost::asio::deadline_timer 使用的计量时间是系统时间 (posix_time), 因此修改系统时间会影响deadline_timer的行为</li>
@@ -1408,8 +1660,8 @@ wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));
 </ul>
 </div>
 </div>
-<div id="outline-container-org5662adb" class="outline-3">
-<h3 id="org5662adb"><span class="section-number-3">4.2</span> daytime</h3>
+<div id="outline-container-org2d8fab0" class="outline-3">
+<h3 id="org2d8fab0"><span class="section-number-3">4.2</span> daytime</h3>
 <div class="outline-text-3" id="text-4-2">
 <ul class="org-ul">
 <li>client synchronous
@@ -1450,8 +1702,8 @@ wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));
 </div>
 </div>
 
-<div id="outline-container-org3ceba0f" class="outline-3">
-<h3 id="org3ceba0f"><span class="section-number-3">4.3</span> chat</h3>
+<div id="outline-container-orgd8cdd26" class="outline-3">
+<h3 id="orgd8cdd26"><span class="section-number-3">4.3</span> chat</h3>
 <div class="outline-text-3" id="text-4-3">
 <ul class="org-ul">
 <li>char_message
@@ -1498,12 +1750,12 @@ wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));
 </div>
 </div>
 
-<div id="outline-container-orgb50e6a2" class="outline-2">
-<h2 id="orgb50e6a2"><span class="section-number-2">5</span> muduo</h2>
+<div id="outline-container-org9847b8d" class="outline-2">
+<h2 id="org9847b8d"><span class="section-number-2">5</span> muduo</h2>
 <div class="outline-text-2" id="text-5">
 </div>
-<div id="outline-container-org89b1b5e" class="outline-3">
-<h3 id="org89b1b5e"><span class="section-number-3">5.1</span> timestamp</h3>
+<div id="outline-container-org1ac6257" class="outline-3">
+<h3 id="org1ac6257"><span class="section-number-3">5.1</span> timestamp</h3>
 <div class="outline-text-3" id="text-5-1">
 <ul class="org-ul">
 <li>boost::less_than_comparable&lt;&gt;: 要求实现 operator &lt; , 自动实现 &gt;, &lt;=, &gt;=, 模板元</li>
@@ -1533,8 +1785,8 @@ printf("%ld", value);		/* 64 bit OS */
 </div>
 </div>
 
-<div id="outline-container-org0e0717d" class="outline-3">
-<h3 id="org0e0717d"><span class="section-number-3">5.2</span> exception</h3>
+<div id="outline-container-orgffefd84" class="outline-3">
+<h3 id="orgffefd84"><span class="section-number-3">5.2</span> exception</h3>
 <div class="outline-text-3" id="text-5-2">
 <ul class="org-ul">
 <li><p>
@@ -1556,12 +1808,12 @@ void backtrace_symbols_fd(void *const *buffer, int size, int fd);
 </div>
 </div>
 </div>
-<div id="outline-container-org0983d93" class="outline-2">
-<h2 id="org0983d93"><span class="section-number-2">6</span> unix</h2>
+<div id="outline-container-orgdf1276a" class="outline-2">
+<h2 id="orgdf1276a"><span class="section-number-2">6</span> unix</h2>
 <div class="outline-text-2" id="text-6">
 </div>
-<div id="outline-container-orgf1921ce" class="outline-3">
-<h3 id="orgf1921ce"><span class="section-number-3">6.1</span> baisc</h3>
+<div id="outline-container-org3d20ad3" class="outline-3">
+<h3 id="org3d20ad3"><span class="section-number-3">6.1</span> baisc</h3>
 <div class="outline-text-3" id="text-6-1">
 <ul class="org-ul">
 <li>int / iret
@@ -1635,8 +1887,8 @@ termination, respectively.
 </ul>
 </div>
 </div>
-<div id="outline-container-orgff0e6b1" class="outline-3">
-<h3 id="orgff0e6b1"><span class="section-number-3">6.2</span> man sections</h3>
+<div id="outline-container-org6b839d0" class="outline-3">
+<h3 id="org6b839d0"><span class="section-number-3">6.2</span> man sections</h3>
 <div class="outline-text-3" id="text-6-2">
 <ol class="org-ol">
 <li>Executable programs or shell commands</li>
@@ -1651,8 +1903,8 @@ termination, respectively.
 </ol>
 </div>
 </div>
-<div id="outline-container-org0e30741" class="outline-3">
-<h3 id="org0e30741"><span class="section-number-3">6.3</span> ctrl</h3>
+<div id="outline-container-orgb923309" class="outline-3">
+<h3 id="orgb923309"><span class="section-number-3">6.3</span> ctrl</h3>
 <div class="outline-text-3" id="text-6-3">
 <ul class="org-ul">
 <li>ctrl-c: = kill -s INT [PID] (kill foreground process) 发送 SIGINT 信号给前台进程组中的所有进程, 强制终止程序的执行</li>
@@ -1665,8 +1917,8 @@ termination, respectively.
 </div>
 </div>
 
-<div id="outline-container-org9a040d8" class="outline-3">
-<h3 id="org9a040d8"><span class="section-number-3">6.4</span> *nix commands</h3>
+<div id="outline-container-org79d280c" class="outline-3">
+<h3 id="org79d280c"><span class="section-number-3">6.4</span> *nix commands</h3>
 <div class="outline-text-3" id="text-6-4">
 <ul class="org-ul">
 <li><p>
@@ -1763,12 +2015,12 @@ strace - trace system calls and signals
 </div>
 </div>
 </div>
-<div id="outline-container-org8f85f0a" class="outline-2">
-<h2 id="org8f85f0a"><span class="section-number-2">7</span> Primer C++</h2>
+<div id="outline-container-orgf74c290" class="outline-2">
+<h2 id="orgf74c290"><span class="section-number-2">7</span> Primer C++</h2>
 <div class="outline-text-2" id="text-7">
 </div>
-<div id="outline-container-org4f1954d" class="outline-3">
-<h3 id="org4f1954d"><span class="section-number-3">7.1</span> string, vector and array</h3>
+<div id="outline-container-org9fef504" class="outline-3">
+<h3 id="org9fef504"><span class="section-number-3">7.1</span> string, vector and array</h3>
 <div class="outline-text-3" id="text-7-1">
 <ul class="org-ul">
 <li>老的编译器需要区分 &gt;&gt; 和 &gt; &gt;</li>
@@ -1851,8 +2103,8 @@ const char *str = s.c_str(); // ok
 </div>
 </div>
 
-<div id="outline-container-org75b8bd5" class="outline-3">
-<h3 id="org75b8bd5"><span class="section-number-3">7.2</span> expression</h3>
+<div id="outline-container-org93976f5" class="outline-3">
+<h3 id="org93976f5"><span class="section-number-3">7.2</span> expression</h3>
 <div class="outline-text-3" id="text-7-2">
 <ul class="org-ul">
 <li>使用 decltype 时会区分 lvalue 和 rvalue</li>
@@ -1928,12 +2180,12 @@ const_cast&lt;string&gt;(cp); // error: const_cast only changes constness
 </div>
 </div>
 </div>
-<div id="outline-container-org7d0716b" class="outline-2">
-<h2 id="org7d0716b"><span class="section-number-2">8</span> CSAPP</h2>
+<div id="outline-container-orgd0c8649" class="outline-2">
+<h2 id="orgd0c8649"><span class="section-number-2">8</span> CSAPP</h2>
 <div class="outline-text-2" id="text-8">
 </div>
-<div id="outline-container-orgc852f4d" class="outline-3">
-<h3 id="orgc852f4d"><span class="section-number-3">8.1</span> basic</h3>
+<div id="outline-container-orga8aab65" class="outline-3">
+<h3 id="orga8aab65"><span class="section-number-3">8.1</span> basic</h3>
 <div class="outline-text-3" id="text-8-1">
 <ul class="org-ul">
 <li>registers
@@ -1986,8 +2238,8 @@ const_cast&lt;string&gt;(cp); // error: const_cast only changes constness
 </ul>
 </div>
 </div>
-<div id="outline-container-org88a60ff" class="outline-3">
-<h3 id="org88a60ff"><span class="section-number-3">8.2</span> optimization</h3>
+<div id="outline-container-orgc7abc3d" class="outline-3">
+<h3 id="orgc7abc3d"><span class="section-number-3">8.2</span> optimization</h3>
 <div class="outline-text-3" id="text-8-2">
 <dl class="org-dl">
 <dt>conditional move</dt><dd>使用 conditional moves 能避免 branch prediction</dd>
@@ -1998,8 +2250,8 @@ const_cast&lt;string&gt;(cp); // error: const_cast only changes constness
 </div>
 </div>
 
-<div id="outline-container-org921c2a0" class="outline-3">
-<h3 id="org921c2a0"><span class="section-number-3">8.3</span> memory</h3>
+<div id="outline-container-orgbb823bb" class="outline-3">
+<h3 id="orgbb823bb"><span class="section-number-3">8.3</span> memory</h3>
 <div class="outline-text-3" id="text-8-3">
 <ul class="org-ul">
 <li>bus interface standard
@@ -2025,8 +2277,8 @@ const_cast&lt;string&gt;(cp); // error: const_cast only changes constness
 </div>
 </div>
 
-<div id="outline-container-orgaaca4b4" class="outline-3">
-<h3 id="orgaaca4b4"><span class="section-number-3">8.4</span> linking</h3>
+<div id="outline-container-orgac396a2" class="outline-3">
+<h3 id="orgac396a2"><span class="section-number-3">8.4</span> linking</h3>
 <div class="outline-text-3" id="text-8-4">
 <ul class="org-ul">
 <li>linker symbol
@@ -2078,8 +2330,8 @@ pkg-config --cflags --libs yaml-cpp
 </div>
 </div>
 </div>
-<div id="outline-container-orgb4e104f" class="outline-3">
-<h3 id="orgb4e104f"><span class="section-number-3">8.5</span> exceptional control flow</h3>
+<div id="outline-container-org988ce63" class="outline-3">
+<h3 id="org988ce63"><span class="section-number-3">8.5</span> exceptional control flow</h3>
 <div class="outline-text-3" id="text-8-5">
 <ul class="org-ul">
 <li>asynchronous exceptions (interrputs)
@@ -2189,8 +2441,8 @@ sigprocmask(SIG_SETMASK, &amp;prev_mask, NULL); /* Restore sigs */
 </div>
 </div>
 
-<div id="outline-container-orgbfc8eeb" class="outline-3">
-<h3 id="orgbfc8eeb"><span class="section-number-3">8.6</span> system level I/O</h3>
+<div id="outline-container-orgc9d1073" class="outline-3">
+<h3 id="orgc9d1073"><span class="section-number-3">8.6</span> system level I/O</h3>
 <div class="outline-text-3" id="text-8-6">
 <ul class="org-ul">
 <li>End of line (EOL) indicators in different systems
@@ -2271,8 +2523,8 @@ This is different from dup2(2), which uses exactly the file descriptor specified
 </div>
 </div>
 
-<div id="outline-container-orge9bd118" class="outline-3">
-<h3 id="orge9bd118"><span class="section-number-3">8.7</span> virtual memory</h3>
+<div id="outline-container-org8510d7a" class="outline-3">
+<h3 id="org8510d7a"><span class="section-number-3">8.7</span> virtual memory</h3>
 <div class="outline-text-3" id="text-8-7">
 <ul class="org-ul">
 <li>cache
@@ -2361,8 +2613,8 @@ This is different from dup2(2), which uses exactly the file descriptor specified
 </div>
 </div>
 
-<div id="outline-container-org8179e7a" class="outline-3">
-<h3 id="org8179e7a"><span class="section-number-3">8.8</span> dynamic memory allocation</h3>
+<div id="outline-container-orge0ce84a" class="outline-3">
+<h3 id="orge0ce84a"><span class="section-number-3">8.8</span> dynamic memory allocation</h3>
 <div class="outline-text-3" id="text-8-8">
 <ul class="org-ul">
 <li>performance goals
@@ -2434,8 +2686,8 @@ This is different from dup2(2), which uses exactly the file descriptor specified
 </div>
 </div>
 
-<div id="outline-container-org6d4dfb3" class="outline-3">
-<h3 id="org6d4dfb3"><span class="section-number-3">8.9</span> network programming</h3>
+<div id="outline-container-org2aeb2ea" class="outline-3">
+<h3 id="org2aeb2ea"><span class="section-number-3">8.9</span> network programming</h3>
 <div class="outline-text-3" id="text-8-9">
 <ul class="org-ul">
 <li>DNS is multi-multi mapping</li>
@@ -2591,8 +2843,8 @@ the child generates it output on stdout, server uses dup2 to redirect stdout to 
 </ul>
 </div>
 </div>
-<div id="outline-container-orge888a01" class="outline-3">
-<h3 id="orge888a01"><span class="section-number-3">8.10</span> concurrent programming</h3>
+<div id="outline-container-orgaab7c73" class="outline-3">
+<h3 id="orgaab7c73"><span class="section-number-3">8.10</span> concurrent programming</h3>
 <div class="outline-text-3" id="text-8-10">
 <ul class="org-ul">
 <li>approches for writing concurrent servers
@@ -2644,8 +2896,8 @@ signal(SIGCHLD, sigchld_handler);
 </div>
 </div>
 
-<div id="outline-container-org31c3004" class="outline-3">
-<h3 id="org31c3004"><span class="section-number-3">8.11</span> synchronization</h3>
+<div id="outline-container-org544bff2" class="outline-3">
+<h3 id="org544bff2"><span class="section-number-3">8.11</span> synchronization</h3>
 <div class="outline-text-3" id="text-8-11">
 <ul class="org-ul">
 <li><p>
@@ -2738,8 +2990,8 @@ pthread_once(&amp;once, init_routine);
 </div>
 </div>
 
-<div id="outline-container-org447481a" class="outline-3">
-<h3 id="org447481a"><span class="section-number-3">8.12</span> thread level parallelism</h3>
+<div id="outline-container-org174faf6" class="outline-3">
+<h3 id="org174faf6"><span class="section-number-3">8.12</span> thread level parallelism</h3>
 <div class="outline-text-3" id="text-8-12">
 <ul class="org-ul">
 <li>out-of-order processor structure</li>
@@ -2753,12 +3005,12 @@ pthread_once(&amp;once, init_routine);
 </div>
 </div>
 </div>
-<div id="outline-container-orga6d4649" class="outline-2">
-<h2 id="orga6d4649"><span class="section-number-2">9</span> Introduction to Computer Networking</h2>
+<div id="outline-container-org62a028c" class="outline-2">
+<h2 id="org62a028c"><span class="section-number-2">9</span> Introduction to Computer Networking</h2>
 <div class="outline-text-2" id="text-9">
 </div>
-<div id="outline-container-orgd6e49b8" class="outline-3">
-<h3 id="orgd6e49b8"><span class="section-number-3">9.1</span> intro</h3>
+<div id="outline-container-org8c451a9" class="outline-3">
+<h3 id="org8c451a9"><span class="section-number-3">9.1</span> intro</h3>
 <div class="outline-text-3" id="text-9-1">
 <ul class="org-ul">
 <li>layers
@@ -2822,8 +3074,8 @@ pthread_once(&amp;once, init_routine);
 </div>
 </div>
 
-<div id="outline-container-org3f90df8" class="outline-3">
-<h3 id="org3f90df8"><span class="section-number-3">9.2</span> tcp</h3>
+<div id="outline-container-org07d6dc1" class="outline-3">
+<h3 id="org07d6dc1"><span class="section-number-3">9.2</span> tcp</h3>
 <div class="outline-text-3" id="text-9-2">
 <ul class="org-ul">
 <li>stream of bytes</li>
@@ -2866,16 +3118,16 @@ pthread_once(&amp;once, init_routine);
 </div>
 </div>
 
-<div id="outline-container-org073f643" class="outline-3">
-<h3 id="org073f643"><span class="section-number-3">9.3</span> ucp</h3>
+<div id="outline-container-org3c3d413" class="outline-3">
+<h3 id="org3c3d413"><span class="section-number-3">9.3</span> ucp</h3>
 <div class="outline-text-3" id="text-9-3">
 <ul class="org-ul">
 <li>very few applications use UDP, examples: DNS, DHCP</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org5c48ef0" class="outline-3">
-<h3 id="org5c48ef0"><span class="section-number-3">9.4</span> ICMP</h3>
+<div id="outline-container-org4f1d405" class="outline-3">
+<h3 id="org4f1d405"><span class="section-number-3">9.4</span> ICMP</h3>
 <div class="outline-text-3" id="text-9-4">
 <p>
 Internet Control Message Protocol (ICMP) 
@@ -2902,8 +3154,8 @@ Internet Control Message Protocol (ICMP)
 </div>
 </div>
 
-<div id="outline-container-orgcaf283b" class="outline-3">
-<h3 id="orgcaf283b"><span class="section-number-3">9.5</span> error detection</h3>
+<div id="outline-container-org2309888" class="outline-3">
+<h3 id="org2309888"><span class="section-number-3">9.5</span> error detection</h3>
 <div class="outline-text-3" id="text-9-5">
 <ul class="org-ul">
 <li>checksum
@@ -2928,8 +3180,8 @@ Internet Control Message Protocol (ICMP)
 </div>
 </div>
 
-<div id="outline-container-org2f9e0dd" class="outline-3">
-<h3 id="org2f9e0dd"><span class="section-number-3">9.6</span> sliding window</h3>
+<div id="outline-container-org6e9c925" class="outline-3">
+<h3 id="org6e9c925"><span class="section-number-3">9.6</span> sliding window</h3>
 <div class="outline-text-3" id="text-9-6">
 <ul class="org-ul">
 <li>sender
@@ -2977,8 +3229,8 @@ Internet Control Message Protocol (ICMP)
 </div>
 </div>
 
-<div id="outline-container-orgfd2f181" class="outline-3">
-<h3 id="orgfd2f181"><span class="section-number-3">9.7</span> packet switching</h3>
+<div id="outline-container-org48f2a37" class="outline-3">
+<h3 id="org48f2a37"><span class="section-number-3">9.7</span> packet switching</h3>
 <div class="outline-text-3" id="text-9-7">
 <ul class="org-ul">
 <li>end-to-end delay
@@ -3002,8 +3254,8 @@ Internet Control Message Protocol (ICMP)
 </div>
 </div>
 </div>
-<div id="outline-container-org4b6933f" class="outline-2">
-<h2 id="org4b6933f"><span class="section-number-2">10</span> Computer Networking: A Top-Down Approach</h2>
+<div id="outline-container-orgb8083a7" class="outline-2">
+<h2 id="orgb8083a7"><span class="section-number-2">10</span> Computer Networking: A Top-Down Approach</h2>
 <div class="outline-text-2" id="text-10">
 <ul class="org-ul">
 <li>packet switch (分组交换机) 主要有两种: router (路由器), link-layer switch (链路层交换机)
@@ -3077,8 +3329,8 @@ Internet Control Message Protocol (ICMP)
 </ul>
 </div>
 </div>
-<div id="outline-container-orgb487232" class="outline-2">
-<h2 id="orgb487232"><span class="section-number-2">11</span> Modern Operating Systems</h2>
+<div id="outline-container-org571650e" class="outline-2">
+<h2 id="org571650e"><span class="section-number-2">11</span> Modern Operating Systems</h2>
 <div class="outline-text-2" id="text-11">
 <ul class="org-ul">
 <li><p>
@@ -3167,12 +3419,12 @@ void *page_address(const struct page *page)
 </ul>
 </div>
 </div>
-<div id="outline-container-org628dffa" class="outline-2">
-<h2 id="org628dffa"><span class="section-number-2">12</span> source code</h2>
+<div id="outline-container-org122b925" class="outline-2">
+<h2 id="org122b925"><span class="section-number-2">12</span> source code</h2>
 <div class="outline-text-2" id="text-12">
 </div>
-<div id="outline-container-org8af4ad4" class="outline-3">
-<h3 id="org8af4ad4"><span class="section-number-3">12.1</span> epoll</h3>
+<div id="outline-container-orgd326602" class="outline-3">
+<h3 id="orgd326602"><span class="section-number-3">12.1</span> epoll</h3>
 <div class="outline-text-3" id="text-12-1">
 <p>
 初始化
@@ -3869,8 +4121,8 @@ static inline int is_file_epoll(struct file *f)
 </div>
 </div>
 </div>
-<div id="outline-container-orgac43a15" class="outline-2">
-<h2 id="orgac43a15"><span class="section-number-2">13</span> miscellaneous</h2>
+<div id="outline-container-orgbb5d448" class="outline-2">
+<h2 id="orgbb5d448"><span class="section-number-2">13</span> miscellaneous</h2>
 <div class="outline-text-2" id="text-13">
 <ul class="org-ul">
 <li><p>
@@ -3892,7 +4144,11 @@ fcntl(fd, F_SETFD, flags);
 </ul>
 </div>
 </div>
-<div class="taglist"><a href="https://zhongming-unice.github.io/tags.html">Tags</a>: <a href="https://zhongming-unice.github.io/tag-c++.html">c++</a> </div></div>
-<div id="postamble" class="status"></div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: 2021-01-30 六 15:08</p>
+<p class="author">Author: ming</p>
+<p class="date">Created: 2021-03-24 三 22:55</p>
+</div>
 </body>
 </html>

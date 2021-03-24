@@ -1,3 +1,4 @@
+
 #+title: c++ note
 #+date: <2021-01-30 15:08>
 #+filetags: c++
@@ -499,7 +500,6 @@ Async-Signal-Safe Function
 A function that may be invoked, without restriction, from signal-catching functions. No function is async-signal-safe unless explicitly described as such.
 #+end_quote
 可重入函数必然是线程安全函数和异步信号安全函数
-
 * stl container
 ** std::array
 template<typename T, size_t N>
@@ -597,8 +597,9 @@ namespaece std
     {
       size_t operator()(const Key &k) const
       {
-	auto seed1 = hash<int>()(k.v1);
-	return hash_combine(seed1, k.v2);
+      auto seed = hash<int>()(k.v1);
+      hash_combine(seed, k.v2);
+      return seed;
       }
     };
   }
@@ -613,7 +614,6 @@ str2.erase(std::remove_if(str2.begin(),
                           [](unsigned char x){return std::isspace(x);}),
            str2.end());
 #+end_src
-
 * concurrency
 ** basic
 - std::thread::hardware_concurrency 硬件支持的线程数
@@ -710,6 +710,20 @@ std::scoped_lock lock(e1.m, e2.m);
 // std::unique_lock<std::mutex> lk2(e2.m, std::defer_lock);
 // std::lock(lk1, lk2);
 #+end_src
+- 递归锁 recursive mutex 和非递归锁 non-recursive mutex
+  +  pthread_mutex_t 默认是非递归的, 可以通过设置 PTHREAD_MUTEX_RECURSIVE 属性, 将pthread_mutex_t 锁设置为递归锁
+    #+begin_src c
+    
+        //create recursive attribute
+        pthread_mutexattr_t attr;
+        pthread_mutexattr_init(&attr);
+ 
+        //set recursive attribute
+        pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+ 
+        pthread_mutex_init(&g_mutex, &attr);
+
+    #+end_src
 
 ** condition variable
 - notify_one(): notifies one waiting thread
@@ -724,7 +738,6 @@ std::scoped_lock lock(e1.m, e2.m);
     /* Equivalent to */ 
     wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));
   #+end_src
-
 * asio
 ** timer
 - boost::asio::deadline_timer 使用的计量时间是系统时间 (posix_time), 因此修改系统时间会影响deadline_timer的行为
@@ -805,6 +818,19 @@ std::scoped_lock lock(e1.m, e2.m);
     printf("%ld", value);		/* 64 bit OS */
   #+end_src
  
+** exception
+- backtrace: 栈回溯, 保存各个栈帧的地址到 buffer, backtrace_symbols: 根据地址, 转成相应的函数符号, 使用了 malloc(3), 需要 free 返回的 char **
+  #+begin_src c
+  #include <execinfo.h>
+
+  int backtrace(void **buffer, int size);
+
+  char **backtrace_symbols(void *const *buffer, int size);
+
+  void backtrace_symbols_fd(void *const *buffer, int size, int fd);
+  #+end_src
+
+- demangle 解构, 还原函数, 把不利于阅读的符号转为利于人类阅读的符号
 * unix
 ** baisc
 - int / iret
@@ -910,6 +936,8 @@ std::scoped_lock lock(e1.m, e2.m);
 - readelf 读取 ELF 文件信息
 
 - nslookup: query internet name servers, explore properties of DNS mappings
+
+- dig: DNS lookup utility
 
 - telnet [host] [port]: like a echo client
 
@@ -1297,7 +1325,7 @@ pkg-config --cflags --libs yaml-cpp
   + task_struct 进程描述符: 有指向内存描述符的指针 struct mm_struct *mm, *active_mm
   + mm_struct 内存描述符: 有指向线性区对象的链表头 struct vm_area_struct *mmap , 
     有指向线性区对象的红黑树 struct rb_root mm_rb,  
-    有 pgd_t * pgd 指向第一级页表(页全局目录)的基址, 当内核运行这个进程时, 就将 pgd存放在 CR3 控制寄存器中
+    有 pgd_t * pgd 指向第一级页表(页全局目录)的基址, 当内核运行这个进程时, 就将 pgd 存放在 CR3 控制寄存器中
   + vm_area_truct: 描述了虚拟地址空间的一个区间
     - vm_prot: read/write premission for this area
     - vm_flags: pages shared with other processes or private for this process
@@ -1594,6 +1622,32 @@ pkg-config --cflags --libs yaml-cpp
   - htons(), ntohs(), htonl(), ntohl(): htons means "host to network short", ntohl means "network to host long"
   - inet_pton / inet_ntop: dotted decimal string (presentation) <---> IP address in network byte order (network)
 
++ 计算机上网需要的4个参数
+  - 本机的 IP 地址 (静态或动态)
+  - 子网掩码
+　- 网关的 IP 地址
+　- DNS 的 IP 地址
+
++ DHCP 属于 application layer, transport layer 使用 UDP
+  - UDP header 中设置发出方的端口和接收方的端口: 这一部分是 DHCP 协议规定好的, 发出方是 68 端口, 接收方是 67 端口
+  - 用于分配动态 IP 地址
+  - 中继代理 DHCP relay agent: 网关充当中继代理的角色
+  - 虚拟局域网技术 VLAN
+  - 配置 DHCP snooping 可以解决 DHCP 欺骗问题和 ARP 欺骗问题
+
++ ARP 
+  - 两台主机不在同一个子网络, 只能把数据包传送到两个子网络连接处的 gateway, 让网关去处理
+  - 两台主机在同一个子网络, 可以用 ARP 协议, 得到对方的 MAC 地址
+  - ARP 协议也是发出一个数据包, 其中包含它所要查询主机的 IP 地址，在对方的 MAC 地址这一栏, 填的是 FF:FF:FF:FF:FF:FF, 表示这是一个"广播"地址
+    它所在子网络的每一台主机, 都会收到这个数据包, 从中取出 IP 地址, 与自身的 IP 地址进行比较。如果两者相同, 都做出回复, 向对方报告自己的 MAC 地址, 否则就丢弃这个包
+
+
++ 访问网站
+  - DNS 进程检查 cache, 如果没有找到, 检查本地 host 文件, 如果没有找到, 通过 DNS 服务器获取域名对应的 ip address
+  - 判断这个 IP 地址是不是在同一个子网络, 这就要用到子网掩码
+  - 是在同一个子网络: 通过广播 ARP 获取 ip 对应的 mac 地址, 不是同一子网络, MAC 地址将是网关的 MAC 地址
+  - 构建 http 数据包, 嵌在 TCP 中, 嵌在 IP 中, 嵌入以太网中, 以太网数据包的数据部分, 最大长度为1500字节
+
 ** tcp
 - stream of bytes
 - reliable delivery
@@ -1684,34 +1738,138 @@ Internet Control Message Protocol (ICMP)
   + selective repeat: one loss will lead to only that packet retransmitting
 
 ** packet switching
-- propagation delay: the time it takes a single bit to travel over a link at propagation speed c
-- packetization delay: the time from when the first to the last bit of a packet is transmitted
-- queuing delay: wait in the routers' packet buffers
+- end-to-end delay
+  - propagation delay: the time it takes a single bit to travel over a link at propagation speed c
+  - packetization delay: the time from when the first to the last bit of a packet is transmitted
+  - queuing delay: wait in the routers' packet buffers
 
-* Practical Network Programming
-** intro
+- generic packet switch
+  - lookup address: forwarding table (destination address -> egress link)
+    - lookup Ehternet address using exact match
+    - lookup IP address using longest prefix match (binary tries) (ternary content addressable memory TCAM)
+  - update header
+  - queue packet (buffer memory)
+* Computer Networking: A Top-Down Approach
+- packet switch (分组交换机) 主要有两种: router (路由器), link-layer switch (链路层交换机)
+  + 每台分组交换机有多条链路与之相连, 对于每条链路, 
+    该分组交换机有一个输出缓存 (output buffer), 也叫输出队列 (output queue)
+  + 每台路由器有一个转发表 (forwarding table)
+
+- 时延的类型: 处理时延, 排队时延, 传输时延, 传播时延
+
 - layered network
   + ethernet frame
-  + IP packet
+  + IP packet/datagram
   + TCP segment
   + Application message
 
-** tcp self-connection
 - port should in net.ipv4.ip_local_port_range (sysctl -A | grep port_range)
 
-** other
-- 大型网站的构建
-  + web 静动态资源分离
-  + 缓存处理：客户端（浏览器）缓存, 前端页面缓存（squid）, 页面片段缓存（Edge Side Includes）, 本地数据缓存
-  + web server 集群
-  + 数据库读写分离
-  + 负载均衡
-    - 前端负载均衡：DNS, NAT, 反向代理
-    - 应用服务器负载均衡
-    - 数据库负载均衡
-  + CDN（内容分发网络）, 分布式缓存, 分库分表
-  + 多数据中心, 分布式存储与计算
+- 因为 http 服务器不保存关于客户的任何信息, 所以 http 是一个无状态协议 (stateless protocol)
 
+- cookie 可以用于识别一个用户, 可以在无状态的 http 之上建立一个用户会话层
+
+- conditional GET 方法: 使的缓存器 (Web cache, 也叫 代理服务器 proxy server)证实它的对象是最新的
+  + 报文中包含提个 "if-Modified-Since: " 首部行的 get 请求即为 conditional get request
+  + 响应报文中状态行为 304 Not Modified 表示 proxy 可以使用缓存的对象
+
+- 传输层的多路复用和多路分解:
+  + 多路复用: 从不同的 socket 中收集数据块, 并为每个数据块封装上首部信息, 从而生成报文段, 然后将报文段传递到网络层
+  + 多路分解: 将传输层报文段的数据交付到正确的 socket 
+
+- 最大传输单元 Maximum Transmission Unit, MTU 通常为 1500 字节, 最大报文段长度 Maximum Segment Size, MSS 通常为 1460 字节
+
+- 一条 TCP 连接的双方均可随机地选择初始序号, 这样做可以减少将旧连接 (使用同样的端口号 SO_REUSEADDR) 发送的报文误认为是新连接的
+
+- TimeoutInterval = EstimatedRTT + 4 * DevRTT, RTT 估计值和偏差值通过指数加权移动平均 (Exponential Weighted Moving Averge, EWMA) 计算
+
+- duplicate ACK 冗余 ACK: 接收方对已经接收到的最后一个按序字节数据进行重复确认产生, 发送方一旦接受到 3 个冗余 ACK, TCP 就执行快速重传 (fast retransmit)
+
+- TCP 的差错恢复机制为 go-back-N 和 selective repeat 的混合, 接收方有选择地确认失序报文段
+
+- 丢包事件的定义: 出现超时 或者 收到来自接收方的 3 个冗余 ACK, 出现过度的拥塞时, 路径上的一台或多台路由器的缓存会溢出, 导致丢包
+
+- 慢启动
+  + TCP 连接开始时, cwnd 初始值为一个 MSS, 每接收到一个 ACK 就增加一个 MSS, 这导致每过一个 RTT 就翻倍
+  + 当遇到一个 timeout 丢包事件, 设置慢启动阈值 ssthresh 为 cwnd/2, 将 cwnd 设置为 1, 重新开始慢启动过程, 当检测到 cwnd 到达 sshthresh 时, 结束慢启动并转移到拥塞避免模式
+  + 当遇到一个冗余 ACK 为 3 的丢包事件, 执行一次快速重传, cwnd 减半, 结束慢启动并进入快速恢复模式
+
+- 拥塞避免
+  + 每个 RTT 增加一个 MSS, 可通过每个 ACK 增加 1/n 个 MSS 实现
+  + 出现 timeout: ssthresh 设为 cwnd/2, cwnd 设为 1, 进入慢启动
+  + 出现 3 duplicate ack: ssthresh 设为 cwnd/2, cwnd 减半, 进入快速恢复
+
+- 快速恢复
+  + 对于每个冗余 ACK, 增加一个 MSS, 进入拥塞避免
+  + 出现 timeout: ssthresh 设为 cwnd/2, cwnd 设为 1, 进入慢启动
+  
+- TCP 拥塞控制被称为加性增, 乘性减 Additive-Increase, Multiplicative-Decrease AIMD
+* Modern Operating Systems
+- errno is thread-safe, on Linux, the global errno variable is thread-specific
+  每个线程都有属于它自己的局部 errno
+  #+begin_src c
+    /* in /usr/include/bits/errno.h: */
+    /* Function to get address of global `errno' variable.  */
+    extern int *__errno_location (void) __THROW __attribute__ ((__const__));
+
+    #  if !defined _LIBC || defined _LIBC_REENTRANT
+    /* When using threads, errno is a per-thread value.  */
+    #   define errno (*__errno_location ())
+    #  endif
+  #+end_src
+
+- 只有在有理由认为等待时间是非常短的情况下, 才使用忙等待,
+  用于忙等待的锁, 称为自旋锁(spin lock)
+
+- futex - fast user-space locking
+  futex 通过用户态和内核配合, 可以减小开销, 
+  并且线程灵活可控是否要进入睡眠等待还是 spin 等待
+
+  + 用户线程通过 CAS 类原子指令尝试获取锁, 如果成功, 则获取锁成功, 这种情况下无需调用系统调用, 不需要进入内核, 开销很小
+  + 如果 CAS 失败, 可以选择 spin 重试, 也可以选择挂起自己等待唤醒。这里即调用系统调用, 让内核操作挂起, 为了保证锁原语, 调用者将 futex word 的当前状态(锁定状态)作为参数传入内核, 内核进行检查如果与 futex word 的当前一致, 则挂起线程。否则返回失败。
+  + 为了唤醒等待线程, 获取锁的线程在释放锁后, 需要调用系统调用, 来通知锁释放, 内核会唤醒等待者进行竞争锁
+
+- second chance 二次机会算法: 寻找一个在最近时间间隔没有被访问过的页面, 如果所有的页面都被访问过了, 该算法就简化为纯粹的 FIFO 算法
+
+- 局部分配策略和全局分配策略: 页面置换时考虑所有进程的页面还是只考虑本进程的页面
+  + 一种方法是 PFF (Page Fault Frequency, 缺页中断率) 算法, 指出何时增加或减少分配给一个进程的页面
+
+- 缺页中断处理:
+  + 陷入内核, 保存进程上下文
+  + 检查地址是否有效, 检查存取与保护是否一致, 如果不一致向进程发送一个信号
+  + 检查是否有空闲的页框, 如果没有, 执行页面置换算法寻找一个页面淘汰, 如果选择的页面脏了, 安排写进磁盘, 挂起进程直到传输结束
+  + 恢复进程上下文
+
+- 虚拟内存的核心是两张表: LDT (local Descriptor Table 局部描述符表), GDT (global Descriptor Table 全局描述符表)
+  + 每个程序都有自己的 LDT, 共享同一个 GDT, LDT 描述局部于每个程序的段
+
+- 内核将所有进程的 task_struct 组织成一个双向链表, 不需要遍历这个链表来访问进程描述符(PID),PID 可以直接被映射成进程的 task_struct 所在的地址
+
+- linux 将线程分为三类: 实时先入先出, 实时轮转, 分时, 实时的优先级为 0 ~ 99, 非实时的优先级为 100 ~ 139
+
+- 处理非实时任务的默认调度器: 公平调度器 (Completely Fair Scheduler, CFS)
+  + 根据任务在 CPU 上运行时间的长短 (虚拟运行时间 vruntime) 排列在一个红黑树上, 优先调度 vruntime 小的任务, 优先级较低的任务 vruntime 会增加的更快
+  + 调度器只考虑可以运行的任务, 其他任务被放入等待队列中, 等待队列包含了一个自旋锁
+
+- 内核使用 page 结构体表示一个 4k 大小的物理页, 也叫页框
+
+- linux 把空闲的页框分组为 11 个块链表, 在第 i 个链表中每个页框块包含 2 的 i 次方个连续的页框
+
+- 页框操作 alloc_pages(), page_address()
+  #+begin_src c
+    /* 分配 2^order 个连续的物理页, 返回一个指针指向第一个物理页的 page 结构体 */
+    static inline struct page *alloc_pages(gfp_t gfp_mask, unsigned int order)
+    /* 返回 page 所映射的虚拟地址 */
+    void *page_address(const struct page *page)
+  #+end_src
+
+- slab
+  - 每种对象类型对应着一个高速缓存
+  - 每个高速缓存由多个 slab 组成, 每个 slab 由一个或多个物理上连续的页组成
+  - 减少伙伴算法在分配小块连续内存时产生的内部碎片
+  - 将频繁使用的对象缓存起来
+  - 通过着色技术调整对象以更好的使用硬件高速缓存
+  - slob / slub
 * source code
 ** epoll
 初始化
@@ -2381,24 +2539,15 @@ static inline int is_file_epoll(struct file *f)
 
 
 #+end_src
-
 * miscellaneous
-** 页框和伙伴算法
-- 内核使用 page 结构体表示一个 4k 大小的物理页, 也叫页框
-
-- linux 把空闲的页框分组为 11 个块链表, 在第 i 个链表中每个页框块包含 2 的 i 次方个连续的页框
-
-- 页框操作 alloc_pages(), page_address()
+- FD_CLOEXEC 实现 close-on-exec, 关闭子进程无用文件描述符
   #+begin_src c
-    /* 分配 2^order 个连续的物理页, 返回一个指针指向第一个物理页的 page 结构体 */
-    static inline struct page *alloc_pages(gfp_t gfp_mask, unsigned int order)
-    /* 返回 page 所映射的虚拟地址 */
-    void *page_address(const struct page *page)
+  int flags = fcntl(fd, F_GETFD);  
+  flags |= FD_CLOEXEC;  
+  fcntl(fd, F_SETFD, flags);
   #+end_src
-** slab
-- 每种对象类型对应着一个高速缓存
-- 每个高速缓存由多个 slab 组成, 每个 slab 由一个或多个物理上连续的页组成
-- 减少伙伴算法在分配小块连续内存时产生的内部碎片
-- 将频繁使用的对象缓存起来
-- 通过着色技术调整对象以更好的使用硬件高速缓存
-- slob / slub
+  + open 函数中 flags 参数可以传入 O_CLOEXEC
+  + listenfd = socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP)
+  + connfd = accept4(listenfd, (sockaddr*)&peerAddr, &peerLength, SOCK_NONBLOCK | SOCK_CLOEXEC);
+  
+- 链接时, 依赖其他库的库一定要放到被依赖库的前面
