@@ -16,138 +16,125 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org87738a1">1. basic</a>
+<li><a href="#org6c56b4b">1. basic</a>
 <ul>
-<li><a href="#org3a79fd9">1.1. static</a></li>
-<li><a href="#org4cb4ddb">1.2. virtual</a></li>
-<li><a href="#orgb43ae57">1.3. lvalue and rvalue</a></li>
-<li><a href="#org713a719">1.4. cast</a></li>
-<li><a href="#orga40c6d9">1.5. inheritance</a></li>
-<li><a href="#org43f3846">1.6. time</a></li>
-<li><a href="#org880b441">1.7. smart pointer</a></li>
-<li><a href="#org95835f3">1.8. RAII</a></li>
-<li><a href="#org5fed355">1.9. value semantics</a></li>
-<li><a href="#orgbea46cb">1.10. CRTP</a></li>
-<li><a href="#org8d6a641">1.11. network I/O basic</a>
+<li><a href="#orgabeda87">1.1. virtual</a></li>
+<li><a href="#org777288c">1.2. lvalue and rvalue</a></li>
+<li><a href="#orgd53f75b">1.3. cast</a></li>
+<li><a href="#org989035f">1.4. inheritance</a></li>
+<li><a href="#org304ce24">1.5. time</a></li>
+<li><a href="#org7bd001b">1.6. smart pointer</a></li>
+<li><a href="#org621bd9c">1.7. RAII</a></li>
+<li><a href="#orged58502">1.8. value semantics</a></li>
+<li><a href="#org50db2b1">1.9. CRTP</a></li>
+<li><a href="#orgc11fe5e">1.10. network I/O basic</a>
 <ul>
-<li><a href="#orgdbf8dfc">1.11.1. socket</a></li>
-<li><a href="#orgc830635">1.11.2. select</a></li>
-<li><a href="#org7fa0fb5">1.11.3. poll</a></li>
-<li><a href="#org95d0509">1.11.4. epoll</a></li>
+<li><a href="#org5846f24">1.10.1. socket</a></li>
+<li><a href="#org48baae0">1.10.2. select</a></li>
+<li><a href="#orge6ec258">1.10.3. poll</a></li>
+<li><a href="#org834a867">1.10.4. epoll</a></li>
 </ul>
 </li>
-<li><a href="#org6e41a0a">1.12. malloc</a></li>
-<li><a href="#orgfa4f006">1.13. thread-Safe, async-signal-safe and reentrant</a></li>
+<li><a href="#orgd5b3953">1.11. malloc</a></li>
+<li><a href="#orgacb6b64">1.12. thread-Safe, async-signal-safe and reentrant</a></li>
 </ul>
 </li>
-<li><a href="#org85ac6bc">2. stl container</a>
+<li><a href="#orgce0e3b9">2. stl container</a>
 <ul>
-<li><a href="#orgbbbf92d">2.1. std::array</a></li>
-<li><a href="#org1bd53c6">2.2. std::vector</a></li>
-<li><a href="#org2a5d9e2">2.3. std::deque</a></li>
-<li><a href="#orgcc50590">2.4. std::list</a></li>
-<li><a href="#org576ede2">2.5. std::forward_list</a></li>
-<li><a href="#orgfe926e1">2.6. std::set</a></li>
-<li><a href="#org6966719">2.7. std::map</a></li>
-<li><a href="#org64933ea">2.8. std::unordered_map</a></li>
-<li><a href="#org170949d">2.9. std::remove</a></li>
+<li><a href="#org5626441">2.1. std::array</a></li>
+<li><a href="#orgf6988e9">2.2. std::vector</a></li>
+<li><a href="#orge76d6ad">2.3. std::deque</a></li>
+<li><a href="#org0bcfba8">2.4. std::list</a></li>
+<li><a href="#orga0bfdcc">2.5. std::forward_list</a></li>
+<li><a href="#org5e41bfb">2.6. std::set</a></li>
+<li><a href="#org11cdc17">2.7. std::map</a></li>
+<li><a href="#org13b300d">2.8. std::unordered_map</a></li>
+<li><a href="#org36f61b4">2.9. std::remove</a></li>
 </ul>
 </li>
-<li><a href="#orgc299f80">3. concurrency</a>
+<li><a href="#org99800e3">3. concurrency</a>
 <ul>
-<li><a href="#org6571c2b">3.1. basic</a></li>
-<li><a href="#org2092836">3.2. atomic</a></li>
-<li><a href="#org8fe2c5f">3.3. mutex</a></li>
-<li><a href="#org79d6e3f">3.4. condition variable</a></li>
+<li><a href="#orgcd827af">3.1. basic</a></li>
+<li><a href="#orgfc94c48">3.2. atomic</a></li>
+<li><a href="#orgaf40481">3.3. mutex</a></li>
+<li><a href="#org22125d5">3.4. condition variable</a></li>
 </ul>
 </li>
-<li><a href="#org63394b2">4. asio</a>
+<li><a href="#orgc228aba">4. asio</a>
 <ul>
-<li><a href="#org1116615">4.1. timer</a></li>
-<li><a href="#org5662adb">4.2. daytime</a></li>
-<li><a href="#org3ceba0f">4.3. chat</a></li>
+<li><a href="#org790c94e">4.1. timer</a></li>
+<li><a href="#org8a8401e">4.2. daytime</a></li>
+<li><a href="#orgab3cfe8">4.3. chat</a></li>
 </ul>
 </li>
-<li><a href="#orgb50e6a2">5. muduo</a>
+<li><a href="#orgda35c5b">5. muduo</a>
 <ul>
-<li><a href="#org89b1b5e">5.1. timestamp</a></li>
-<li><a href="#org0e0717d">5.2. exception</a></li>
+<li><a href="#org7d76d5e">5.1. book</a></li>
+<li><a href="#orgd7a5913">5.2. timestamp</a></li>
+<li><a href="#org3245254">5.3. exception</a></li>
+<li><a href="#orge8c1d48">5.4. thread</a></li>
 </ul>
 </li>
-<li><a href="#org0983d93">6. unix</a>
+<li><a href="#org93abdbb">6. unix</a>
 <ul>
-<li><a href="#orgf1921ce">6.1. baisc</a></li>
-<li><a href="#orgff0e6b1">6.2. man sections</a></li>
-<li><a href="#org0e30741">6.3. ctrl</a></li>
-<li><a href="#org9a040d8">6.4. *nix commands</a></li>
+<li><a href="#org3d8dde4">6.1. baisc</a></li>
+<li><a href="#orgbfc1c7a">6.2. man sections</a></li>
+<li><a href="#orgbb9ed4e">6.3. ctrl</a></li>
+<li><a href="#org9f80efc">6.4. *nix commands</a></li>
 </ul>
 </li>
-<li><a href="#org8f85f0a">7. Primer C++</a>
+<li><a href="#orgf67d85a">7. Primer C++</a>
 <ul>
-<li><a href="#org4f1954d">7.1. string, vector and array</a></li>
-<li><a href="#org75b8bd5">7.2. expression</a></li>
+<li><a href="#org29a8edc">7.1. string, vector and array</a></li>
+<li><a href="#org1aaa41c">7.2. expression</a></li>
 </ul>
 </li>
-<li><a href="#org7d0716b">8. CSAPP</a>
+<li><a href="#org47382c7">8. CSAPP</a>
 <ul>
-<li><a href="#orgc852f4d">8.1. basic</a></li>
-<li><a href="#org88a60ff">8.2. optimization</a></li>
-<li><a href="#org921c2a0">8.3. memory</a></li>
-<li><a href="#orgaaca4b4">8.4. linking</a></li>
-<li><a href="#orgb4e104f">8.5. exceptional control flow</a></li>
-<li><a href="#orgbfc8eeb">8.6. system level I/O</a></li>
-<li><a href="#orge9bd118">8.7. virtual memory</a></li>
-<li><a href="#org8179e7a">8.8. dynamic memory allocation</a></li>
-<li><a href="#org6d4dfb3">8.9. network programming</a></li>
-<li><a href="#orge888a01">8.10. concurrent programming</a></li>
-<li><a href="#org31c3004">8.11. synchronization</a></li>
-<li><a href="#org447481a">8.12. thread level parallelism</a></li>
+<li><a href="#orgd308c2b">8.1. basic</a></li>
+<li><a href="#orge98f792">8.2. optimization</a></li>
+<li><a href="#org6bc31bc">8.3. memory</a></li>
+<li><a href="#org9963606">8.4. linking</a></li>
+<li><a href="#org94b6120">8.5. exceptional control flow</a></li>
+<li><a href="#org314ea81">8.6. system level I/O</a></li>
+<li><a href="#org2b5aaaf">8.7. virtual memory</a></li>
+<li><a href="#org7322d25">8.8. dynamic memory allocation</a></li>
+<li><a href="#orge5ab2f4">8.9. network programming</a></li>
+<li><a href="#org70facf8">8.10. concurrent programming</a></li>
+<li><a href="#orged2d8c8">8.11. synchronization</a></li>
+<li><a href="#org2f00729">8.12. thread level parallelism</a></li>
 </ul>
 </li>
-<li><a href="#orga6d4649">9. Introduction to Computer Networking</a>
+<li><a href="#org1f6fdad">9. Introduction to Computer Networking</a>
 <ul>
-<li><a href="#orgd6e49b8">9.1. intro</a></li>
-<li><a href="#org3f90df8">9.2. tcp</a></li>
-<li><a href="#org073f643">9.3. ucp</a></li>
-<li><a href="#org5c48ef0">9.4. ICMP</a></li>
-<li><a href="#orgcaf283b">9.5. error detection</a></li>
-<li><a href="#org2f9e0dd">9.6. sliding window</a></li>
-<li><a href="#orgfd2f181">9.7. packet switching</a></li>
+<li><a href="#org60561b7">9.1. intro</a></li>
+<li><a href="#org05fcf16">9.2. tcp</a></li>
+<li><a href="#orgd2609d8">9.3. ucp</a></li>
+<li><a href="#org11d86e8">9.4. ICMP</a></li>
+<li><a href="#orgb6edcb4">9.5. error detection</a></li>
+<li><a href="#org225c89f">9.6. sliding window</a></li>
+<li><a href="#orgda85cd6">9.7. packet switching</a></li>
 </ul>
 </li>
-<li><a href="#org4b6933f">10. Computer Networking: A Top-Down Approach</a></li>
-<li><a href="#orgb487232">11. Modern Operating Systems</a></li>
-<li><a href="#org628dffa">12. source code</a>
+<li><a href="#org626b37d">10. Computer Networking: A Top-Down Approach</a></li>
+<li><a href="#org620263e">11. Modern Operating Systems</a></li>
+<li><a href="#orga738942">12. source code</a>
 <ul>
-<li><a href="#org8af4ad4">12.1. epoll</a></li>
+<li><a href="#orgb4a750f">12.1. epoll</a></li>
 </ul>
 </li>
-<li><a href="#orgac43a15">13. miscellaneous</a></li>
+<li><a href="#org104b599">13. miscellaneous</a></li>
 </ul>
 </div>
 </nav>
 
-<div id="outline-container-org87738a1" class="outline-2">
-<h2 id="org87738a1"><span class="section-number-2">1</span> basic</h2>
+<div id="outline-container-org6c56b4b" class="outline-2">
+<h2 id="org6c56b4b"><span class="section-number-2">1</span> basic</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org3a79fd9" class="outline-3">
-<h3 id="org3a79fd9"><span class="section-number-3">1.1</span> static</h3>
+<div id="outline-container-orgabeda87" class="outline-3">
+<h3 id="orgabeda87"><span class="section-number-3">1.1</span> virtual</h3>
 <div class="outline-text-3" id="text-1-1">
-<dl class="org-dl">
-<dt>copy constructor</dt><dd></dd>
-</dl>
-<p>
-在使用包含静态成员的类时, 调用拷贝构造函数生成临时对象, 
-这个临时对象在调用析构函数时可能会产生对静态成员的副作用（如 count 自减1）, 
-我们需要重写拷贝构造函数, 在该拷贝构造函数中完成构造函数里的操作（如 count 自增1）。
-</p>
-</div>
-</div>
-
-<div id="outline-container-org4cb4ddb" class="outline-3">
-<h3 id="org4cb4ddb"><span class="section-number-3">1.2</span> virtual</h3>
-<div class="outline-text-3" id="text-1-2">
 <ul class="org-ul">
 <li>在构造函数和析构函数中调用虚的成员函数不会有虚函数的效果, 即还是调用父类的成员函数, 可以使用工厂模式来解决。</li>
 <li>类中有虚函数时, 析构函数要为虚或者 protected</li>
@@ -155,9 +142,9 @@
 </div>
 </div>
 
-<div id="outline-container-orgb43ae57" class="outline-3">
-<h3 id="orgb43ae57"><span class="section-number-3">1.3</span> lvalue and rvalue</h3>
-<div class="outline-text-3" id="text-1-3">
+<div id="outline-container-org777288c" class="outline-3">
+<h3 id="org777288c"><span class="section-number-3">1.2</span> lvalue and rvalue</h3>
+<div class="outline-text-3" id="text-1-2">
 <ul class="org-ul">
 <li>rvalue
 <ul class="org-ul">
@@ -179,9 +166,9 @@
 </div>
 </div>
 
-<div id="outline-container-org713a719" class="outline-3">
-<h3 id="org713a719"><span class="section-number-3">1.4</span> cast</h3>
-<div class="outline-text-3" id="text-1-4">
+<div id="outline-container-orgd53f75b" class="outline-3">
+<h3 id="orgd53f75b"><span class="section-number-3">1.3</span> cast</h3>
+<div class="outline-text-3" id="text-1-3">
 <dl class="org-dl">
 <dt>const_cast</dt><dd>可 cast const 的对象, 除 function pointers</dd>
 <dt>reinterpret_cast</dt><dd>将内存里的值重新解释</dd>
@@ -189,10 +176,26 @@
 </dl>
 </div>
 </div>
-<div id="outline-container-orga40c6d9" class="outline-3">
-<h3 id="orga40c6d9"><span class="section-number-3">1.5</span> inheritance</h3>
-<div class="outline-text-3" id="text-1-5">
+
+<div id="outline-container-org989035f" class="outline-3">
+<h3 id="org989035f"><span class="section-number-3">1.4</span> inheritance</h3>
+<div class="outline-text-3" id="text-1-4">
 <ul class="org-ul">
+<li><p>
+return type
+</p>
+<blockquote>
+<p>
+If the function Derived::f overrides a function Base::f, their return types must either be the same or be covariant. Two types are covariant if they satisfy all of the following requirements:
+</p>
+
+<p>
+both types are pointers or references (lvalue or rvalue) to classes. Multi-level pointers or references are not allowed.
+the referenced/pointed-to class in the return type of Base::f() must be a unambiguous and accessible direct or indirect base class of the referenced/pointed-to class of the return type of Derived::f().
+the return type of Derived::f() must be equally or less cv-qualified than the return type of Base::f().
+</p>
+</blockquote></li>
+
 <li><p>
 强制要求派生类显式地使用接口, 又为派生类准备一个可调用的默认实现：为纯虚函数提供定义, 这种定义不会存入虚表, 因此基类本身仍然是抽象类, 并且派生类仍然需要提供一个显式实现
 </p>
@@ -241,18 +244,13 @@ int main() {
 <pre class="src src-sh">-Xclang -fdump-record-layouts -std=c++11
 </pre>
 </div></li>
-<li>组合正交的多个功能
-<ul class="org-ul">
-<li>有一个 TaskManager 类, 负责管理所有拥有 ITask 接口的对象, 现在需要为 ITask 类型增加两个功能：一是 timing 功能, 即在 ITask 对象执行 Execute 方法前后计时；二是 logging 功能, 即在 ITask 对象执行 Execute 方法前后打印日志</li>
-<li>将 TimingTask 和 LoggingTask 的基类都换成模板参数, 实现 mixin</li>
-</ul></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org43f3846" class="outline-3">
-<h3 id="org43f3846"><span class="section-number-3">1.6</span> time</h3>
-<div class="outline-text-3" id="text-1-6">
+<div id="outline-container-org304ce24" class="outline-3">
+<h3 id="org304ce24"><span class="section-number-3">1.5</span> time</h3>
+<div class="outline-text-3" id="text-1-5">
 <table>
 
 
@@ -320,13 +318,42 @@ clock_gettime(): 系统调用 (_sys_clock_gettime()), 可指定参数 CLOCK_REAL
 clock_gettime(CLOCK_MONOTONIC_COARSE, &amp;ts);
 unsigned long long millisecs = ts.tv_sec * 1000 + ts.tv_nsec / (1000 * 1000);
 </pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-c">  notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
+{
+	switch (clock) {
+	case CLOCK_REALTIME:
+		if (do_realtime(ts) == VCLOCK_NONE)
+			goto fallback;
+		break;
+	case CLOCK_MONOTONIC:
+		if (do_monotonic(ts) == VCLOCK_NONE)
+			goto fallback;
+		break;
+	case CLOCK_REALTIME_COARSE:
+		do_realtime_coarse(ts);
+		break;
+	case CLOCK_MONOTONIC_COARSE:
+		do_monotonic_coarse(ts);
+		break;
+	default:
+		goto fallback;
+	}
+
+	return 0;
+fallback:
+	return vdso_fallback_gettime(clock, ts);
+}
+
+</pre>
 </div></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org880b441" class="outline-3">
-<h3 id="org880b441"><span class="section-number-3">1.7</span> smart pointer</h3>
-<div class="outline-text-3" id="text-1-7">
+<div id="outline-container-org7bd001b" class="outline-3">
+<h3 id="org7bd001b"><span class="section-number-3">1.6</span> smart pointer</h3>
+<div class="outline-text-3" id="text-1-6">
 <dl class="org-dl">
 <dt>enable_shared_from_this</dt><dd><ul class="org-ul">
 <li>是一种 CRTP</li>
@@ -395,9 +422,9 @@ int main()
 </ul>
 </div>
 </div>
-<div id="outline-container-org95835f3" class="outline-3">
-<h3 id="org95835f3"><span class="section-number-3">1.8</span> RAII</h3>
-<div class="outline-text-3" id="text-1-8">
+<div id="outline-container-org621bd9c" class="outline-3">
+<h3 id="org621bd9c"><span class="section-number-3">1.7</span> RAII</h3>
+<div class="outline-text-3" id="text-1-7">
 <p>
 资源获取即初始化（Resource Acquisition Is Initialization）, 或称 RAII, 
 它将必须在使用前请求的资源的生命周期与一个对象的生命周期相绑定。
@@ -409,9 +436,9 @@ int main()
 </div>
 </div>
 
-<div id="outline-container-org5fed355" class="outline-3">
-<h3 id="org5fed355"><span class="section-number-3">1.9</span> value semantics</h3>
-<div class="outline-text-3" id="text-1-9">
+<div id="outline-container-orged58502" class="outline-3">
+<h3 id="orged58502"><span class="section-number-3">1.8</span> value semantics</h3>
+<div class="outline-text-3" id="text-1-8">
 <ul class="org-ul">
 <li>对一个具有值语义的原始变量变量赋值可以转换成内存的 bit-wise-copy</li>
 <li>如果一个type X 具有值语义, 则：
@@ -424,9 +451,9 @@ int main()
 </div>
 </div>
 
-<div id="outline-container-orgbea46cb" class="outline-3">
-<h3 id="orgbea46cb"><span class="section-number-3">1.10</span> CRTP</h3>
-<div class="outline-text-3" id="text-1-10">
+<div id="outline-container-org50db2b1" class="outline-3">
+<h3 id="org50db2b1"><span class="section-number-3">1.9</span> CRTP</h3>
+<div class="outline-text-3" id="text-1-9">
 <p>
 Curiously Recurring Template Pattern 奇异递归模板模式, 更一般地被称作 F-bound polymorphism
 </p>
@@ -438,13 +465,13 @@ Curiously Recurring Template Pattern 奇异递归模板模式, 更一般地被�
 </div>
 </div>
 
-<div id="outline-container-org8d6a641" class="outline-3">
-<h3 id="org8d6a641"><span class="section-number-3">1.11</span> network I/O basic</h3>
-<div class="outline-text-3" id="text-1-11">
+<div id="outline-container-orgc11fe5e" class="outline-3">
+<h3 id="orgc11fe5e"><span class="section-number-3">1.10</span> network I/O basic</h3>
+<div class="outline-text-3" id="text-1-10">
 </div>
-<div id="outline-container-orgdbf8dfc" class="outline-4">
-<h4 id="orgdbf8dfc"><span class="section-number-4">1.11.1</span> socket</h4>
-<div class="outline-text-4" id="text-1-11-1">
+<div id="outline-container-org5846f24" class="outline-4">
+<h4 id="org5846f24"><span class="section-number-4">1.10.1</span> socket</h4>
+<div class="outline-text-4" id="text-1-10-1">
 <ul class="org-ul">
 <li>setsockopt
 <ul class="org-ul">
@@ -482,17 +509,17 @@ on the same socket.
 </ul>
 </div>
 </div>
-<div id="outline-container-orgc830635" class="outline-4">
-<h4 id="orgc830635"><span class="section-number-4">1.11.2</span> select</h4>
-<div class="outline-text-4" id="text-1-11-2">
+<div id="outline-container-org48baae0" class="outline-4">
+<h4 id="org48baae0"><span class="section-number-4">1.10.2</span> select</h4>
+<div class="outline-text-4" id="text-1-10-2">
 <ul class="org-ul">
 <li>当前进程使用 O(N) 时间轮询 bitmap 中准备就绪的 socket, 并将其保存进 socket 的等待队列中（作为等待者）, 如果没有准备就绪的 socket, 该进程将会被挂起, 等有数据传输完毕触发中断程序（kernel 也可以启动 interrupt coalescing 机制, 让网卡做中断合并）使 cpu 让出时间片去将数据导入 socket 的读缓冲区并将等待者移入工作队列</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org7fa0fb5" class="outline-4">
-<h4 id="org7fa0fb5"><span class="section-number-4">1.11.3</span> poll</h4>
-<div class="outline-text-4" id="text-1-11-3">
+<div id="outline-container-orge6ec258" class="outline-4">
+<h4 id="orge6ec258"><span class="section-number-4">1.10.3</span> poll</h4>
+<div class="outline-text-4" id="text-1-10-3">
 <ul class="org-ul">
 <li>用数组代替 select 中的 bitmap 使其监听的 socket 数可以大于1024</li>
 <li>signal
@@ -540,9 +567,9 @@ if (errno == EMFILE)
 </div>
 </div>
 
-<div id="outline-container-org95d0509" class="outline-4">
-<h4 id="org95d0509"><span class="section-number-4">1.11.4</span> epoll</h4>
-<div class="outline-text-4" id="text-1-11-4">
+<div id="outline-container-org834a867" class="outline-4">
+<h4 id="org834a867"><span class="section-number-4">1.10.4</span> epoll</h4>
+<div class="outline-text-4" id="text-1-10-4">
 <ul class="org-ul">
 <li><p>
 file operations 中的 poll 函数的作用
@@ -795,9 +822,9 @@ if (!list_empty(&amp;ep-&gt;rdllist)) {
 </div>
 </div>
 
-<div id="outline-container-org6e41a0a" class="outline-3">
-<h3 id="org6e41a0a"><span class="section-number-3">1.12</span> malloc</h3>
-<div class="outline-text-3" id="text-1-12">
+<div id="outline-container-orgd5b3953" class="outline-3">
+<h3 id="orgd5b3953"><span class="section-number-3">1.11</span> malloc</h3>
+<div class="outline-text-3" id="text-1-11">
 <blockquote>
 <p>
 The malloc(), calloc(), valloc(), realloc(), and reallocf() functions allocate memory.  The allocated memory is aligned such that it can be used for any data type,
@@ -914,9 +941,9 @@ The free() function deallocates the memory allocation pointed to by ptr. If ptr 
 </div>
 </div>
 
-<div id="outline-container-orgfa4f006" class="outline-3">
-<h3 id="orgfa4f006"><span class="section-number-3">1.13</span> thread-Safe, async-signal-safe and reentrant</h3>
-<div class="outline-text-3" id="text-1-13">
+<div id="outline-container-orgacb6b64" class="outline-3">
+<h3 id="orgacb6b64"><span class="section-number-3">1.12</span> thread-Safe, async-signal-safe and reentrant</h3>
+<div class="outline-text-3" id="text-1-12">
 <blockquote>
 <p>
 Reentrant Function
@@ -948,12 +975,13 @@ A function that may be invoked, without restriction, from signal-catching functi
 </div>
 </div>
 </div>
-<div id="outline-container-org85ac6bc" class="outline-2">
-<h2 id="org85ac6bc"><span class="section-number-2">2</span> stl container</h2>
+
+<div id="outline-container-orgce0e3b9" class="outline-2">
+<h2 id="orgce0e3b9"><span class="section-number-2">2</span> stl container</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-orgbbbf92d" class="outline-3">
-<h3 id="orgbbbf92d"><span class="section-number-3">2.1</span> std::array</h3>
+<div id="outline-container-org5626441" class="outline-3">
+<h3 id="org5626441"><span class="section-number-3">2.1</span> std::array</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 template&lt;typename T, size_t N&gt;
@@ -967,8 +995,8 @@ template&lt;typename T, size_t N&gt;
 </div>
 </div>
 
-<div id="outline-container-org1bd53c6" class="outline-3">
-<h3 id="org1bd53c6"><span class="section-number-3">2.2</span> std::vector</h3>
+<div id="outline-container-orgf6988e9" class="outline-3">
+<h3 id="orgf6988e9"><span class="section-number-3">2.2</span> std::vector</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 template&lt;typename T, typename Allocator = allocator&lt;T&gt; &gt;
@@ -986,8 +1014,8 @@ template&lt;typename T, typename Allocator = allocator&lt;T&gt; &gt;
 </div>
 </div>
 
-<div id="outline-container-org2a5d9e2" class="outline-3">
-<h3 id="org2a5d9e2"><span class="section-number-3">2.3</span> std::deque</h3>
+<div id="outline-container-orge76d6ad" class="outline-3">
+<h3 id="orge76d6ad"><span class="section-number-3">2.3</span> std::deque</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 acronym of double-ended queue 双端队列
@@ -999,8 +1027,8 @@ acronym of double-ended queue 双端队列
 </div>
 </div>
 
-<div id="outline-container-orgcc50590" class="outline-3">
-<h3 id="orgcc50590"><span class="section-number-3">2.4</span> std::list</h3>
+<div id="outline-container-org0bcfba8" class="outline-3">
+<h3 id="org0bcfba8"><span class="section-number-3">2.4</span> std::list</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 Doubly linked list 双向列表(循环)
@@ -1017,8 +1045,8 @@ Doubly linked list 双向列表(循环)
 </div>
 </div>
 
-<div id="outline-container-org576ede2" class="outline-3">
-<h3 id="org576ede2"><span class="section-number-3">2.5</span> std::forward_list</h3>
+<div id="outline-container-orga0bfdcc" class="outline-3">
+<h3 id="orga0bfdcc"><span class="section-number-3">2.5</span> std::forward_list</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 Single linked list 单向列表
@@ -1033,8 +1061,8 @@ Single linked list 单向列表
 </div>
 </div>
 
-<div id="outline-container-orgfe926e1" class="outline-3">
-<h3 id="orgfe926e1"><span class="section-number-3">2.6</span> std::set</h3>
+<div id="outline-container-org5e41bfb" class="outline-3">
+<h3 id="org5e41bfb"><span class="section-number-3">2.6</span> std::set</h3>
 <div class="outline-text-3" id="text-2-6">
 <p>
 template&lt;typename T, typename Compare = less&lt;T&gt;, typename Allocator = allocator&lt;T&gt;&gt;
@@ -1055,8 +1083,8 @@ template&lt;typename T, typename Compare = less&lt;T&gt;, typename Allocator = a
 </div>
 </div>
 
-<div id="outline-container-org6966719" class="outline-3">
-<h3 id="org6966719"><span class="section-number-3">2.7</span> std::map</h3>
+<div id="outline-container-org11cdc17" class="outline-3">
+<h3 id="org11cdc17"><span class="section-number-3">2.7</span> std::map</h3>
 <div class="outline-text-3" id="text-2-7">
 <p>
 template&lt;typename Key, typename T, typename Compare = less&lt;Key&gt;, typename Allocator = allocator&lt;pair&lt;const Key, T&gt; &gt; &gt;
@@ -1070,8 +1098,8 @@ template&lt;typename Key, typename T, typename Compare = less&lt;Key&gt;, typena
 </div>
 </div>
 
-<div id="outline-container-org64933ea" class="outline-3">
-<h3 id="org64933ea"><span class="section-number-3">2.8</span> std::unordered_map</h3>
+<div id="outline-container-org13b300d" class="outline-3">
+<h3 id="org13b300d"><span class="section-number-3">2.8</span> std::unordered_map</h3>
 <div class="outline-text-3" id="text-2-8">
 <p>
 template&lt;typename Key, typename T, typename Hash = hash&lt;Key&gt;, typename EqPred = equal_to&lt;Key&gt;, typename Allocator = allocator&lt;pair&lt;const Key, T&gt; &gt; &gt;
@@ -1122,8 +1150,8 @@ namespaece std
 </div>
 </div>
 
-<div id="outline-container-org170949d" class="outline-3">
-<h3 id="org170949d"><span class="section-number-3">2.9</span> std::remove</h3>
+<div id="outline-container-org36f61b4" class="outline-3">
+<h3 id="org36f61b4"><span class="section-number-3">2.9</span> std::remove</h3>
 <div class="outline-text-3" id="text-2-9">
 <p>
 STL 中 remove() 只是将待删除元素之后的元素移动到容器的前端, 而不是删除。若要真正移除, 需要搭配使用 erase()
@@ -1139,28 +1167,36 @@ str2.erase(std::remove_if(str2.begin(),
 </div>
 </div>
 </div>
-<div id="outline-container-orgc299f80" class="outline-2">
-<h2 id="orgc299f80"><span class="section-number-2">3</span> concurrency</h2>
+
+<div id="outline-container-org99800e3" class="outline-2">
+<h2 id="org99800e3"><span class="section-number-2">3</span> concurrency</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-org6571c2b" class="outline-3">
-<h3 id="org6571c2b"><span class="section-number-3">3.1</span> basic</h3>
+<div id="outline-container-orgcd827af" class="outline-3">
+<h3 id="orgcd827af"><span class="section-number-3">3.1</span> basic</h3>
 <div class="outline-text-3" id="text-3-1">
 <ul class="org-ul">
 <li>std::thread::hardware_concurrency 硬件支持的线程数</li>
 <li>std::this_thread::yield() 让出时间片</li>
 <li>Binary semaphore 与 Mutex 的不同:
-mutex 一定要由获得锁的进程释放, 而 semaphore 可以由其它进程释放, 因此semaphore可以用於進程間同步</li>
+mutex 一定要由获得锁的进程释放, 而 semaphore 可以由其它进程释放, 因此 semaphore 可以用於進程間同步</li>
 <li>spinlock 与 semaphore 的不同: 
 spinlock 是 busy waiting, 而 semaphore 是 sleep。只有多 CPU 的內核态非进程空间, 才会用到 spinlock。 
 Linux kernel 的 spinlock 在非 SMP 的情況下，只是关 irq，沒有別的操作，用於確保該段程序的運行不會被打斷。
 而 spinlock 也一般沒有必要用於可以 sleep 的進程空間。</li>
 <li>用户空间的 spinlock 可以通过 atomic_flag 的 clear/test_and_set 来实现 unlock/lock/try_lock</li>
+<li><p>
+std::bind 和 std::thread 必须显式通过 std::ref 来绑定引用进行传参, 否则, 形参的引用声明是无效的
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">std::thread t1(transfer, std::ref(my_account), std::ref(your_account), 10);
+</pre>
+</div></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org2092836" class="outline-3">
-<h3 id="org2092836"><span class="section-number-3">3.2</span> atomic</h3>
+<div id="outline-container-orgfc94c48" class="outline-3">
+<h3 id="orgfc94c48"><span class="section-number-3">3.2</span> atomic</h3>
 <div class="outline-text-3" id="text-3-2">
 <ul class="org-ul">
 <li><p>
@@ -1306,8 +1342,8 @@ Release-Acquire ordering: 在 store() 之前的所有读写操作, 不允许被�
 </div>
 </div>
 
-<div id="outline-container-org8fe2c5f" class="outline-3">
-<h3 id="org8fe2c5f"><span class="section-number-3">3.3</span> mutex</h3>
+<div id="outline-container-orgaf40481" class="outline-3">
+<h3 id="orgaf40481"><span class="section-number-3">3.3</span> mutex</h3>
 <div class="outline-text-3" id="text-3-3">
 <ul class="org-ul">
 <li>mutex 类似于 binary semaphore, 不同的是只能由上锁的进程/线程来解锁</li>
@@ -1351,7 +1387,7 @@ Release-Acquire ordering: 在 store() 之前的所有读写操作, 不允许被�
 <li>递归锁 recursive mutex 和非递归锁 non-recursive mutex
 <ul class="org-ul">
 <li><p>
-pthread_mutex_t 默认是非递归的, 可以通过设置 PTHREAD_MUTEX_RECURSIVE 属性, 将pthread_mutex_t 锁设置为递归锁
+pthread_mutex_t 默认是非递归的, 可以通过设置 PTHREAD_MUTEX_RECURSIVE 属性, 将 pthread_mutex_t 锁设置为递归锁
 </p>
 <div class="org-src-container">
 <pre class="src src-c">
@@ -1371,8 +1407,8 @@ pthread_mutex_init(&amp;g_mutex, &amp;attr);
 </div>
 </div>
 
-<div id="outline-container-org79d6e3f" class="outline-3">
-<h3 id="org79d6e3f"><span class="section-number-3">3.4</span> condition variable</h3>
+<div id="outline-container-org22125d5" class="outline-3">
+<h3 id="org22125d5"><span class="section-number-3">3.4</span> condition variable</h3>
 <div class="outline-text-3" id="text-3-4">
 <ul class="org-ul">
 <li>notify_one(): notifies one waiting thread</li>
@@ -1394,12 +1430,13 @@ wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));
 </div>
 </div>
 </div>
-<div id="outline-container-org63394b2" class="outline-2">
-<h2 id="org63394b2"><span class="section-number-2">4</span> asio</h2>
+
+<div id="outline-container-orgc228aba" class="outline-2">
+<h2 id="orgc228aba"><span class="section-number-2">4</span> asio</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-org1116615" class="outline-3">
-<h3 id="org1116615"><span class="section-number-3">4.1</span> timer</h3>
+<div id="outline-container-org790c94e" class="outline-3">
+<h3 id="org790c94e"><span class="section-number-3">4.1</span> timer</h3>
 <div class="outline-text-3" id="text-4-1">
 <ul class="org-ul">
 <li>boost::asio::deadline_timer 使用的计量时间是系统时间 (posix_time), 因此修改系统时间会影响deadline_timer的行为</li>
@@ -1408,8 +1445,8 @@ wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));
 </ul>
 </div>
 </div>
-<div id="outline-container-org5662adb" class="outline-3">
-<h3 id="org5662adb"><span class="section-number-3">4.2</span> daytime</h3>
+<div id="outline-container-org8a8401e" class="outline-3">
+<h3 id="org8a8401e"><span class="section-number-3">4.2</span> daytime</h3>
 <div class="outline-text-3" id="text-4-2">
 <ul class="org-ul">
 <li>client synchronous
@@ -1450,8 +1487,8 @@ wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));
 </div>
 </div>
 
-<div id="outline-container-org3ceba0f" class="outline-3">
-<h3 id="org3ceba0f"><span class="section-number-3">4.3</span> chat</h3>
+<div id="outline-container-orgab3cfe8" class="outline-3">
+<h3 id="orgab3cfe8"><span class="section-number-3">4.3</span> chat</h3>
 <div class="outline-text-3" id="text-4-3">
 <ul class="org-ul">
 <li>char_message
@@ -1498,13 +1535,24 @@ wait_until(lock, std::chrono::steady_clock::now() + rel_time, std::move(pred));
 </div>
 </div>
 
-<div id="outline-container-orgb50e6a2" class="outline-2">
-<h2 id="orgb50e6a2"><span class="section-number-2">5</span> muduo</h2>
+<div id="outline-container-orgda35c5b" class="outline-2">
+<h2 id="orgda35c5b"><span class="section-number-2">5</span> muduo</h2>
 <div class="outline-text-2" id="text-5">
 </div>
-<div id="outline-container-org89b1b5e" class="outline-3">
-<h3 id="org89b1b5e"><span class="section-number-3">5.1</span> timestamp</h3>
+<div id="outline-container-org7d76d5e" class="outline-3">
+<h3 id="org7d76d5e"><span class="section-number-3">5.1</span> book</h3>
 <div class="outline-text-3" id="text-5-1">
+<ul class="org-ul">
+<li>对象构造的线程安全: 构造期间不要泄露 this 指针</li>
+<li>空悬指针 dangling pointer 指向已销毁对象或已回收地址, 野指针 wild pointer 未经初始化的指针</li>
+<li>fork() 只克隆当前线程的 thread of control</li>
+<li>时间戳精确到微秒, 通过 gettimeofday(2) 获取时间, 不会陷入内核</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgd7a5913" class="outline-3">
+<h3 id="orgd7a5913"><span class="section-number-3">5.2</span> timestamp</h3>
+<div class="outline-text-3" id="text-5-2">
 <ul class="org-ul">
 <li>boost::less_than_comparable&lt;&gt;: 要求实现 operator &lt; , 自动实现 &gt;, &lt;=, &gt;=, 模板元</li>
 <li>BOOST_STATIC_ASSERT: 编译时断言, assert: 运行时断言, 在头文件 &lt;boost/static_assert.hpp&gt;</li>
@@ -1533,9 +1581,9 @@ printf("%ld", value);		/* 64 bit OS */
 </div>
 </div>
 
-<div id="outline-container-org0e0717d" class="outline-3">
-<h3 id="org0e0717d"><span class="section-number-3">5.2</span> exception</h3>
-<div class="outline-text-3" id="text-5-2">
+<div id="outline-container-org3245254" class="outline-3">
+<h3 id="org3245254"><span class="section-number-3">5.3</span> exception</h3>
+<div class="outline-text-3" id="text-5-3">
 <ul class="org-ul">
 <li><p>
 backtrace: 栈回溯, 保存各个栈帧的地址到 buffer, backtrace_symbols: 根据地址, 转成相应的函数符号, 使用了 malloc(3), 需要 free 返回的 char **
@@ -1555,13 +1603,80 @@ void backtrace_symbols_fd(void *const *buffer, int size, int fd);
 </ul>
 </div>
 </div>
+
+<div id="outline-container-orge8c1d48" class="outline-3">
+<h3 id="orge8c1d48"><span class="section-number-3">5.4</span> thread</h3>
+<div class="outline-text-3" id="text-5-4">
+<ul class="org-ul">
+<li><p>
+__thread 修饰的变量是线程局部存储的, 只能修饰 POD (plain old data), 初始化只能是编译期常量
+</p>
+<div class="org-src-container">
+<pre class="src src-c">__thread int t_cacheTid = 0;
+__thread string a("aaa");	/* error 不是 POD */
+__thread string *b = new string; /* error */
+__thread string *c = nullptr;	 /* ok */
+</pre>
+</div></li>
+
+<li>tsd 线程特定数据 thread-specific data 也称 tls (thread-local storage)
+<ul class="org-ul">
+<li>pthread_key_create</li>
+<li>pthread_key_delete</li>
+<li>pthread_getspecific</li>
+<li>pthread_setspecific</li>
+</ul></li>
+
+<li><p>
+获取线程 id
+</p>
+<div class="org-src-container">
+<pre class="src src-c">#include &lt;unistd.h&gt;
+#include &lt;sys/syscall.h&gt;
+#include &lt;thread&gt;
+std::thread::id this_id = std::this_thread::get_id();
+auto pthread_id = pthread_self(); /* same as get_id */
+auto tid = static_cast&lt;pid_t&gt;(::syscall(SYS_gettid));
+</pre>
+</div></li>
+
+<li><p>
+pthread_atfork : 调用 fork() 在创建进程前, 在父进程调用 prepare, 创建完进程后再父进程中调用 parent, 在子进程中调用 child
+</p>
+<div class="org-src-container">
+<pre class="src src-c">/* The pthread_atfork() function registers fork handlers that are to
+   be executed when fork(2) is called by this thread */
+#include &lt;pthread.h&gt;
+
+int pthread_atfork(void (*prepare)(void), void (*parent)(void), void (*child)(void));
+</pre>
+</div></li>
+
+<li>无界队列和有界队列  
+<ul class="org-ul">
+<li>生产者消费者模型, 使用 semaphore 或 condition variable 实现</li>
+<li>BlockingQueue: mutex, condition_variable(notEmpty), deque&lt;T&gt;
+<ul class="org-ul">
+<li>put: lock_guard 保护 deque push back, notEmpty notify</li>
+<li>take: while deque is empty notEmpty wait, deque pop front</li>
+</ul></li>
+<li>BoundedBlockingQueue: mutex, condition_variable(notEmpty, notFull), boost::circular_buffer&lt;T&gt;
+<ul class="org-ul">
+<li>put: while queue is full notFull wait</li>
+<li>take: after pop front, notFull notify</li>
+</ul></li>
+</ul></li>
+</ul>
 </div>
-<div id="outline-container-org0983d93" class="outline-2">
-<h2 id="org0983d93"><span class="section-number-2">6</span> unix</h2>
+</div>
+</div>
+
+<div id="outline-container-org93abdbb" class="outline-2">
+<h2 id="org93abdbb"><span class="section-number-2">6</span> unix</h2>
 <div class="outline-text-2" id="text-6">
 </div>
-<div id="outline-container-orgf1921ce" class="outline-3">
-<h3 id="orgf1921ce"><span class="section-number-3">6.1</span> baisc</h3>
+<div id="outline-container-org3d8dde4" class="outline-3">
+<h3 id="org3d8dde4"><span class="section-number-3">6.1</span> baisc</h3>
 <div class="outline-text-3" id="text-6-1">
 <ul class="org-ul">
 <li>int / iret
@@ -1635,8 +1750,8 @@ termination, respectively.
 </ul>
 </div>
 </div>
-<div id="outline-container-orgff0e6b1" class="outline-3">
-<h3 id="orgff0e6b1"><span class="section-number-3">6.2</span> man sections</h3>
+<div id="outline-container-orgbfc1c7a" class="outline-3">
+<h3 id="orgbfc1c7a"><span class="section-number-3">6.2</span> man sections</h3>
 <div class="outline-text-3" id="text-6-2">
 <ol class="org-ol">
 <li>Executable programs or shell commands</li>
@@ -1651,8 +1766,8 @@ termination, respectively.
 </ol>
 </div>
 </div>
-<div id="outline-container-org0e30741" class="outline-3">
-<h3 id="org0e30741"><span class="section-number-3">6.3</span> ctrl</h3>
+<div id="outline-container-orgbb9ed4e" class="outline-3">
+<h3 id="orgbb9ed4e"><span class="section-number-3">6.3</span> ctrl</h3>
 <div class="outline-text-3" id="text-6-3">
 <ul class="org-ul">
 <li>ctrl-c: = kill -s INT [PID] (kill foreground process) 发送 SIGINT 信号给前台进程组中的所有进程, 强制终止程序的执行</li>
@@ -1665,8 +1780,8 @@ termination, respectively.
 </div>
 </div>
 
-<div id="outline-container-org9a040d8" class="outline-3">
-<h3 id="org9a040d8"><span class="section-number-3">6.4</span> *nix commands</h3>
+<div id="outline-container-org9f80efc" class="outline-3">
+<h3 id="org9f80efc"><span class="section-number-3">6.4</span> *nix commands</h3>
 <div class="outline-text-3" id="text-6-4">
 <ul class="org-ul">
 <li><p>
@@ -1763,12 +1878,12 @@ strace - trace system calls and signals
 </div>
 </div>
 </div>
-<div id="outline-container-org8f85f0a" class="outline-2">
-<h2 id="org8f85f0a"><span class="section-number-2">7</span> Primer C++</h2>
+<div id="outline-container-orgf67d85a" class="outline-2">
+<h2 id="orgf67d85a"><span class="section-number-2">7</span> Primer C++</h2>
 <div class="outline-text-2" id="text-7">
 </div>
-<div id="outline-container-org4f1954d" class="outline-3">
-<h3 id="org4f1954d"><span class="section-number-3">7.1</span> string, vector and array</h3>
+<div id="outline-container-org29a8edc" class="outline-3">
+<h3 id="org29a8edc"><span class="section-number-3">7.1</span> string, vector and array</h3>
 <div class="outline-text-3" id="text-7-1">
 <ul class="org-ul">
 <li>老的编译器需要区分 &gt;&gt; 和 &gt; &gt;</li>
@@ -1851,8 +1966,8 @@ const char *str = s.c_str(); // ok
 </div>
 </div>
 
-<div id="outline-container-org75b8bd5" class="outline-3">
-<h3 id="org75b8bd5"><span class="section-number-3">7.2</span> expression</h3>
+<div id="outline-container-org1aaa41c" class="outline-3">
+<h3 id="org1aaa41c"><span class="section-number-3">7.2</span> expression</h3>
 <div class="outline-text-3" id="text-7-2">
 <ul class="org-ul">
 <li>使用 decltype 时会区分 lvalue 和 rvalue</li>
@@ -1928,12 +2043,12 @@ const_cast&lt;string&gt;(cp); // error: const_cast only changes constness
 </div>
 </div>
 </div>
-<div id="outline-container-org7d0716b" class="outline-2">
-<h2 id="org7d0716b"><span class="section-number-2">8</span> CSAPP</h2>
+<div id="outline-container-org47382c7" class="outline-2">
+<h2 id="org47382c7"><span class="section-number-2">8</span> CSAPP</h2>
 <div class="outline-text-2" id="text-8">
 </div>
-<div id="outline-container-orgc852f4d" class="outline-3">
-<h3 id="orgc852f4d"><span class="section-number-3">8.1</span> basic</h3>
+<div id="outline-container-orgd308c2b" class="outline-3">
+<h3 id="orgd308c2b"><span class="section-number-3">8.1</span> basic</h3>
 <div class="outline-text-3" id="text-8-1">
 <ul class="org-ul">
 <li>registers
@@ -1986,8 +2101,8 @@ const_cast&lt;string&gt;(cp); // error: const_cast only changes constness
 </ul>
 </div>
 </div>
-<div id="outline-container-org88a60ff" class="outline-3">
-<h3 id="org88a60ff"><span class="section-number-3">8.2</span> optimization</h3>
+<div id="outline-container-orge98f792" class="outline-3">
+<h3 id="orge98f792"><span class="section-number-3">8.2</span> optimization</h3>
 <div class="outline-text-3" id="text-8-2">
 <dl class="org-dl">
 <dt>conditional move</dt><dd>使用 conditional moves 能避免 branch prediction</dd>
@@ -1998,8 +2113,8 @@ const_cast&lt;string&gt;(cp); // error: const_cast only changes constness
 </div>
 </div>
 
-<div id="outline-container-org921c2a0" class="outline-3">
-<h3 id="org921c2a0"><span class="section-number-3">8.3</span> memory</h3>
+<div id="outline-container-org6bc31bc" class="outline-3">
+<h3 id="org6bc31bc"><span class="section-number-3">8.3</span> memory</h3>
 <div class="outline-text-3" id="text-8-3">
 <ul class="org-ul">
 <li>bus interface standard
@@ -2025,8 +2140,8 @@ const_cast&lt;string&gt;(cp); // error: const_cast only changes constness
 </div>
 </div>
 
-<div id="outline-container-orgaaca4b4" class="outline-3">
-<h3 id="orgaaca4b4"><span class="section-number-3">8.4</span> linking</h3>
+<div id="outline-container-org9963606" class="outline-3">
+<h3 id="org9963606"><span class="section-number-3">8.4</span> linking</h3>
 <div class="outline-text-3" id="text-8-4">
 <ul class="org-ul">
 <li>linker symbol
@@ -2078,8 +2193,8 @@ pkg-config --cflags --libs yaml-cpp
 </div>
 </div>
 </div>
-<div id="outline-container-orgb4e104f" class="outline-3">
-<h3 id="orgb4e104f"><span class="section-number-3">8.5</span> exceptional control flow</h3>
+<div id="outline-container-org94b6120" class="outline-3">
+<h3 id="org94b6120"><span class="section-number-3">8.5</span> exceptional control flow</h3>
 <div class="outline-text-3" id="text-8-5">
 <ul class="org-ul">
 <li>asynchronous exceptions (interrputs)
@@ -2126,6 +2241,39 @@ The pid parameter specifies the set of child processes for which to wait.  If pi
 </blockquote></dd>
 <dt>reap</dt><dd>如果 parent 没有 reap child 进程, init process (pid = 1) 这个进程会去 reap zombie child process</dd>
 <dt>execve</dt><dd>loading and running programs, called once, nerver returns</dd>
+<dt>exec</dt><dd>execute a file
+<ul class="org-ul">
+<li><p>
+l: 可变参数 const char *arg
+</p>
+<div class="org-src-container">
+<pre class="src src-c">execl("/bin/ls", "ls", "-l", NULL);
+</pre>
+</div></li>
+<li><p>
+v: 参数列表 char *const argv[]
+</p>
+<div class="org-src-container">
+<pre class="src src-c">int ret;
+char *argv[] = {"ls", "-l", NULL};
+ret = execvp("ls",argv);
+</pre>
+</div></li>
+<li><p>
+e: 传递环境变量 char *const envp[]
+</p>
+<div class="org-src-container">
+<pre class="src src-c">extern char **environ;
+</pre>
+</div></li>
+<li><p>
+p: 第一个参数 path 不用输入完整路径, 只有给出命令名即可, 它会在环境变量 PATH 当中查找命令
+</p>
+<div class="org-src-container">
+<pre class="src src-c">execlp("ls", "ls", "-l", NULL);
+</pre>
+</div></li>
+</ul></dd>
 </dl></li>
 
 <li>shell 
@@ -2189,8 +2337,8 @@ sigprocmask(SIG_SETMASK, &amp;prev_mask, NULL); /* Restore sigs */
 </div>
 </div>
 
-<div id="outline-container-orgbfc8eeb" class="outline-3">
-<h3 id="orgbfc8eeb"><span class="section-number-3">8.6</span> system level I/O</h3>
+<div id="outline-container-org314ea81" class="outline-3">
+<h3 id="org314ea81"><span class="section-number-3">8.6</span> system level I/O</h3>
 <div class="outline-text-3" id="text-8-6">
 <ul class="org-ul">
 <li>End of line (EOL) indicators in different systems
@@ -2238,15 +2386,16 @@ The file system dependent/independent split was done just above the UNIX-kernel 
 </blockquote></li>
 </ul></li>
 
-<li>dup and dup2 - duplicate a file descriptor
+<li>dup and dup2 - duplicate a file descriptor 
 <ul class="org-ul">
+<li>int dup(int oldfd); int dup2(int oldfd, int newfd);</li>
 <li>The dup() system call creates a copy of the file descriptor oldfd, using the lowest-numbered unused file descriptor for the new descriptor.</li>
 <li>After a successful return, the old and new file descriptors may be used interchangeably.  They refer to the same open file description (see open(2)) and thus share file offset and
 file status flags; for example, if the file offset is modified by using lseek(2) on one of the file descriptors, the offset is also changed for the other.
 The two file descriptors do not share file descriptor flags (the close-on-exec flag).  The close-on-exec flag (FD_CLOEXEC; see fcntl(2)) for the duplicate descriptor is off.</li>
 <li>The dup2() system call performs the same task as dup(), but instead of using the lowest-numbered unused file descriptor, it uses the file descriptor number specified in newfd.  If
 the file descriptor newfd was previously open, it is silently closed before being reused.</li>
-<li>The  steps  of  closing and reusing the file descriptor newfd are performed atomically.</li>
+<li>The steps of closing and reusing the file descriptor newfd are performed atomically.</li>
 <li>If oldfd is not a valid file descriptor, then the call fails, and newfd is not closed.</li>
 <li>If oldfd is a valid file descriptor, and newfd has the same value as oldfd, then dup2() does nothing, and returns newfd.</li>
 <li>most common use: I/O redirection (ls &gt; a.txt)</li>
@@ -2271,8 +2420,8 @@ This is different from dup2(2), which uses exactly the file descriptor specified
 </div>
 </div>
 
-<div id="outline-container-orge9bd118" class="outline-3">
-<h3 id="orge9bd118"><span class="section-number-3">8.7</span> virtual memory</h3>
+<div id="outline-container-org2b5aaaf" class="outline-3">
+<h3 id="org2b5aaaf"><span class="section-number-3">8.7</span> virtual memory</h3>
 <div class="outline-text-3" id="text-8-7">
 <ul class="org-ul">
 <li>cache
@@ -2361,8 +2510,8 @@ This is different from dup2(2), which uses exactly the file descriptor specified
 </div>
 </div>
 
-<div id="outline-container-org8179e7a" class="outline-3">
-<h3 id="org8179e7a"><span class="section-number-3">8.8</span> dynamic memory allocation</h3>
+<div id="outline-container-org7322d25" class="outline-3">
+<h3 id="org7322d25"><span class="section-number-3">8.8</span> dynamic memory allocation</h3>
 <div class="outline-text-3" id="text-8-8">
 <ul class="org-ul">
 <li>performance goals
@@ -2434,8 +2583,8 @@ This is different from dup2(2), which uses exactly the file descriptor specified
 </div>
 </div>
 
-<div id="outline-container-org6d4dfb3" class="outline-3">
-<h3 id="org6d4dfb3"><span class="section-number-3">8.9</span> network programming</h3>
+<div id="outline-container-orge5ab2f4" class="outline-3">
+<h3 id="orge5ab2f4"><span class="section-number-3">8.9</span> network programming</h3>
 <div class="outline-text-3" id="text-8-9">
 <ul class="org-ul">
 <li>DNS is multi-multi mapping</li>
@@ -2591,8 +2740,8 @@ the child generates it output on stdout, server uses dup2 to redirect stdout to 
 </ul>
 </div>
 </div>
-<div id="outline-container-orge888a01" class="outline-3">
-<h3 id="orge888a01"><span class="section-number-3">8.10</span> concurrent programming</h3>
+<div id="outline-container-org70facf8" class="outline-3">
+<h3 id="org70facf8"><span class="section-number-3">8.10</span> concurrent programming</h3>
 <div class="outline-text-3" id="text-8-10">
 <ul class="org-ul">
 <li>approches for writing concurrent servers
@@ -2644,8 +2793,8 @@ signal(SIGCHLD, sigchld_handler);
 </div>
 </div>
 
-<div id="outline-container-org31c3004" class="outline-3">
-<h3 id="org31c3004"><span class="section-number-3">8.11</span> synchronization</h3>
+<div id="outline-container-orged2d8c8" class="outline-3">
+<h3 id="orged2d8c8"><span class="section-number-3">8.11</span> synchronization</h3>
 <div class="outline-text-3" id="text-8-11">
 <ul class="org-ul">
 <li><p>
@@ -2738,8 +2887,8 @@ pthread_once(&amp;once, init_routine);
 </div>
 </div>
 
-<div id="outline-container-org447481a" class="outline-3">
-<h3 id="org447481a"><span class="section-number-3">8.12</span> thread level parallelism</h3>
+<div id="outline-container-org2f00729" class="outline-3">
+<h3 id="org2f00729"><span class="section-number-3">8.12</span> thread level parallelism</h3>
 <div class="outline-text-3" id="text-8-12">
 <ul class="org-ul">
 <li>out-of-order processor structure</li>
@@ -2753,12 +2902,12 @@ pthread_once(&amp;once, init_routine);
 </div>
 </div>
 </div>
-<div id="outline-container-orga6d4649" class="outline-2">
-<h2 id="orga6d4649"><span class="section-number-2">9</span> Introduction to Computer Networking</h2>
+<div id="outline-container-org1f6fdad" class="outline-2">
+<h2 id="org1f6fdad"><span class="section-number-2">9</span> Introduction to Computer Networking</h2>
 <div class="outline-text-2" id="text-9">
 </div>
-<div id="outline-container-orgd6e49b8" class="outline-3">
-<h3 id="orgd6e49b8"><span class="section-number-3">9.1</span> intro</h3>
+<div id="outline-container-org60561b7" class="outline-3">
+<h3 id="org60561b7"><span class="section-number-3">9.1</span> intro</h3>
 <div class="outline-text-3" id="text-9-1">
 <ul class="org-ul">
 <li>layers
@@ -2822,8 +2971,8 @@ pthread_once(&amp;once, init_routine);
 </div>
 </div>
 
-<div id="outline-container-org3f90df8" class="outline-3">
-<h3 id="org3f90df8"><span class="section-number-3">9.2</span> tcp</h3>
+<div id="outline-container-org05fcf16" class="outline-3">
+<h3 id="org05fcf16"><span class="section-number-3">9.2</span> tcp</h3>
 <div class="outline-text-3" id="text-9-2">
 <ul class="org-ul">
 <li>stream of bytes</li>
@@ -2866,16 +3015,16 @@ pthread_once(&amp;once, init_routine);
 </div>
 </div>
 
-<div id="outline-container-org073f643" class="outline-3">
-<h3 id="org073f643"><span class="section-number-3">9.3</span> ucp</h3>
+<div id="outline-container-orgd2609d8" class="outline-3">
+<h3 id="orgd2609d8"><span class="section-number-3">9.3</span> ucp</h3>
 <div class="outline-text-3" id="text-9-3">
 <ul class="org-ul">
 <li>very few applications use UDP, examples: DNS, DHCP</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org5c48ef0" class="outline-3">
-<h3 id="org5c48ef0"><span class="section-number-3">9.4</span> ICMP</h3>
+<div id="outline-container-org11d86e8" class="outline-3">
+<h3 id="org11d86e8"><span class="section-number-3">9.4</span> ICMP</h3>
 <div class="outline-text-3" id="text-9-4">
 <p>
 Internet Control Message Protocol (ICMP) 
@@ -2902,8 +3051,8 @@ Internet Control Message Protocol (ICMP)
 </div>
 </div>
 
-<div id="outline-container-orgcaf283b" class="outline-3">
-<h3 id="orgcaf283b"><span class="section-number-3">9.5</span> error detection</h3>
+<div id="outline-container-orgb6edcb4" class="outline-3">
+<h3 id="orgb6edcb4"><span class="section-number-3">9.5</span> error detection</h3>
 <div class="outline-text-3" id="text-9-5">
 <ul class="org-ul">
 <li>checksum
@@ -2928,8 +3077,8 @@ Internet Control Message Protocol (ICMP)
 </div>
 </div>
 
-<div id="outline-container-org2f9e0dd" class="outline-3">
-<h3 id="org2f9e0dd"><span class="section-number-3">9.6</span> sliding window</h3>
+<div id="outline-container-org225c89f" class="outline-3">
+<h3 id="org225c89f"><span class="section-number-3">9.6</span> sliding window</h3>
 <div class="outline-text-3" id="text-9-6">
 <ul class="org-ul">
 <li>sender
@@ -2977,8 +3126,8 @@ Internet Control Message Protocol (ICMP)
 </div>
 </div>
 
-<div id="outline-container-orgfd2f181" class="outline-3">
-<h3 id="orgfd2f181"><span class="section-number-3">9.7</span> packet switching</h3>
+<div id="outline-container-orgda85cd6" class="outline-3">
+<h3 id="orgda85cd6"><span class="section-number-3">9.7</span> packet switching</h3>
 <div class="outline-text-3" id="text-9-7">
 <ul class="org-ul">
 <li>end-to-end delay
@@ -3002,8 +3151,9 @@ Internet Control Message Protocol (ICMP)
 </div>
 </div>
 </div>
-<div id="outline-container-org4b6933f" class="outline-2">
-<h2 id="org4b6933f"><span class="section-number-2">10</span> Computer Networking: A Top-Down Approach</h2>
+
+<div id="outline-container-org626b37d" class="outline-2">
+<h2 id="org626b37d"><span class="section-number-2">10</span> Computer Networking: A Top-Down Approach</h2>
 <div class="outline-text-2" id="text-10">
 <ul class="org-ul">
 <li>packet switch (分组交换机) 主要有两种: router (路由器), link-layer switch (链路层交换机)
@@ -3074,11 +3224,17 @@ Internet Control Message Protocol (ICMP)
 </ul></li>
 
 <li>TCP 拥塞控制被称为加性增, 乘性减 Additive-Increase, Multiplicative-Decrease AIMD</li>
+
+<li>转发和路由选择
+<ul class="org-ul">
+<li>转发 forwarding 是指分组从一个输入链路接口转移到适当的输出链路接口的路由器本地动作</li>
+<li>路由选择 routing 是指确定分组从源到目的地所采取的的端到端路径的网络范围</li>
+</ul></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orgb487232" class="outline-2">
-<h2 id="orgb487232"><span class="section-number-2">11</span> Modern Operating Systems</h2>
+<div id="outline-container-org620263e" class="outline-2">
+<h2 id="org620263e"><span class="section-number-2">11</span> Modern Operating Systems</h2>
 <div class="outline-text-2" id="text-11">
 <ul class="org-ul">
 <li><p>
@@ -3108,6 +3264,36 @@ futex 通过用户态和内核配合, 可以减小开销,
 <li>用户线程通过 CAS 类原子指令尝试获取锁, 如果成功, 则获取锁成功, 这种情况下无需调用系统调用, 不需要进入内核, 开销很小</li>
 <li>如果 CAS 失败, 可以选择 spin 重试, 也可以选择挂起自己等待唤醒。这里即调用系统调用, 让内核操作挂起, 为了保证锁原语, 调用者将 futex word 的当前状态(锁定状态)作为参数传入内核, 内核进行检查如果与 futex word 的当前一致, 则挂起线程。否则返回失败。</li>
 <li>为了唤醒等待线程, 获取锁的线程在释放锁后, 需要调用系统调用, 来通知锁释放, 内核会唤醒等待者进行竞争锁</li>
+<li><p>
+futex 应用于 pthread_mutex_t 和 sem_t
+</p>
+<div class="org-src-container">
+<pre class="src src-c">/* pthread_mutex_lock: */
+atomic_dec(pthread_mutex_t.value);
+if (pthread_mutex_t.value != 0)
+  futex(WAIT);
+
+/* pthread_mutex_unlock: */
+atomic_inc(pthread_mutex_t.value);
+if(pthread_mutex_t.value != 1)
+  futex(WAKEUP);
+
+sem_wait(sem_t *sem)
+{
+  for (;;) {
+    if (atomic_decrement_if_positive(sem-&gt;count))
+       break;
+    futex_wait(&amp;sem-&gt;count, 0);
+   }
+}
+
+sem_post(sem_t *sem)
+{
+  n = atomic_increment(sem-&gt;count);
+  futex_wake(&amp;sem-&gt;count, n + 1);
+}
+</pre>
+</div></li>
 </ul></li>
 
 <li>second chance 二次机会算法: 寻找一个在最近时间间隔没有被访问过的页面, 如果所有的页面都被访问过了, 该算法就简化为纯粹的 FIFO 算法</li>
@@ -3130,7 +3316,7 @@ futex 通过用户态和内核配合, 可以减小开销,
 <li>每个程序都有自己的 LDT, 共享同一个 GDT, LDT 描述局部于每个程序的段</li>
 </ul></li>
 
-<li>内核将所有进程的 task_struct 组织成一个双向链表, 不需要遍历这个链表来访问进程描述符(PID),PID 可以直接被映射成进程的 task_struct 所在的地址</li>
+<li>内核将所有进程的 task_struct 组织成一个双向链表, 不需要遍历这个链表来访问进程描述符(PID), PID 可以直接被映射成进程的 task_struct 所在的地址</li>
 
 <li>linux 将线程分为三类: 实时先入先出, 实时轮转, 分时, 实时的优先级为 0 ~ 99, 非实时的优先级为 100 ~ 139</li>
 
@@ -3167,12 +3353,13 @@ void *page_address(const struct page *page)
 </ul>
 </div>
 </div>
-<div id="outline-container-org628dffa" class="outline-2">
-<h2 id="org628dffa"><span class="section-number-2">12</span> source code</h2>
+
+<div id="outline-container-orga738942" class="outline-2">
+<h2 id="orga738942"><span class="section-number-2">12</span> source code</h2>
 <div class="outline-text-2" id="text-12">
 </div>
-<div id="outline-container-org8af4ad4" class="outline-3">
-<h3 id="org8af4ad4"><span class="section-number-3">12.1</span> epoll</h3>
+<div id="outline-container-orgb4a750f" class="outline-3">
+<h3 id="orgb4a750f"><span class="section-number-3">12.1</span> epoll</h3>
 <div class="outline-text-3" id="text-12-1">
 <p>
 初始化
@@ -3869,8 +4056,9 @@ static inline int is_file_epoll(struct file *f)
 </div>
 </div>
 </div>
-<div id="outline-container-orgac43a15" class="outline-2">
-<h2 id="orgac43a15"><span class="section-number-2">13</span> miscellaneous</h2>
+
+<div id="outline-container-org104b599" class="outline-2">
+<h2 id="org104b599"><span class="section-number-2">13</span> miscellaneous</h2>
 <div class="outline-text-2" id="text-13">
 <ul class="org-ul">
 <li><p>
@@ -3889,6 +4077,49 @@ fcntl(fd, F_SETFD, flags);
 </ul></li>
 
 <li>链接时, 依赖其他库的库一定要放到被依赖库的前面</li>
+
+<li>tcp backlog
+<ul class="org-ul">
+<li><p>
+第二次握手: 服务端发送完 SYN/ACK 后在内存中建立 SYN-RECEIVED 的连接，将连接放进 incomplete connection queue, 最大长度为 /proc/sys/net/ipv4/tcp_max_syn_backlog
+</p>
+<div class="org-src-container">
+<pre class="src src-c">cat /proc/sys/net/ipv4/tcp_max_syn_backlog
+/* 1024 */
+</pre>
+</div>
+<ul class="org-ul">
+<li>关闭 syncookies(net.ipv4.tcp_syncookies = 0), 当队列满时, 不再接受新的连接</li>
+<li>开启 syncookies(net.ipv4.tcp_syncookies = 1), 当队列满时, 不受影响</li>
+</ul></li>
+<li><p>
+第三次握手: 服务端收到 ACK 后, TCP 连接进入 ESTABLISHED 状态, 将连接放进 complete connection queue, 等待应用程序进行 accept, 其最大长度为 listen 函数的参数 backlog
+</p>
+<div class="org-src-container">
+<pre class="src src-c">int listen(int sockfd, int backlog);
+// backlog 参数暗示了内核在开始拒绝连接请求之前, 队列中要排队的未完成的连接请求的数量, 一般为 128
+listen(listenfd, SOMAXCONN);    
+</pre>
+</div>
+<ul class="org-ul">
+<li>当 sysctl_tcp_abort_on_overflow 为 0 时, Linux 内核只丢弃客户端的 ACK 包, 然后什么都不做</li>
+<li>当 sysctl_tcp_abort_on_overflow 非 0 时, Linux 内核会返回 RST 包, reset TCP 连接</li>
+</ul></li>
+<li><p>
+ss
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"># 查看进程的 backlog 数量
+ss -anp | grep nginx
+# 未完成队列的
+ss -anp | grep nginx | grep -c SYN_RECV
+</pre>
+</div></li>
+</ul></li>
+
+<li>__builtin_popcount() 用于计算一个 32 位无符号整数有多少个位为 1</li>
+
+<li>long __builtin_expect (long EXP, long C) 语义为 "期望 exp 表达式的值等于常量 c ", 增加条件分支预测的准确性</li>
 </ul>
 </div>
 </div>
