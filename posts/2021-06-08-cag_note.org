@@ -1,0 +1,525 @@
+#+title: cag_note
+#+date: <2021-06-08 16:38>
+#+filetags: c++
+
+#+OPTIONS: ^:nil
+
+* base
+------------------------------------------------------------
+
+- ThreadType 线程类型枚举 ::
+  - log
+  - net
+  - job
+  - common
+
+- ThreadBase 线程基类 ::
+  - type(enum ThreadType)
+  - fixed_frame_time: 30 milliseconds
+  - thread_handle(thread *)
+  - Run(): 每次循环过 fixed_frame_time 个 milliseconds, 每次循环调用 Update(), 如果 update spend time 小于 frame time 就 sleep
+  - Destroy(): thread_handle join and then delete
+  - 待定义的虚函数: Push(), OnInit(), Update(), OnDestroy()
+
+------------------------------------------------------------
+
+- NetConnId 网络连接信息 :: 
+  - sid(session id)
+  - conn_type(local services and external services)
+    以 tank 为例:
+    - lobby
+        | mp (local)                       |  1 |
+        | world                            |  2 |
+        | db                               |  3 |
+        | match                            |  4 |
+        | pa                               |  5 |
+        | mail                             |  6 |
+        | sp -> pas/sns/team/prom/chat/max |  7 |
+        | ranking                          |  8 |
+        | pivot                            |  9 |
+        | pse                              | 10 |
+        | season                           | 11 |
+        | pay                              | 12 |
+        | gm                               | 13 |
+        | chat                             | 14 |
+        | max                              | 15 |
+    - world
+        | mp (local)    | 1 |
+        | lobby (local) | 2 |
+        | gm            | 3 |
+    - sp
+        | lobby (local) | 1 |
+        | pas           | 2 |
+        | sns           | 3 |
+        | team          | 4 |
+        | prom          | 5 |
+        | chat          | 6 |
+        | max           | 7 |
+    - sns
+        | lobby (local, lobby -> sp -> sns) | 1 |
+        | team                              | 4 |
+        | max                               | 5 |
+    - prom
+        | lobby proxy (local, lobby -> sp -> prom) | 1 |
+        | team (local)                             | 2 |
+- NetMsg 网络消息 ::
+  - net_conn_id(conn_type, sid)
+  - ts 时间戳: delay = GET_TIME().TickCount() - ts
+  - msg
+
+- MsgStat 消息状态 :: 
+  - msg_total
+  - msg_in_min
+  - msg_delay_in_min
+  - msg_delay_distribution
+
+- JobBase 任务基类 ::
+  - net_msg(map<int, NetMsg *的队列>): <conn_type, deque of NetMsg *>
+  - msg_stat(map<int, MsgStat>): <conn_type, MsgStat>
+  - perf_log_timer(CTinyTimer): 时钟周期为60秒的 Timer
+  - type(enum ThreadType): job_thread
+  - perf_info(string)
+  - OutputPerfInfo(now): 每过60秒, 将平均的 delay 和 delay 的分布写入日志
+  - ProcessNetMsg(now): 处理消息队列, 使用 MsgParser(根据不同的 conn_type 有不同的 parser) 解析网络消息, 更新消息状态
+  - Tick(now): 调用 OutputPerfInfo 和 ProcessNetMsg
+  - OnMsg(type, msg): 插入新消息
+
+- LogicThread 逻辑处理线程 : ThreadBase :: 
+  - job_pointer(JobBase *)
+  - OnInit(): gtk_cag_service 创建 job/common thread
+  - Update(): JobBase call Tick()
+  - Push(): JobBase call OnMsg()
+
+- ThreadManager 逻辑处理线程管理器 :: 
+  - common_thread(LogicThread *)
+  - logic_thread_pool(vector of LogicThread *)
+  - Init(file, frame_time): 读取 ini 配置文件中的 LogicThreadCount, 创建 logic_thread s 和 common_thread
+  - PushMsg(thread_type, dispatch_id, msg): 
+    - 如果 thread_type 为 job_thread: 第 (id mod count) 个 logic 线程 call Push()
+      - JobBase call OnMsg()
+    - 否则 common 线程 call Push()
+      - JobBase call OnMsg()
+  - BroadcastMsg2AllLogicThread(): 广播消息到所有 LogicThread
+  - push 一条消息的 backtrace:
+    - service
+    - ThreadManager
+    - pool of LogicThreads
+    - JobBase
+    - map<conn_type, deque of NetMsg>
+    - conn_type, sid, ts, msg
+------------------------------------------------------------
+
+- LocalNetConfig 本地网络配置 :: 
+  - port
+  - msg_header_type (8 或 24)
+  - io_thread_count
+
+- ExternalNetConfig 外部网络配置 :: 
+  - port
+  - msg_header_type (8 或 24)
+  - io_thread_count
+  - ips(vectot of string)
+
+------------------------------------------------------------
+
+- MsgHandler : TCPSessionHandler 服务器消息处理 :: 
+  - conn_type
+  - header_len
+  - OnConnect(sid, ip, port): 
+    - gtk_net_module call RecvNetMsg()
+    - recv_msg push 一条消息(conn_type, sid, msg of connect_ack)
+  - OnMessage(sid, msg): 
+    - 对24字节头消息做处理后, get_net_module call RecvNetMsg() push 一条消息(conn_type, sid, msg of gamedata_ack)
+  - OnClose(sid, ip, port): 
+    - gtk_net_module call RecvNetMsg() push 一条消息(conn_type, sid, msg of close_ack)
+  - 一个 NetInterface 对应一个 MsgHandler
+
+- NetObj 网络对象(server or client) ::
+  - sid: session id
+  - ip
+  - io_manager(TCPIOThreadManager *)
+  - idle_timer(空闲时间)
+  - Update(now): 
+    - server - 如果 idle_timer 超过时钟周期 io_manager CloseSession
+    - client - 如果 idle_timer 超过时钟周期 SendMsg(idle_req)
+  - SendMsg(msg): io_manager 调用 SendMsg2Session(sid, msg)
+  - 一个 NetInterface 有多个 NetObj, 一个 session 对应一个 NetObj
+
+- NetInterface 网络接口(server or client) :: 
+  - conn_type
+  - msg_handler(shared_ptr of TCPSessionHandler)
+  - io_thread(thread *)
+  - io_manager(TCPIOThreadManager *)
+  - net_obj(map<int, NetObj *>): <sid, NetObj>
+  - client: ExternNetConfig, ip_2_sid(map), reconn_timer
+  - server: LocalNetConfig
+  - Update(now): 每个NetObj 调用 Update()
+    - client - CheckReconnectServer()(1分钟)
+  - KickNetObj(sid): io_manager 调用 CloseSession(sid)
+  - SendMsg(sid, msg): sid 对应的 NetObj 调用 SendMsg(msg)
+  - OnConnected(msg): 根据 msg->sid 插入 NetObj
+    - client - 初始化 ip_2_sid(一个 peer ip 对应一个 sid)
+  - OnIdleMsg(sid): only for server, NetObj reset idle timer(3分钟)
+
+- NetWorker 网络工作线程 : ThreadBase ::
+  - fixed_frame_time = 1
+  - Update(now): get_net_module 调用 Update()
+  - 一个 NetModule 对应一个 NetWorker
+  
+- NetModule 网络模块 :: 
+  - conn_id_lock(shared_mutex 用于读写锁)
+    - std::unique_lock<std::shared_mutex> write lock
+      - 只有一个线程/写者能写
+    - std::shared_lock<std::shared_mutex> read lock
+      - 多个线程/读者能同时读
+  - local_net_config(map<int, LocalNetConfig *>): <conn type, config> 本地服务器配置(ini)
+  - external_net_config(map<int, ExternalNetConfig *>): 外部服务器配置
+  - net_interface(map<int, NetInterface *>): <conn_type, interface(server or client)>
+  - net_worker(Networker *)
+  - conn_cid_2_ip(map<NetConnId, string>): <conn_id, peer_ip>
+  - conn_type_2_sids(map<int, set<uint>>): <conn_type, set of sid>
+  - recv_msg(deque<NetMsg*>)
+  - send_msg(deque<NetMsg>)
+  - Update(now): ProcessRecvMsg(), ProcessSendMsg(), UpdateNetInterface()
+  - ProcessRecvMsg(): 从 recv_msg 中取出一个 NetMsg, 根据 msg 的 header 调用 
+    - OnConneted()(connect | ack)
+    - OnClosed()(close | ack)
+    - OnIdleMsg()(idle | req)
+    - OnGameMsg()(game or web | req or ack)
+  - ProcessSendMsg(): 从 send_msg 中取出一个 NetMsg, 根据 msg 的 conn_type 找到对应的 NetInterface, SendMsg()
+  - UpdateNetInterface(): 每个 NetInterface call Update()
+  - OnConnected(): 将 msg 中的 conn_id 和 peer_ip 插入 conn_id_2_ip, 将 conn_id 的 sid 加入 conn_type 对应的 set, conn_type 对应的 NetInterface call OnConnected(), gtk_cag_service call DispatchRevbMsg()
+  - OnClosed(): 类似 OnConnected()
+  - OnIdleMsg(): 根据 msg 的 conn_type 找到对应的 NetInterface call OnIdleMsg()
+  - OnGameMsg(): gtk_cag_service call DispatchRecvMsg()
+  - 一个 CAGService 对应一个 NetModule
+
+
+- 对应关系: 
+  - sid -> NetObj
+  - conn_type -> NetInterface
+  - conn_type -> set of sid
+  - [conn_type, sid] -> peer_ip
+
+------------------------------------------------------------  
+
+- CAGService ::
+  - net_module(NetModule *)
+  - thread_manager(ThreadManager *)
+  - thread_frame_time
+  - local_ip
+  - msg_parser(map<int, MsgParser *>)
+  - module_msg_parser(map<int, MsgParser *>)
+  - output_stat_timer
+  - check_external_order_timer
+  - net_event_msg(deque<NetMsg *>): connect/close ack msg
+  - DispatchRecvMsg(msg): connect/close: call OnClosed()/OnConnected(), other: call ThreadManager::PushMsg()
+  
+
+- 消息队列: 
+  - NetModule(recv_msg, send_msg)
+  - JobBase(net_msg)
+  - GAGService(net_event_msg)
+
+- 消息路径:
+  - NetModule::ProcessRecvMsg()
+  - CAGService::DispatchRecvMsg()
+    - 非 connect/close msg 就从 NetModule 中的 recv_msg ThreadManager::PushMsg() 到了 JobBase 中的 net_msg
+    - connect/close msg 通过 service 的 ProcessNetMsg() 处理, 不进入 JobBase 中
+------------------------------------------------------------  
+
+- CTinyTimer ::
+  - tick_term 时钟周期
+  - tick_old
+  - tick_begin
+  - left_time: 剩余时间 = term - (now - begin)
+  - CountingTimer(int): 如果经过的时间超过了时钟周期 
+    - if (now - old > term) 
+      - old = begin = now
+      - return true
+
+- TimeSystem ::
+  - begin: 用于 windows 下记录初始化时的 GetTickCount
+  - t_start: 用于 linux 下记录初始化时的 tick count
+
+  - now: time()
+  - timeT: 每次 update 时更新为 time()
+  - TM: 每次 update 时更新为 localtime_r(const time_t *timeT, struct tm *result)
+  - _CurrentTime(): 离操作系统启动所经过的毫秒数, _tend - _tstart, _tend 使用 gettimeofday(struct timeval *tv, struct timezone *tz) 获取
+  - TickCount(): 离 Init() 所经过的毫秒数
+
+- time functions
+  | Function           | Type            | Precision   |
+  |--------------------+-----------------+-------------+
+  | time(2)            | time_t          | second      |
+  | gettimeofday(2)    | struct timeval  | microsecond |
+  | clock_gettime(2)   | struct timespec | nanosecond  |
+  - time/gettimeofday/clock_gettime 都可以使用 vdso, 可以不陷入内核粗粒度地获取时间, clock_gettime 需要指定 CLOCK_REALTIME_COARSE/CLOCK_MONOTONIC_COARSE
+- tm struct
+  #+begin_src c
+  #include <time.h>
+             struct tm {
+               int tm_sec;    /* Seconds (0-60) */
+               int tm_min;    /* Minutes (0-59) */
+               int tm_hour;   /* Hours (0-23) */
+               int tm_mday;   /* Day of the month (1-31) */
+               int tm_mon;    /* Month (0-11) */
+               int tm_year;   /* Year - 1900 */
+               int tm_wday;   /* Day of the week (0-6, Sunday = 0) */
+               int tm_yday;   /* Day in the year (0-365, 1 Jan = 0) */
+               int tm_isdst;  /* Daylight saving time */
+           };
+  #+end_src
+- timeval struct
+  #+begin_src c
+  #include <sys/time.h>
+             struct timeval {
+               time_t      tv_sec;     /* seconds */
+               suseconds_t tv_usec;    /* microseconds */
+           };
+
+  #+end_src
+- timezone struct
+  #+begin_src c
+             struct timezone {
+               int tz_minuteswest;     /* minutes west of Greenwich */
+               int tz_dsttime;         /* type of DST correction */
+           };
+  #+end_src
+- timespec struct
+  #+begin_src c
+                   struct timespec {
+                         time_t          tv_sec;
+                         long            tv_nsec;
+                 };
+  #+end_src
+
+- Convert tm structure to time_t
+  time_t mktime (struct tm * timeptr);
+
+- Convert time_t to tm as local time
+  struct tm * localtime (const time_t * timer);
+  # localtime_r 是可重入的 localtime
+  struct tm *localtime_r(const time_t *timep, struct tm *result);
+  #+begin_src c
+  setenv("TZ", "/usr/share/zoneinfo/Asia/Shanghai", 1); // POSIX-specific
+  #+end_src
+
+- Convert time_t to tm as UTC time
+  struct tm * gmtime (const time_t * timer);
+
+------------------------------------------------------------  
+
+- LogChannel ::
+  - FmtFixPath(path, name): 将 fixed_path_ 设为 "./log/path_name", 将 log_path_ 设为 0
+  - FmtLogPath(): 将 log_path_ 设为 "fixed_path__.year-month-day.log"
+  - Push(msg): write_pos_ 大于缓存大小时记录到 LogDiscard, 否则加锁将 msg 写入 cache_log_
+  - Pop(exchange_log): 更新 log_path_, 加锁, cache_log_ 拷贝到 exchange_log, write_pos_ 设为 0
+
+- LogSys : ThreadBase, 单例模式 ::
+  - fixed_frame_time_ = 5 秒
+  - Init(): 开个线程调用 OnInit()
+  - channels(map<int, LogChannel>)
+  - refresh_fmt_path(CTinyTimer): 60 秒更新一次所有 channel 的 log_path_
+  - prefix_name: log 的名字前缀, 如 world, lobby
+  - Register(type, name): channels 添加值键对 <type, Init(prefix_name, name, cache_size_)>
+  - Push(type, msg): push msg 到相对应 type 的 channel
+  - Save(path): 将 exchange_log_ 写入 path
+  - Update(): 更新所有 channels 的 log_path_, 将它们的 cache_log_ 拷贝到 exchange_log_, 然后写入 log_path_
+  - LOG_USERDEF_START: 拓展 log 类型的 enum 开始值(= 9)
+
+------------------------------------------------------------  
+
+- Ini ::
+  - curSection(*map<string, int>)
+  - sectionData(map<string, *map<string, int> >)
+  - Open(filename): 循环读取每一行, 如果是 section(以 [] 开头结尾), sectionData 插入新的 section, 如果是 key = value, curSection 就插入新的值键对
+  - GetInt/Float/Text(): 用 atoi/atof/strncpy 获取指定 section, key 的值
+  - TrimString: 修剪文本, 结尾回车符转成 0, ';' 转成结尾标识符, 空格和 tab 转成 0
+
+- TABFile ::
+  - field: union, int/float/string, field 之间要用 tab 分隔
+  - data_buf: vector<field>, size = 行数 * 列数
+  - hash_index: ordered_map<int, field *>, 以 field 的 int 值寻找 field
+  - OpenFromTXT(): 
+    #+begin_src c++
+    # 获取二进制文件字节数
+    fseek(fp, 0, SEEK_END);
+    auto filesize = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    #+end_src
+  - GetFieldsNum/GetRecordsNum(): 获取列/行数
+
+------------------------------------------------------------  
+
+- tk cag header: msg type, msg length
+- tk net connected ack: cag header, sid, port, peer ip
+- tk net closed ack: cag header, sid, port, peer ip
+- tk cag srv header: cag header, player id, dispatch id
+
+------------------------------------------------------------  
+
+* tank
+** lobby
+- 领取成就奖励: TankGainAchievementAwardReq(achievement_id, repeated select_params)
+  - ThreadBase::Run()
+  - TankLobbyWorker(JobBase)::Tick()
+  - JobBase::ProcessMsg()
+  - TankMPMsgParser::ParseTankGainAchievementAwardReq()
+  - TankPlayer::GainAchieveAward()
+  - CAGService::GetAchieveRuler()
+  - TankPlayer::SendExchangeItemAck()
+  - TankPlayer::SendAchievementAwardAckMsg()
+  - AchieveRuler::MultiSelectAchieveAward()
+  - TankPlayer::SaveDBData()
+  - LobbyService::SendMsg2DB()
+  - NetModule::SendNetMsg()
+  
+- 断开连接:
+  - ThreadBase::Run()
+  - NetWorker::Update()
+  - NetModule::Update(), ProcessRecvMsg(), OnClose(), DelConnIP()
+  - CAGService::DispatchRecvMsg(), ProcessNetStateMsg()
+  - LobbyService::OnClosed()
+    - MP 关闭: BroadcastLocalMsg(), ThreadManager::BroadcastMsg2AllLogicThread()
+    - world/db/pa... 关闭: DelNetSid()
+  
+- 选择坦克:
+  - msg: TankChooseTankReq
+    | chosen_tank_id |
+    | is_trail 试玩  |
+  - Player::ChoseTank(), GetUsedTank(), UpdatePlayerSnsSignupData()
+
+- 购买物品
+  - msg: CagBuyshopItemReq
+    | rack_id        |
+    | item_id        |
+    | purchase_count |
+    | pay_type       |
+  - Shop::BuyItem(), CanBuyShopItem()
+  - ShopItemExist(), CanBuyOnceItem(), PurchaseLimited(), CostJJMoney/RMB(), PlayerCanAfford()
+  - ExeBuyItem(), BuyItemCostGameMoney(), SendBuyItemResultMsg()
+
+- Login
+  - msg: CagPlayerLoginReqMsg
+    | null_value |
+  - Player::RegisterPlayer2World()
+
+- Logout
+  - msg: CagPlayerLogoutReqMsg
+    | null_value |
+  - Player::Logout()
+  - DelayOffline(), SendLeaveLobbyMsg(), UnregisterPlayer2Mail/Season/Chat()
+
+- Player init
+  - msg: CagPlayerEnterReqMsg
+    | nick    |
+    | figure  |
+    | user_id |
+  - Player::Init()
+  - PlayerBP()(赛季任务), PlayerTask(), Brisk()(活跃度), ExchangeResult()
+
+- serialize player brisk DB data
+  - msg: PlayerBriskDBData
+    | daily_brisk 日玩家活跃度        |
+    | period_brisk 自定义时间段活跃度 |
+    Brisk
+    | degree 活跃度           |
+    | award_step 已领取奖励步 |
+    | last_tm 上次刷新时间    |
+  - Player::CheckTimerSaveDB()(120s)
+  - Brisk::ToPB()(更新 Brisk msg)
+  
+* revise
+- tkcagbase/deps/util/ini.h
+  - 宏定义 Assert 中 exit() 修改为全局的 ::exit()
+- tkcagbase/src/core/player_manager.cpp
+  - PlayerManager::CreatePlayer(int) 中的 return false 改为 return nullptr
+- boost/cstdint.hpp
+  - typedef 将 boost 中的 int64_t/uint64_t 定义为 stdint.h 中的 int64_t/uint64_t
+- 所有 struct tm 初始化时将 tm_isdst 设为 -1
+- tank/tanklobby/src/battlepass/bp_config.cpp
+  - #include <io.h> 改为 #include <sys/io.h>, 或把 /usr/include/sys 加到头文件搜索路径
+
+* cmake
+- 添加编译选项: add_compile_options(-g -O0 -std=c++17 -D_DEBUG -D__LINUX__ -Wno-enum-compare)
+- 获取父目录: get_filename_component(PARENT_DIR ${PROJECT_SOURCE_DIR} DIRECTORY)
+- 打印信息: message(STATUS "parent directory is: " ${PARENT_DIR})
+- 指定可执行文件存放目录: set(EXECUTABLE_OUTPUT_PATH ${PARENT_DIR}/bin)
+- 添加 protobuf 的头文件路径和链接库:
+  - find_package(Protobuf)
+  - include_directories(${Protobuf_INCLUDE_DIRS})
+  - target_link_libraries(a.out ${Protobuf_LIBRARIES} pthread)
+* redis
+- normal value ::
+  - set
+  - get
+  - setnx: set if no exists
+  - incr
+  - del
+
+- list value ::
+  - rpush: 尾部 push
+  - lpush: 头部 push
+  - rpop
+  - lpop
+  - llen: 长度
+  - lrange
+  - del
+
+- set value, 值唯一 ::
+  - sadd: 添加元素
+  - srem: 删除元素
+  - sismember: 测试元素是否存在
+  - smembers: 返回所有元素
+  - sunion: 合并多个 set
+  - del
+
+- sorted set(zset), value 通过 score 排序, 值唯一 ::
+  - zadd key score1 member1 [score2 member2]
+  - zrange [withscores]
+  - del
+
+- hash value, field 唯一 ::
+  - hset key field value
+  - hmset key field1 value1 [field2 value2]
+  - hget
+  - hgetall
+  - hincrby
+  - hdel
+  - del
+  
+* ssdb
+- todo
+* protobuf
+- 序列化(二进制信息保存到字符串): p1.SerializeToString(&str);
+- 反序列化: p2.ParseFromString(str);
+- SerializeToOstream(ostream *output);
+- ParseFromIstream(istream *input);
+- 将 pb 文本信息保存到字符串: 
+  #+begin_src c++
+  #include "google/protobuf/text_format.h"
+  google::protobuf::TextFormat::PrintToString(p, &str);
+  #+end_src
+- 将 pb 文本信息写入文件:
+  #+begin_src c++
+  #include <fstream>
+  #include "google/protobuf/io/zero_copy_stream_impl.h"
+  #include "google/protobuf/text_format.h"
+
+  std::ofstream fw;
+  fw.open("./a.txt", std::ios::out | std::ios::binary);
+
+  google::protobuf::io::OstreamOutputStream *output =
+    new google::protobuf::io::OstreamOutputStream(&fw);
+
+  google::protobuf::TextFormat::Print(p, output);
+
+  delete output;
+  fw.close();
+
+  #+end_src
+- add: 添加一个子对象的指针
+- size: 返回 repeated 的 size
+- mutable: 取子对象的指针
+
