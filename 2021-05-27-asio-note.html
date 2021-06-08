@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="alternate"
+      type="application/rss+xml"
+      href="https://zhongming-unice.github.io/rss.xml"
+      title="RSS feed for https://zhongming-unice.github.io/">
+<title>asio note</title>
+<meta name="author" content="ming"><meta name="referrer" content="no-referrer"><link href="static/usual-org-front-matter.css" rel="stylesheet" type="text/css" /><link href="static/org-notes-style.css" rel="stylesheet" type="text/css" /><link href="static/floating-toc.css" rel="stylesheet" type="text/css" /><link href="static/blog-banner.css" rel="stylesheet" type="text/css" /><link rel="icon" href="static/favicon.ico"></head>
+<body>
+<div id="preamble" class="status"><div class="header">  <div class="sitelinks">    <a href="https://zhongming-unice.github.io/about.html">about</a>    | <a href="https://zhongming-unice.github.io/archive.html">archive</a>    | <a href="https://zhongming-unice.github.io/rss.xml">rss</a>  </div></div></div>
+<div id="content">
+<div class="post-date">26  5 2021</div><h1 class="post-title"><a href="https://zhongming-unice.github.io/2021-05-27-asio-note.html">asio note</a></h1>
+<nav id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgb69ee6a">1. asio 简介</a>
+<ul>
+<li><a href="#orgcb650f0">1.1. tutorial</a></li>
+<li><a href="#org36215ab">1.2. timer</a></li>
+<li><a href="#org7e1428b">1.3. boost::asio 和 asio</a></li>
+</ul>
+</li>
+<li><a href="#orgcf89835">2. 异步 asio 使用</a>
+<ul>
+<li><a href="#org3a7dc59">2.1. async echo server with callback</a></li>
+<li><a href="#orge2052ab">2.2. multi-threaded</a></li>
+<li><a href="#orgb0e318b">2.3. 使用 future 代替 callback</a></li>
+<li><a href="#orgcf99c82">2.4. 使用 coroutine 代替 callback</a></li>
+</ul>
+</li>
+<li><a href="#org0398c2f">3. misc</a>
+<ul>
+<li><a href="#org4e1712b">3.1. composed asynchronous operation</a></li>
+<li><a href="#org44708fa">3.2. asio 更新</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+
+<div id="outline-container-orgb69ee6a" class="outline-2">
+<h2 id="orgb69ee6a"><span class="section-number-2">1</span> asio 简介</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orgcb650f0" class="outline-3">
+<h3 id="orgcb650f0"><span class="section-number-3">1.1</span> tutorial</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+asio 是一个跨平台的 c++ 网络库, 现在的最新版本为1.18.2, 在 Windows 下调用 IOCP, Linux 下调用 epoll, BSD 下调用 kqueue
+</p>
+
+<p>
+introduction:
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3388.pdf">Using Asio with C++11</a>
+</p>
+
+<p>
+asio 库的官方示例文档:
+<a href="https://think-async.com/Asio/asio-1.18.2/doc/asio/tutorial.html">asio tutorial</a>
+</p>
+
+<p>
+作者的 github:
+<a href="https://github.com/chriskohlhoff/asio/tree/cpp11-only">chriskohlhoff asio</a>
+</p>
+
+<ul class="org-ul">
+<li><p>
+install asio
+</p>
+<div class="org-src-container">
+<pre class="src src-sh"># for mac
+brew install asio
+# for ubuntu
+apt install libasio-dev
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org36215ab" class="outline-3">
+<h3 id="org36215ab"><span class="section-number-3">1.2</span> timer</h3>
+<div class="outline-text-3" id="text-1-2">
+<dl class="org-dl">
+<dt>asio::deadline_timer</dt><dd>使用的计量时间是系统时间 (posix_time), 因此修改系统时间会影响 deadline_timer 的行为</dd>
+<dt>asio::steady_timer</dt><dd>基于 std::chrono::steady_clock 是一个不会受系统时间影响的定时器</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org7e1428b" class="outline-3">
+<h3 id="org7e1428b"><span class="section-number-3">1.3</span> boost::asio 和 asio</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+asio 可以独立于 boost 库, 大部分新的编译器(vs 2012, gcc 4.7 -std=c11 后) 会自动添加 <b>ASIO_STANDALONE</b>, 表示 asio 不需要用到 boost 库
+</p>
+<blockquote>
+<p>
+most of Asio may now be used without a dependency on Boost header files or libraries.
+</p>
+
+<p>
+Boost.Asio 1.18.2 is also included in Boost 1.76.
+</p>
+</blockquote>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcf89835" class="outline-2">
+<h2 id="orgcf89835"><span class="section-number-2">2</span> 异步 asio 使用</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org3a7dc59" class="outline-3">
+<h3 id="org3a7dc59"><span class="section-number-3">2.1</span> async echo server with callback</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+下面为一个简单的使用异步 asio 的 echo 服务器
+</p>
+
+<p>
+首先创建一个 CRTP 类 Session
+</p>
+<ul class="org-ul">
+<li>CRTP 奇异递归模板模式, 更一般地被称作 F-bound polymorphism</li>
+<li>派生类继承自模板类, 派生类将自身作为参数传给模板类</li>
+<li>基类转换成派生类用的是 static_cast 而不是 dynamic_cast, 降低了继承带来的虚函数表查询开销</li>
+<li>enable_shared_from_this 和 ranges::view_interface 属于 CRTP</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-c++">// CRTP
+class Session : public std::enable_shared_from_this&lt;Session&gt;
+{
+public:
+  Session(asio::ip::tcp::socket socket)
+    : socket_(std::move(socket)) {}
+
+  void start()
+  {
+    do_read();
+  }
+
+private:
+  void do_read()
+  {
+    auto self(shared_from_this());
+    socket_.async_read_some(asio::buffer(data_, maxLen),
+			    [this, self]
+			    (std::error_code ec, size_t len)
+			    {
+			      if (!ec)
+				// this-&gt;do_write(len)
+				do_write(len);
+			    });
+  }
+
+  void do_write(size_t len)
+  {
+    auto self(shared_from_this());
+    asio::async_write(socket_, asio::buffer(data_, len),
+		      [this, self](std::error_code ec, size_t)
+		      {
+			if (!ec)
+			  do_read();
+		      });
+  }
+
+  asio::ip::tcp::socket socket_;
+  enum { maxLen = 1024 };
+  char data_[maxLen];
+};
+</pre>
+</div>
+<ul class="org-ul">
+<li><p>
+这里使用 callback handler 函数的方式实现异步, 使用了 <b>async_read_some</b> 和 <b>async_write</b> 对 socket 进行读写
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">async_read_some(asio::error_code, std::size_t)&gt;::return_type
+  async_read_some(const MutableBufferSequence &amp;buffers,
+  const ReadHandler &amp;handler)
+
+
+async_write(asio::error_code, std::size_t)&gt;::return_type
+  async_write(AsyncWriteStream &amp;s, DynamicBuffer_v2 buffers,
+  CompletionCondition completion_condition,
+  const WriteHandler &amp;handler,
+  typename enable_if&lt;is_dynamic_buffer_v2&lt;DynamicBuffer_v2&gt;
+  ::value&gt;::type * = 0)
+
+</pre>
+</div></li>
+<li>socket 的传递需要使用 std::move()</li>
+</ul>
+
+<p>
+接下来创建 Server 类:
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">class Server
+{
+public:
+  Server(asio::io_context &amp;io_context, short port)
+    : acceptor_(io_context,
+		asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
+  {
+    do_accept();
+  }
+
+private:
+  void do_accept()
+  {
+    acceptor_.async_accept([this](std::error_code ec,
+				  asio::ip::tcp::socket socket)
+    {
+      if (!ec)
+	std::make_shared&lt;Session&gt;(std::move(socket))-&gt;start();
+      do_accept();
+    });
+  }
+
+  asio::ip::tcp::acceptor acceptor_;
+};
+</pre>
+</div>
+<ul class="org-ul">
+<li>socket 的传递始终使用 std::move()</li>
+<li>这里使用 make_shared&lt;T&gt;() 创建 Session, 使用 make_shared 和 shared_ptr+new 的优劣 trade-offs 如下:
+<ul class="org-ul">
+<li>std::shared_ptr&lt;T&gt;(new T(args&#x2026;)) 调用两次 allocations (one for the object T and one for the control block of the shared pointer), 而 std::make_shared&lt;T&gt; 只调用一次 allocation</li>
+<li>如果有 std::weak_ptr 引用由 std::make_shared 创建的控制块, 当所有 shared 结束生命周期后, 内存要等到所有 weak 销毁后才释放</li>
+<li>std::make_shared 需要构造函数为 public</li>
+<li>std::make_shared 使用的是 ::new, 修改 operator new 会导致行为和 std::shared_ptr&lt;T&gt;(new T(args&#x2026;)) 不同</li>
+</ul></li>
+<li><p>
+使用 <b>async_accept</b> 接收新的连接
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">async_accept(asio::error_code)&gt;::return_type
+  async_accept(basic_socket&lt;protocol_type, Executor1&gt; &amp;peer,
+  endpoint_type &amp;peer_endpoint, const AcceptHandler &amp;handler)
+
+</pre>
+</div></li>
+</ul>
+
+<p>
+最后是 asio::io_context 的执行:
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">#include &lt;stdio.h&gt;
+#include &lt;memory&gt;
+#include &lt;utility&gt;
+#include "asio.hpp"
+
+int main(int argc, char *argv[])
+{
+  try
+    {
+      asio::io_context io_context;
+      // listen to localhost:9999
+      Server server(io_context, 9999);
+      io_context.run();
+    }
+  catch (std::exception &amp;e)
+    {
+      printf("exception %s\n", e.what());
+    }
+  return 0;
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge2052ab" class="outline-3">
+<h3 id="orge2052ab"><span class="section-number-3">2.2</span> multi-threaded</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+上面的例子是单进程单线程的, 如希望使用多个线程来处理同一个 io_context 需要加上 asio::strand 解决竞态问题
+</p>
+<ul class="org-ul">
+<li>strand 用于串行化回调函数的执行</li>
+<li>asio::strand 基于 mutex 实现, 保证 callback 的顺序, 使用 strand.post/wrap 包装非线程安全的操作, wrap 最近已经弃用, 使用 asio::bind_executor 代替</li>
+</ul>
+
+<p>
+下面是根据 strand 改进的 echo server:
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">#include &lt;stdio.h&gt;
+#include &lt;memory&gt;
+#include &lt;vector&gt;
+#include &lt;thread&gt;
+#include &lt;utility&gt;
+#include "asio.hpp"
+
+// CRTP
+class Session : public std::enable_shared_from_this&lt;Session&gt;
+{
+public:
+  Session(asio::io_context &amp;io_context)
+    : socket_(io_context), strand_(io_context) {}
+
+  void start()
+  {
+    do_read();
+  }
+
+  asio::ip::tcp::socket &amp;socket() { return socket_; }
+
+private:
+  void do_read()
+  {
+    auto self(shared_from_this());
+    socket_.async_read_some(asio::buffer(data_, maxLen),
+			    asio::bind_executor(strand_,
+						[this, self]
+			    (std::error_code ec, size_t len)
+			    {
+			      if (!ec)
+				do_write(len);
+			    }));
+  }
+
+  void do_write(size_t len)
+  {
+    auto self(shared_from_this());
+    asio::async_write(socket_, asio::buffer(data_, len),
+		      asio::bind_executor(strand_,
+		       [this, self](std::error_code ec, size_t)
+		      {
+			if (!ec)
+			  do_read();
+		      }));
+  }
+
+  asio::io_context::strand strand_;
+  asio::ip::tcp::socket socket_;
+  enum { maxLen = 1024 };
+  char data_[maxLen];
+};
+
+class Server
+{
+public:
+  Server(asio::io_context &amp;io_context, short port)
+    : acceptor_(io_context,
+		asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)),
+      io_context_(io_context)
+  {
+    do_accept();
+  }
+
+private:
+  void do_accept()
+  {
+    auto session = std::make_shared&lt;Session&gt;(io_context_);
+    acceptor_.async_accept(session-&gt;socket(),
+			   [this, session](std::error_code ec)
+			   {
+			     if (!ec)
+			       session-&gt;start();
+			     do_accept();
+			   });
+  }
+
+  asio::io_context &amp;io_context_;
+  asio::ip::tcp::acceptor acceptor_;
+};
+
+int main(int argc, char *argv[])
+{
+  try
+    {
+      asio::io_context io_context;
+      Server server(io_context, 9999);
+      auto thread_num = std::thread::hardware_concurrency();
+      printf("thread number is: %d\n", thread_num);
+      std::vector&lt;std::thread&gt; thread_pool;
+      for (int i = 0; i &lt; thread_num; ++i)
+	{
+	  thread_pool.emplace_back([&amp;io_context](){ io_context.run(); });
+	}
+
+      for (auto &amp;t : thread_pool)
+	t.join();
+    }
+  catch (std::exception &amp;e)
+    {
+      printf("exception %s\n", e.what());
+    }
+  return 0;
+}
+
+</pre>
+</div>
+<ul class="org-ul">
+<li>使用 asio::bind_executor(strand, handler) 包装回调函数</li>
+<li>std::thread::hardware_concurrency() 可以获取支持的并发线程数</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgb0e318b" class="outline-3">
+<h3 id="orgb0e318b"><span class="section-number-3">2.3</span> 使用 future 代替 callback</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+我们可以使用 c++ 的新特性 std::future 来代替异步调用中的 callback
+</p>
+
+<p>
+下面我简单实现了一个 async echo server with std::future:
+</p>
+
+<p>
+先看 echo 函数:
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">std::future&lt;void&gt; echo(asio::ip::tcp::socket socket)
+{
+  try
+    {
+      char data[1024];
+      while (1)
+	{
+	  std::future&lt;size_t&gt; f_read = 
+	    socket.async_read_some(asio::buffer(data),
+				   asio::use_future);
+	  auto len = f_read.get();
+	  asio::async_write(socket, asio::buffer(data, len),
+			    asio::use_future);
+	}
+    }
+  catch (std::exception &amp;e)
+    {
+      printf("echo exception: %s\n", e.what());
+    }
+}
+</pre>
+</div>
+<p>
+这里使用 asio::use_future 来代替 handler
+</p>
+
+<p>
+接下来是监听函数:
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">std::future&lt;void&gt; listener(asio::io_context &amp;io_context)
+{
+  asio::ip::tcp::acceptor acceptor(io_context,
+				   {asio::ip::tcp::v4(), 9999});
+  while (1)
+    {
+      std::future&lt;asio::ip::tcp::socket&gt; f_socket =
+	acceptor.async_accept(asio::use_future);
+
+      auto socket = f_socket.get();
+      std::future&lt;void&gt; f_echo
+	= std::async(std::launch::async,
+		     [&amp;]{ return echo(std::move(socket)).get(); });
+      f_echo.get();
+    }
+}
+</pre>
+</div>
+<p>
+最后是 main 函数
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">#include &lt;stdio.h&gt;
+#include &lt;future&gt;
+#include &lt;asio.hpp&gt;
+
+int main(int argc, char *argv[])
+{
+  try
+    {
+      asio::io_context io_context(1);
+      asio::signal_set signals(io_context, SIGINT, SIGTERM);
+      signals.async_wait([&amp;](auto, auto)
+      {
+	// signal handler
+	io_context.stop();
+      });
+      std::future&lt;void&gt; f
+	= std::async(std::launch::async,
+		     [&amp;]{ return listener(io_context).get(); });
+      io_context.run();
+      f.get();
+    }
+  catch (std::exception &amp;e)
+    {
+      printf("exception: %s\n", e.what());  
+    }
+
+  return 0;
+}
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>TODO: 好像有点 bug 待处理</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgcf99c82" class="outline-3">
+<h3 id="orgcf99c82"><span class="section-number-3">2.4</span> 使用 coroutine 代替 callback</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+同样, 我们可以使用 asio 中的协程来代替 callback,
+下面是一个简单的使用 asio 协程的 echo 服务器:
+</p>
+
+<p>
+先看 echo 函数:
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">asio::awaitable&lt;void&gt; echo(asio::ip::tcp::socket socket)
+{
+  try
+    {
+      char data[1024];
+      while (1)
+	{
+	  size_t n = co_await
+	    socket.async_read_some(asio::buffer(data),
+				   asio::use_awaitable);
+	  co_await async_write(socket, asio::buffer(data, n),
+			       asio::use_awaitable);
+	}
+    }
+  catch (std::exception &amp;e)
+    {
+      printf("echo exception: %s\n", e.what());  
+    }
+}
+</pre>
+</div>
+<p>
+上面函数中用到的关键字:
+</p>
+<dl class="org-dl">
+<dt>asio::awaitable</dt><dd><p>
+可等待体
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">template&lt;
+  typename T,
+  typename Executor = executor&gt;
+class awaitable
+</pre>
+</div></dd>
+<dt>co_await</dt><dd>一元运算符 co_await 暂停协程并将控制返回给调用方</dd>
+<dt>asio::use_awaitable</dt><dd>表示当前正在执行的协程的 completion token</dd>
+</dl>
+
+<p>
+然后是监听:
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">asio::awaitable&lt;void&gt; listener()
+{
+  auto executor = co_await asio::this_coro::executor;
+  asio::ip::tcp::acceptor acceptor(executor,
+				   {asio::ip::tcp::v4(), 9999});
+  while (1)
+    {
+      asio::ip::tcp::socket socket = co_await
+	acceptor.async_accept(asio::use_awaitable);
+
+      asio::co_spawn(executor, echo(std::move(socket)),
+		     asio::detached);
+    }
+}
+</pre>
+</div>
+<ul class="org-ul">
+<li>spawn 函数是用于 stackful 的协程的高级包装器, spawn 函数使程序能够以同步方式实现异步逻辑</li>
+<li>co_spawn 用于 spawn 一个新的 coroutined-based thread</li>
+<li>第一个参数是 executor 决定了执行协程的上下文</li>
+<li><p>
+第四个参数 completion token, 用于产生 completion handler 在 coroutine 结束时调用, 我们这里使用了 asio::detached, 表示显式忽略异步操作的结果
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">template&lt;
+  typename Executor,
+  typename T,
+  typename AwaitableExecutor,
+  typename CompletionToken = DEFAULT&gt;
+DEDUCED co_spawn
+</pre>
+</div></li>
+</ul>
+
+<p>
+main 函数使用 co_spawn 产生新的协程:
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">int main(int argc, char *argv[])
+{
+  try
+    {
+      asio::io_context io_context(1);
+      asio::signal_set signals(io_context, SIGINT, SIGTERM);
+      signals.async_wait([&amp;](auto, auto)
+      {
+	// signal handler
+	    io_context.stop();
+      });
+      asio::co_spawn(io_context, listener(), asio::detached);
+      io_context.run();
+    }
+  catch (std::exception &amp;e)
+    {
+      printf("exception: %s\n", e.what());  
+    }
+
+  return 0;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0398c2f" class="outline-2">
+<h2 id="org0398c2f"><span class="section-number-2">3</span> misc</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org4e1712b" class="outline-3">
+<h3 id="org4e1712b"><span class="section-number-3">3.1</span> composed asynchronous operation</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+我们可以 <b>async_write</b> 函数包装一下成一个新的函数:
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">template &lt;typename CompletionToken&gt;
+auto async_write_message(tcp::socket&amp; socket,
+    const char* message, CompletionToken&amp;&amp; token)
+{
+  return asio::async_write(socket,
+      asio::buffer(message, std::strlen(message)),
+      std::forward&lt;CompletionToken&gt;(token));
+}
+</pre>
+</div>
+<p>
+这里的返回值会根据 token 的类型进行自动类型推导:
+</p>
+<ul class="org-ul">
+<li>当 completion token 是简单的 callback, 返回值为 void</li>
+<li>当 completion token 是 asio::use_future, 返回值为 std::future&lt;std::size_t&gt;</li>
+<li>当 completion token 是 asio::yield_context (用于 stackful coroutines), 返回值为 std::size_t</li>
+</ul>
+
+<p>
+这里使用完美转发 std::forwar&lt;&gt;() 自动判断左值右值, 进行 copy 或 move
+</p>
+
+<dl class="org-dl">
+<dt>使用 callback</dt><dd><div class="org-src-container">
+<pre class="src src-c++">async_write_message(socket, "callback\r\n",
+    [](const std::error_code &amp;error, std::size_t n)
+    {
+      if (!error)
+	printf("%d bytes transferred\n", n);
+      else
+	printf("error: %s\n", error.message().c_str());
+    });
+</pre>
+</div></dd>
+
+<dt>使用 future</dt><dd><div class="org-src-container">
+<pre class="src src-c++">std::future&lt;std::size_t&gt; f = async_write_message(
+    socket, "future\r\n", asio::use_future);
+
+io_context.run();
+
+try
+{
+  std::size_t n = f.get();
+  printf("%d bytes transferred\n", n);
+}
+catch (const std::exception&amp; e)
+{
+  printf("error: %s\n", e.what());
+}
+
+</pre>
+</div></dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-org44708fa" class="outline-3">
+<h3 id="org44708fa"><span class="section-number-3">3.2</span> asio 更新</h3>
+<div class="outline-text-3" id="text-3-2">
+<ul class="org-ul">
+<li><p>
+boost 1.66 中, <b>io_service</b> 已经改名为 <b>io_context</b>
+</p>
+<blockquote>
+<p>
+io_service -&gt; io_context
+io_service.post() -&gt; io_context.get_executor().post()
+io_service.post() -&gt; post(io_context, handler))
+io_service.dispatch() -&gt; io_context.get_executor().dispatch()
+io_service::strand -&gt; strand&lt;io_context::executor_type&gt;
+&#x2026;
+</p>
+</blockquote></li>
+
+<li><p>
+lambda 代替 bind 将成员函数注册为回调函数
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">class tcp_connection
+{
+  void handle_write(const boost::system::error_code &amp;/*error*/,
+		    size_t /*bytes_transferred*/) {}
+  // ...
+}
+
+// bind
+asio::async_write(socket_, asio::buffer(message_),
+		  std::bind(&amp;tcp_connection::handle_write,
+			    shared_from_this(),
+			    asio::placeholders::error,
+			    asio::placeholders::bytes_transferred));
+
+// lambda
+auto self = shared_from_this();
+asio::async_write(socket_, asio::buffer(message_),
+		  [self = std::move(self)]
+		  (auto error, auto bytes_transferred)
+		  {
+		    self-&gt;handle_write(error, bytes_transferred);
+		  });
+
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="taglist"><a href="https://zhongming-unice.github.io/tags.html">Tags</a>: <a href="https://zhongming-unice.github.io/tag-c++.html">c++</a> </div></div>
+<div id="postamble" class="status"></div>
+</body>
+</html>

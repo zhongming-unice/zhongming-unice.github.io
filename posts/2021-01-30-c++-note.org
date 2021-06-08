@@ -11,7 +11,6 @@
 #+OPTIONS: ^:nil
 
 * basic
-
 ** virtual
 - 在构造函数和析构函数中调用虚的成员函数不会有虚函数的效果, 即还是调用父类的成员函数, 可以使用工厂模式来解决。
 - 类中有虚函数时, 析构函数要为虚或者 protected
@@ -95,41 +94,70 @@ int main() {
 | gettimeofday(2)    | struct timeval  | microsecond |          |
 | clock_gettime(2)   | struct timespec | nanosecond  |          |
 | Time Stamp Counter | 64-bit register | CPU related |          |
-- clock_gettime(): 系统调用 (_sys_clock_gettime()), 可指定参数 CLOCK_REALTIME_COARSE 和 CLOCK_MONOTONIC_COARSE,
-  粗粒度地获取时间, 而不需要发生上下文切换 (和 gettimeofday() 一样也是 vdso 技术)
+
+- time/gettimeofday/clock_gettime 都可以使用 vdso, 可以不陷入内核粗粒度地获取时间, clock_gettime 需要指定 CLOCK_REALTIME_COARSE/CLOCK_MONOTONIC_COARSE
+
   #+begin_src c++
   struct timespec ts;
   clock_gettime(CLOCK_MONOTONIC_COARSE, &ts);
   unsigned long long millisecs = ts.tv_sec * 1000 + ts.tv_nsec / (1000 * 1000);
   #+end_src
-  #+begin_src c
-  notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
-{
-	switch (clock) {
-	case CLOCK_REALTIME:
-		if (do_realtime(ts) == VCLOCK_NONE)
-			goto fallback;
-		break;
-	case CLOCK_MONOTONIC:
-		if (do_monotonic(ts) == VCLOCK_NONE)
-			goto fallback;
-		break;
-	case CLOCK_REALTIME_COARSE:
-		do_realtime_coarse(ts);
-		break;
-	case CLOCK_MONOTONIC_COARSE:
-		do_monotonic_coarse(ts);
-		break;
-	default:
-		goto fallback;
-	}
 
-	return 0;
-fallback:
-	return vdso_fallback_gettime(clock, ts);
-}
+- tm struct
+  #+begin_src c
+  #include <time.h>
+             struct tm {
+               int tm_sec;    /* Seconds (0-60) */
+               int tm_min;    /* Minutes (0-59) */
+               int tm_hour;   /* Hours (0-23) */
+               int tm_mday;   /* Day of the month (1-31) */
+               int tm_mon;    /* Month (0-11) */
+               int tm_year;   /* Year - 1900 */
+               int tm_wday;   /* Day of the week (0-6, Sunday = 0) */
+               int tm_yday;   /* Day in the year (0-365, 1 Jan = 0) */
+               int tm_isdst;  /* Daylight saving time */
+           };
+  #+end_src
+- timeval struct
+  #+begin_src c
+  #include <sys/time.h>
+             struct timeval {
+               time_t      tv_sec;     /* seconds */
+               suseconds_t tv_usec;    /* microseconds */
+           };
 
   #+end_src
+- timezone struct
+  #+begin_src c
+             struct timezone {
+               int tz_minuteswest;     /* minutes west of Greenwich */
+               int tz_dsttime;         /* type of DST correction */
+           };
+  #+end_src
+- timespec struct
+  #+begin_src c
+                   struct timespec {
+                         time_t          tv_sec;
+                         long            tv_nsec;
+                 };
+  #+end_src
+
+- Convert tm structure to time_t
+  time_t mktime (struct tm * timeptr);
+
+- Convert time_t to tm as local time
+  struct tm * localtime (const time_t * timer);
+  
+  # localtime_r 是可重入的 localtime
+  struct tm *localtime_r(const time_t *timep, struct tm *result);
+  #+begin_src c
+  setenv("TZ", "/usr/share/zoneinfo/America/Los_Angeles", 1); // POSIX-specific
+  setenv("TZ", "/usr/share/zoneinfo/Asia/Shanghai", 1); // POSIX-specific
+  #+end_src
+
+- Convert time_t to tm as UTC time
+  struct tm * gmtime (const time_t * timer);
+
 ** smart pointer
 - enable_shared_from_this ::
   + 是一种 CRTP
@@ -187,6 +215,15 @@ int main()
   + std::shared_ptr<T>(new T(args...)) may call a non-public constructor of T if executed in context where it is accessible, while std::make_shared requires public access to the selected constructor.
   + Unlike the std::shared_ptr constructors, std::make_shared does not allow a custom deleter.
   + std::make_shared uses ::new, so if any special behavior has been set up using a class-specific operator new, it will differ from std::shared_ptr<T>(new T(args...)).
+** cmake
+- 添加编译选项: add_compile_options(-g -O0 -std=c++17 -D_DEBUG -D__LINUX__ -Wno-enum-compare)
+- 获取父目录: get_filename_component(PARENT_DIR ${PROJECT_SOURCE_DIR} DIRECTORY)
+- 打印信息: message(STATUS "parent directory is: " ${PARENT_DIR})
+- 指定可执行文件存放目录: set(EXECUTABLE_OUTPUT_PATH ${PARENT_DIR}/bin)
+- 添加 protobuf 的头文件路径和链接库:
+  - find_package(Protobuf)
+  - include_directories(${Protobuf_INCLUDE_DIRS})
+  - target_link_libraries(a.out ${Protobuf_LIBRARIES} pthread)
 ** RAII
 资源获取即初始化（Resource Acquisition Is Initialization）, 或称 RAII, 
 它将必须在使用前请求的资源的生命周期与一个对象的生命周期相绑定。
@@ -309,7 +346,7 @@ Curiously Recurring Template Pattern 奇异递归模板模式, 更一般地被�
   
 
 - epoll_ctl(epfd, EPOLL_ADD_CTL, fd, &event)
-  + copy_from_user 将用户的 event 拷贝到内核 named epds
+  + copy_from_user 将用户的 event 拷贝到内核 epds
   + 得到 epfd 的 file 结构体 named file, fd 的结构体 named tfile
   + tfile 需要支持 poll: tfile->f_op->poll
   + epfd 不能监听自己: file == tfile
@@ -759,7 +796,11 @@ std::scoped_lock lock(e1.m, e2.m);
         pthread_mutex_init(&g_mutex, &attr);
 
     #+end_src
-
+- shared_mutex 用于读写锁
+  - std::unique_lock<std::shared_mutex> write lock
+    - 只有一个线程/写者能写
+  - std::shared_lock<std::shared_mutex> read lock
+    - 多个线程/读者能同时读
 ** condition variable
 - notify_one(): notifies one waiting thread
 - notify_all(): notifies all waiting threads
