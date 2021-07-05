@@ -519,10 +519,15 @@ auto async_write_message(tcp::socket& socket,
 - boost 1.66 中, *io_service* 已经改名为 *io_context*
   #+begin_quote
   io_service -> io_context
+
   io_service.post() -> io_context.get_executor().post()
+
   io_service.post() -> post(io_context, handler))
+
   io_service.dispatch() -> io_context.get_executor().dispatch()
+
   io_service::strand -> strand<io_context::executor_type>
+
   ...
   #+end_quote
 

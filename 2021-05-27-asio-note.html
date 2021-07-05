@@ -16,37 +16,37 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgb69ee6a">1. asio 简介</a>
+<li><a href="#org70f2cef">1. asio 简介</a>
 <ul>
-<li><a href="#orgcb650f0">1.1. tutorial</a></li>
-<li><a href="#org36215ab">1.2. timer</a></li>
-<li><a href="#org7e1428b">1.3. boost::asio 和 asio</a></li>
+<li><a href="#org1b0e11c">1.1. tutorial</a></li>
+<li><a href="#org89a70d1">1.2. timer</a></li>
+<li><a href="#orgadef70f">1.3. boost::asio 和 asio</a></li>
 </ul>
 </li>
-<li><a href="#orgcf89835">2. 异步 asio 使用</a>
+<li><a href="#orgf8a099c">2. 异步 asio 使用</a>
 <ul>
-<li><a href="#org3a7dc59">2.1. async echo server with callback</a></li>
-<li><a href="#orge2052ab">2.2. multi-threaded</a></li>
-<li><a href="#orgb0e318b">2.3. 使用 future 代替 callback</a></li>
-<li><a href="#orgcf99c82">2.4. 使用 coroutine 代替 callback</a></li>
+<li><a href="#org955f133">2.1. async echo server with callback</a></li>
+<li><a href="#org31d8cbc">2.2. multi-threaded</a></li>
+<li><a href="#org962642e">2.3. 使用 future 代替 callback</a></li>
+<li><a href="#org56329d5">2.4. 使用 coroutine 代替 callback</a></li>
 </ul>
 </li>
-<li><a href="#org0398c2f">3. misc</a>
+<li><a href="#orgcbab820">3. misc</a>
 <ul>
-<li><a href="#org4e1712b">3.1. composed asynchronous operation</a></li>
-<li><a href="#org44708fa">3.2. asio 更新</a></li>
+<li><a href="#org84edecb">3.1. composed asynchronous operation</a></li>
+<li><a href="#org9d106ab">3.2. asio 更新</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </nav>
 
-<div id="outline-container-orgb69ee6a" class="outline-2">
-<h2 id="orgb69ee6a"><span class="section-number-2">1</span> asio 简介</h2>
+<div id="outline-container-org70f2cef" class="outline-2">
+<h2 id="org70f2cef"><span class="section-number-2">1</span> asio 简介</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-orgcb650f0" class="outline-3">
-<h3 id="orgcb650f0"><span class="section-number-3">1.1</span> tutorial</h3>
+<div id="outline-container-org1b0e11c" class="outline-3">
+<h3 id="org1b0e11c"><span class="section-number-3">1.1</span> tutorial</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 asio 是一个跨平台的 c++ 网络库, 现在的最新版本为1.18.2, 在 Windows 下调用 IOCP, Linux 下调用 epoll, BSD 下调用 kqueue
@@ -81,8 +81,8 @@ apt install libasio-dev
 </ul>
 </div>
 </div>
-<div id="outline-container-org36215ab" class="outline-3">
-<h3 id="org36215ab"><span class="section-number-3">1.2</span> timer</h3>
+<div id="outline-container-org89a70d1" class="outline-3">
+<h3 id="org89a70d1"><span class="section-number-3">1.2</span> timer</h3>
 <div class="outline-text-3" id="text-1-2">
 <dl class="org-dl">
 <dt>asio::deadline_timer</dt><dd>使用的计量时间是系统时间 (posix_time), 因此修改系统时间会影响 deadline_timer 的行为</dd>
@@ -91,8 +91,8 @@ apt install libasio-dev
 </div>
 </div>
 
-<div id="outline-container-org7e1428b" class="outline-3">
-<h3 id="org7e1428b"><span class="section-number-3">1.3</span> boost::asio 和 asio</h3>
+<div id="outline-container-orgadef70f" class="outline-3">
+<h3 id="orgadef70f"><span class="section-number-3">1.3</span> boost::asio 和 asio</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 asio 可以独立于 boost 库, 大部分新的编译器(vs 2012, gcc 4.7 -std=c11 后) 会自动添加 <b>ASIO_STANDALONE</b>, 表示 asio 不需要用到 boost 库
@@ -110,12 +110,12 @@ Boost.Asio 1.18.2 is also included in Boost 1.76.
 </div>
 </div>
 
-<div id="outline-container-orgcf89835" class="outline-2">
-<h2 id="orgcf89835"><span class="section-number-2">2</span> 异步 asio 使用</h2>
+<div id="outline-container-orgf8a099c" class="outline-2">
+<h2 id="orgf8a099c"><span class="section-number-2">2</span> 异步 asio 使用</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-org3a7dc59" class="outline-3">
-<h3 id="org3a7dc59"><span class="section-number-3">2.1</span> async echo server with callback</h3>
+<div id="outline-container-org955f133" class="outline-3">
+<h3 id="org955f133"><span class="section-number-3">2.1</span> async echo server with callback</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 下面为一个简单的使用异步 asio 的 echo 服务器
@@ -275,8 +275,8 @@ int main(int argc, char *argv[])
 </div>
 </div>
 </div>
-<div id="outline-container-orge2052ab" class="outline-3">
-<h3 id="orge2052ab"><span class="section-number-3">2.2</span> multi-threaded</h3>
+<div id="outline-container-org31d8cbc" class="outline-3">
+<h3 id="org31d8cbc"><span class="section-number-3">2.2</span> multi-threaded</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 上面的例子是单进程单线程的, 如希望使用多个线程来处理同一个 io_context 需要加上 asio::strand 解决竞态问题
@@ -403,8 +403,8 @@ int main(int argc, char *argv[])
 </ul>
 </div>
 </div>
-<div id="outline-container-orgb0e318b" class="outline-3">
-<h3 id="orgb0e318b"><span class="section-number-3">2.3</span> 使用 future 代替 callback</h3>
+<div id="outline-container-org962642e" class="outline-3">
+<h3 id="org962642e"><span class="section-number-3">2.3</span> 使用 future 代替 callback</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 我们可以使用 c++ 的新特性 std::future 来代替异步调用中的 callback
@@ -506,8 +506,8 @@ int main(int argc, char *argv[])
 </ul>
 </div>
 </div>
-<div id="outline-container-orgcf99c82" class="outline-3">
-<h3 id="orgcf99c82"><span class="section-number-3">2.4</span> 使用 coroutine 代替 callback</h3>
+<div id="outline-container-org56329d5" class="outline-3">
+<h3 id="org56329d5"><span class="section-number-3">2.4</span> 使用 coroutine 代替 callback</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 同样, 我们可以使用 asio 中的协程来代替 callback,
@@ -626,12 +626,12 @@ main 函数使用 co_spawn 产生新的协程:
 </div>
 </div>
 
-<div id="outline-container-org0398c2f" class="outline-2">
-<h2 id="org0398c2f"><span class="section-number-2">3</span> misc</h2>
+<div id="outline-container-orgcbab820" class="outline-2">
+<h2 id="orgcbab820"><span class="section-number-2">3</span> misc</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-org4e1712b" class="outline-3">
-<h3 id="org4e1712b"><span class="section-number-3">3.1</span> composed asynchronous operation</h3>
+<div id="outline-container-org84edecb" class="outline-3">
+<h3 id="org84edecb"><span class="section-number-3">3.1</span> composed asynchronous operation</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 我们可以 <b>async_write</b> 函数包装一下成一个新的函数:
@@ -695,8 +695,8 @@ catch (const std::exception&amp; e)
 </div>
 </div>
 
-<div id="outline-container-org44708fa" class="outline-3">
-<h3 id="org44708fa"><span class="section-number-3">3.2</span> asio 更新</h3>
+<div id="outline-container-org9d106ab" class="outline-3">
+<h3 id="org9d106ab"><span class="section-number-3">3.2</span> asio 更新</h3>
 <div class="outline-text-3" id="text-3-2">
 <ul class="org-ul">
 <li><p>
@@ -705,10 +705,25 @@ boost 1.66 中, <b>io_service</b> 已经改名为 <b>io_context</b>
 <blockquote>
 <p>
 io_service -&gt; io_context
+</p>
+
+<p>
 io_service.post() -&gt; io_context.get_executor().post()
+</p>
+
+<p>
 io_service.post() -&gt; post(io_context, handler))
+</p>
+
+<p>
 io_service.dispatch() -&gt; io_context.get_executor().dispatch()
+</p>
+
+<p>
 io_service::strand -&gt; strand&lt;io_context::executor_type&gt;
+</p>
+
+<p>
 &#x2026;
 </p>
 </blockquote></li>
