@@ -1,0 +1,88 @@
+#+TITLE: c/c++ 中的协程
+#+AUTHOR: zhongming
+#+EMAIL: ming.zhong@etu.unice.fr
+#+OPTIONS: ^:nil
+* 什么是协程
+- 从来源来说 Conway Melvin E 1963的文章《Design of a Separable Transition-Diagram Compiler》提出协程是可以挂起 (suspend) 和恢复 (resume) 的子例程 (subroutine), 为了实现这一点需要保存上下文 (context)
+
+#+CAPTION: [[https://www.boost.org/doc/libs/1_57_0/libs/coroutine/doc/html/coroutine/intro.html][foobar]]
+[[./images/foobar.png]]
+
+
+- 从控制流 (control flow) 的角度来说是一种语言层面 (language-level) 的控制流, 进程和线程中的逻辑控制流是由操作系统内核调度的, 而协程则是在语言层由程序员编写
+
+
+* 进程, 线程和协程
+本文中提到的线程一般指的是 linux 2.6 后 glibc 中的 NPTL (Native POSIX Threads Library) 实现的线程, 一个用户态线程 posix thread 对应一个内核态轻量级进程 light-weight process
+
+操作系统用 [[https://elixir.bootlin.com/linux/v5.15/source/include/linux/sched.h#L723][task_struct]] 这个结构体来描述一个进程或线程 (轻量级进程)
+
+task_struct 有两个 id, *pid* 和 *tgid*, 类型均为 pid_t (x86_64 下为 int)
+  - pid 可通过 syscall(SYS_gettid) 获取
+  - tgid 可通过 getpid(2) 获取, 意为 thread group id, 即同一进程下的不同线程有不同的 pid 和相同的 tgid
+  - clone(2) 中 flags 如设为 CLONE_THREAD, 意为创建线程 (轻量级进程), 创建出来的线程的 tgid 和调用这个函数的进程的 tgid 一致
+  #+begin_src c
+    #include <sched.h>
+
+    int clone(int (*fn)(void *), void *child_stack, int flags, void *arg, ...
+                /* pid_t *ptid, void *newtls, pid_t *ctid */ );
+  #+end_src
+
+同一线程组 (进程) 下的线程共享虚拟内存 (virtual address space), 文件描述符表 (table of file descriptors) 和信号处理表 (table of signal handlers)
+
+信号处理是 process-wide 的, 即对整个线程组产生影响, 但每个线程可以有自己的 signal mask, 信号可以通过 kill(2) 或 tgkill(2) 发送给进程或者线程 (a signal may be process-directed or thread-directed)
+
+** 进程和线程的上下文
+
+进程的上下文包括内存空间和寄存器, 也可以分为数据寄存器, 条件码, 栈指针, pc 这些程序上下文和虚拟内存结构体, 文件描述符表, brk 指针这些内核上下文
+program context(data registers, condition codes, stack pointer, program counter) + kernel context(vm structures, descriptor table, brk pointer)
+
+如CR3 寄存器保存着当前进程页目录的物理地址, 切换进程就会改变 CR3 的值 (part of the process' context)
+
+每个线程都有属于它自己的局部 [[https://elixir.bootlin.com/glibc/latest/source/csu/errno.c#L31][errno]]
+
+#+CAPTION: virtual memory
+#+attr_html: :width 800px
+[[./images/vm.png]]
+
+
+** 协程的上下文
+
+协程的上下文由具体实现决定, 一般都远小于线程的上下文
+
+* c++ 20 coroutine ts
+
+#+CAPTION: echo server
+#+attr_html: :width 800px
+[[./images/echo.png]]
+
+
+* 生产者消费者问题
+
+- 进程: 通过 futex 同步, 映射到同一个物理内存地址的 futex 变量
+
+- 线程: 通过 futex 同步, 共享虚拟内存空间中的 futex 变量
+
+- 协程: 通过用户定义的变量同步
+
+#+CAPTION: producer-consumer problem
+#+attr_html: :width 800px
+[[./images/producer-consumer.png]]
+
+* conclusion
+
+- fine-grained concurrency
+
+- cannot take advantage of multi-core
+
+* references
+
+[[https://en.wikipedia.org/wiki/Coroutine][coroutine wikipedia]]
+
+[[https://www.melconway.com/Home/pdf/compiler.pdf][Design of a Separable Transition-Diagram Compiler]]
+
+[[https://seriouscomputerist.atariverse.com/media/pdf/book/Art%20of%20Computer%20Programming%20-%20Volume%201%20(Fundamental%20Algorithms).pdf][Art of Computer Programming - Volume 1]]
+
+[[https://www.boost.org/doc/libs/1_57_0/libs/coroutine/doc/html/coroutine/intro.html][asio coroutine]]
+
+[[https://man7.org/linux/man-pages/man2/clone.2.html][clone(2) — Linux manual page]]
