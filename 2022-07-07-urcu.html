@@ -11,38 +11,40 @@
 <body>
 <div id="preamble" class="status"><div class="header">  <div class="sitelinks">    <a href="https://zhongming-unice.github.io/about.html">about</a>    | <a href="https://zhongming-unice.github.io/archive.html">archive</a>    | <a href="https://zhongming-unice.github.io/rss.xml">rss</a>  </div></div></div>
 <div id="content">
-<div class="post-date">08  7 2022</div><h1 class="post-title"><a href="https://zhongming-unice.github.io/2022-07-07-urcu.html">RCU 机制及 Userspace RCU 实现</a></h1>
+<div class="post-date">12  7 2022</div><h1 class="post-title"><a href="https://zhongming-unice.github.io/2022-07-07-urcu.html">RCU 机制及 Userspace RCU 实现</a></h1>
 <nav id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org1623cfc">1. RCU overview</a></li>
-<li><a href="#org880aa18">2. Userspace RCU</a>
+<li><a href="#org5b451af">1. RCU overview</a></li>
+<li><a href="#org9beda66">2. Userspace RCU</a>
 <ul>
-<li><a href="#org632235a">2.1. 内存屏障</a>
+<li><a href="#orge9fd68d">2.1. 内存屏障</a>
 <ul>
-<li><a href="#org4920e26">2.1.1. 编译级的屏障</a></li>
-<li><a href="#org3c5eda1">2.1.2. CPU 级的屏障</a></li>
-<li><a href="#orgdabe4df">2.1.3. membarrier</a></li>
+<li><a href="#org4190bf8">2.1.1. 编译级的屏障</a></li>
+<li><a href="#orgc45ddf3">2.1.2. CPU 级的屏障</a></li>
+<li><a href="#orge0474d6">2.1.3. membarrier</a></li>
 </ul>
 </li>
-<li><a href="#org2b61ca8">2.2. 实用函数</a></li>
-<li><a href="#org621d8fa">2.3. 用户态实现</a>
+<li><a href="#orgfa58e63">2.2. 实用函数</a></li>
+<li><a href="#org6b47848">2.3. 用户态实现</a>
 <ul>
-<li><a href="#org2de6fe0">2.3.1. grace period</a></li>
-<li><a href="#org5d4af10">2.3.2. 读者</a></li>
-<li><a href="#orgedd3a93">2.3.3. primitives</a></li>
+<li><a href="#org5f8723b">2.3.1. grace period</a></li>
+<li><a href="#org16f3c8c">2.3.2. 读者</a></li>
+<li><a href="#org6bcf4e1">2.3.3. primitives</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org4206c85">3. References</a></li>
+<li><a href="#orga9864a7">3. References</a></li>
 </ul>
 </div>
 </nav>
-
-<div id="outline-container-org1623cfc" class="outline-2">
-<h2 id="org1623cfc"><span class="section-number-2">1</span> RCU overview</h2>
+<p>
+<a href="./docs/rcu.pdf">./docs/rcu.pdf</a>
+</p>
+<div id="outline-container-org5b451af" class="outline-2">
+<h2 id="org5b451af"><span class="section-number-2">1</span> RCU overview</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 RCU 的基本思想是将共享数据的更新 (update) 分为修改 (removal) 和回收 (reclamation) 两个部分, removal 阶段将数据拷贝一份并进行修改, 然后进入容忍期 (grace period) 等待所有在容忍期前的读者所在的 CPU 发生上下文切换, 然后进入 reclamation 阶段完成数据的更新回收
@@ -122,15 +124,22 @@ RCU primitives
 <p>
 同样适合于读多写少场景的 seqlock, 机制上存在不同, seqlock 在写过于频繁时读者可能一直需要循环更新值
 </p>
+<div class="org-src-container">
+<pre class="src src-c">do {
+    seq = read_seqbegin(&amp;jiffies_lock);
+    ret = jiffies_64;
+} while (read_seqretry(&amp;jiffies_lock, seq));
+</pre>
+</div>
 </div>
 </div>
 
-<div id="outline-container-org880aa18" class="outline-2">
-<h2 id="org880aa18"><span class="section-number-2">2</span> Userspace RCU</h2>
+<div id="outline-container-org9beda66" class="outline-2">
+<h2 id="org9beda66"><span class="section-number-2">2</span> Userspace RCU</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-org632235a" class="outline-3">
-<h3 id="org632235a"><span class="section-number-3">2.1</span> 内存屏障</h3>
+<div id="outline-container-orge9fd68d" class="outline-3">
+<h3 id="orge9fd68d"><span class="section-number-3">2.1</span> 内存屏障</h3>
 <div class="outline-text-3" id="text-2-1">
 
 <figure>
@@ -143,8 +152,8 @@ RCU primitives
 userspace-rcu 中使用到了 3 种内存屏障:
 </p>
 </div>
-<div id="outline-container-org4920e26" class="outline-4">
-<h4 id="org4920e26"><span class="section-number-4">2.1.1</span> 编译级的屏障</h4>
+<div id="outline-container-org4190bf8" class="outline-4">
+<h4 id="org4190bf8"><span class="section-number-4">2.1.1</span> 编译级的屏障</h4>
 <div class="outline-text-4" id="text-2-1-1">
 <p>
 编译级的屏障保证编译生成的汇编代码的顺序是按照程序文本的顺序, 但实际运行的时候 CPU 仍有可能将它们乱序 (out-of-order)
@@ -157,8 +166,8 @@ userspace-rcu 中使用到了 3 种内存屏障:
 </div>
 </div>
 
-<div id="outline-container-org3c5eda1" class="outline-4">
-<h4 id="org3c5eda1"><span class="section-number-4">2.1.2</span> CPU 级的屏障</h4>
+<div id="outline-container-orgc45ddf3" class="outline-4">
+<h4 id="orgc45ddf3"><span class="section-number-4">2.1.2</span> CPU 级的屏障</h4>
 <div class="outline-text-4" id="text-2-1-2">
 <p>
 CPU 级别的屏障保证实际执行的顺序是按照程序文本的顺序, 同时保证了多 CPU 间的缓存一致性
@@ -246,8 +255,8 @@ x86-TSO 下的 store-load barrier 的实现除了上述的 mfence 外, lock 前�
 </div>
 </div>
 
-<div id="outline-container-orgdabe4df" class="outline-4">
-<h4 id="orgdabe4df"><span class="section-number-4">2.1.3</span> membarrier</h4>
+<div id="outline-container-orge0474d6" class="outline-4">
+<h4 id="orge0474d6"><span class="section-number-4">2.1.3</span> membarrier</h4>
 <div class="outline-text-4" id="text-2-1-3">
 <p>
 membarrier 是减少 CPU 级别的内存屏障指令开销的一种屏障, 适用场景为, 有些用到了屏障的函数被执行的频率比另一些用到了屏障的函数高的多, 如下面代码中, 若 fast_path 被执行的频率远远高于 slow_path 被执行的频率, 那么使用一个编译级内存屏障加 membarrier 的组合可能会比使用两个 store-load 内存屏障的开销要小
@@ -326,8 +335,8 @@ int membarrier(int cmd, unsigned int flags, int cpu_id)
 </div>
 </div>
 
-<div id="outline-container-org2b61ca8" class="outline-3">
-<h3 id="org2b61ca8"><span class="section-number-3">2.2</span> 实用函数</h3>
+<div id="outline-container-orgfa58e63" class="outline-3">
+<h3 id="orgfa58e63"><span class="section-number-3">2.2</span> 实用函数</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 RMW(Read-Modifiy-Write) 可能是非原子的, 使用 volatile 关键字使变量不被加载到寄存器, 在 load 前和 store 后使用编译级内存屏障, 但并不能防止 CPU 的重新排序 (reordering), 合并 (merging) 或重新获取 (refetching)
@@ -374,12 +383,12 @@ uint64_t get_cycles()
 </div>
 </div>
 
-<div id="outline-container-org621d8fa" class="outline-3">
-<h3 id="org621d8fa"><span class="section-number-3">2.3</span> 用户态实现</h3>
+<div id="outline-container-org6b47848" class="outline-3">
+<h3 id="org6b47848"><span class="section-number-3">2.3</span> 用户态实现</h3>
 <div class="outline-text-3" id="text-2-3">
 </div>
-<div id="outline-container-org2de6fe0" class="outline-4">
-<h4 id="org2de6fe0"><span class="section-number-4">2.3.1</span> grace period</h4>
+<div id="outline-container-org5f8723b" class="outline-4">
+<h4 id="org5f8723b"><span class="section-number-4">2.3.1</span> grace period</h4>
 <div class="outline-text-4" id="text-2-3-1">
 <p>
 linux 内核中的 gp 是从写者调用 call_rcu 开始, 在所有 CPU 的 Quiescent State 标志位改变后结束, userspace rcu 也做了类似的实现:
@@ -443,8 +452,8 @@ wake_up_gp() 当 gp 的 futex 为-1时将其置为0, 并唤醒最多一个 waite
 </div>
 </div>
 
-<div id="outline-container-org5d4af10" class="outline-4">
-<h4 id="org5d4af10"><span class="section-number-4">2.3.2</span> 读者</h4>
+<div id="outline-container-org16f3c8c" class="outline-4">
+<h4 id="org16f3c8c"><span class="section-number-4">2.3.2</span> 读者</h4>
 <div class="outline-text-4" id="text-2-3-2">
 <p>
 读者的数据结构 rcu_reader 是 tls(thread local storage), 可以使用 __thread 或者 pthread_key_create() 实现
@@ -532,8 +541,8 @@ typedef struct reader_list {
 </div>
 </div>
 
-<div id="outline-container-orgedd3a93" class="outline-4">
-<h4 id="orgedd3a93"><span class="section-number-4">2.3.3</span> primitives</h4>
+<div id="outline-container-org6bcf4e1" class="outline-4">
+<h4 id="org6bcf4e1"><span class="section-number-4">2.3.3</span> primitives</h4>
 <div class="outline-text-4" id="text-2-3-3">
 <p>
 下面是5个原语的用户态大致实现:
@@ -680,8 +689,8 @@ typedef struct reader_list {
 </div>
 </div>
 
-<div id="outline-container-org4206c85" class="outline-2">
-<h2 id="org4206c85"><span class="section-number-2">3</span> References</h2>
+<div id="outline-container-orga9864a7" class="outline-2">
+<h2 id="orga9864a7"><span class="section-number-2">3</span> References</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 <a href="https://www.kernel.org/doc/Documentation/RCU/whatisRCU.txt">whatisRCU</a>

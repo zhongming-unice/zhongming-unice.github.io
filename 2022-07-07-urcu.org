@@ -10,7 +10,7 @@
 ;;  Written by (c) ZHONG Ming.  2021-2022.
 #+end_comment
 #+OPTIONS: ^:nil
-
+[[./docs/rcu.pdf]]
 * RCU overview
 RCU 的基本思想是将共享数据的更新 (update) 分为修改 (removal) 和回收 (reclamation) 两个部分, removal 阶段将数据拷贝一份并进行修改, 然后进入容忍期 (grace period) 等待所有在容忍期前的读者所在的 CPU 发生上下文切换, 然后进入 reclamation 阶段完成数据的更新回收
 
@@ -38,6 +38,12 @@ RCU primitives
 对比 Readers-writer lock 如 Reader-Writer Spin Locks 这种读者优先的锁, RCU 不会造成 writer starvation, 读者写者可以切换, 读者的开销少
 
 同样适合于读多写少场景的 seqlock, 机制上存在不同, seqlock 在写过于频繁时读者可能一直需要循环更新值
+#+begin_src c
+    do {
+        seq = read_seqbegin(&jiffies_lock);
+        ret = jiffies_64;
+    } while (read_seqretry(&jiffies_lock, seq));
+#+end_src
 
 * Userspace RCU
 ** 内存屏障
